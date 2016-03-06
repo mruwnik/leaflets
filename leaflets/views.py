@@ -24,6 +24,7 @@ def setup_app():
         ],
         debug=options.DEBUG,
         template_path=options.TEMPLATES,
+        cookie_secret=options.SECRET_KEY,
     )
 
     io_instance = ioloop.IOLoop.instance()

@@ -2,6 +2,7 @@ import os
 
 
 PORT = int(os.environ.get('PORT'))
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DB_NAME = 'd2de9evfrj5u2p'
 DB_USER = 'hodvexdtuufsju'

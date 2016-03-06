@@ -15,17 +15,35 @@ GRANT ALL ON SCHEMA leaflets TO leaflets;
 CREATE DATABASE leaflets;
 ```
 
-* The code
+* Get the code
 Check out the code from the github repo:
 
 `git clone https://github.com/mruwnik/leaflets`
+
+* Set up python
+The project uses Python 3.5, so make sure you have it installed. Once that is done, you can set up the development environment. The basic way is to simply execute the following (make sure that the python path is set correctly):
+
+```
+pip install virtualenv
+virtualenv venv --python=/usr/local/bin/python3.5
+```
+
+which will create a virtual enviroment for this project, where you can install and remove packets however you like - it will have no effect on the rest of the system. To use it, execute:
+
+`source venv/bin/activate`
+
+A more friendly alternative is [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en/latest/)
+
+* Install dependancies
+To install all the required packages, go to wherever the project is and execute the following for it all to be automatically downloaded and installed:
+`pip install -r requirements.txt`
 
 * Run the database migrations
 For there to be any data in the database, you must run the migrations. Go to the project directory that you cloned from github, and do the following:
 
 ```
 cd leaflets
-alembic upgrade HEAD
+alembic upgrade head
 ```
 
 * Local settings
