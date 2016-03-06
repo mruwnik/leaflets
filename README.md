@@ -2,5 +2,40 @@
 A website to handle door-to-door leaflets
 
 
-Obecnie tu nic nie ma, no i też mi się nie chce tego opisywać póki co. Postaram się zawsze uaktualnić ten plik jak coś nowego dodam.
+# Environment setup
+
+* Postgres
+Start out by setting up postgres on your local machine. [this guide](https://wiki.postgresql.org/wiki/Detailed_installation_guides) seems to decribe how. [here](https://wiki.postgresql.org/wiki/First_steps) you can see how to access it from the command line.
+Once you have postgres set up, create the leaflet's database and user:
+
+```
+CREATE SCHEMA leaflets;
+CREATE USER leaflets PASSWORD 'leaflets';
+GRANT ALL ON SCHEMA leaflets TO leaflets;
+CREATE DATABASE leaflets;
+```
+
+* The code
+Check out the code from the github repo:
+
+`git clone https://github.com/mruwnik/leaflets`
+
+* Run the database migrations
+For there to be any data in the database, you must run the migrations. Go to the project directory that you cloned from github, and do the following:
+
+```
+cd leaflets
+alembic upgrade HEAD
+```
+
+* Local settings
+If you want to specify any personal settings, create a file called `leaflets/etc/local.py` and add them there. The settings must already be present in `leaflets/etc/__init__.py` to be actually seen by the project. This step is totally optional, as the defaults should be good enough. A good use of this file is to set debugging on. To do so, just add the following line to your `local.py` file:
+`DEBUG = True`
+
+* Run the project
+Execute the following from the project directory:
+`python leaflets/views.py`
+
+* Check whether it works
+Open `localhost:5000` in your browser to see if the webpage is working.
 
