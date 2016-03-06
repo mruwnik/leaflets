@@ -14,6 +14,18 @@ define('config_file', '', help='The settings to use')
 define('DEBUG', False)
 define('TEMPLATES', os.path.join(BASE_DIR, 'templates'), help='The location of all HTML templates')
 
+
+DATABASE_PARAMS = {
+    'DB_NAME': 'leaflets',
+    'DB_USER': 'leaflets',
+    'DB_PASSWORD': 'leaflets',
+    'DB_HOST': 'localhost',
+    'DB_PORT': 5432
+}
+for param, val in DATABASE_PARAMS.items():
+    define(param, val)
+
+
 def import_settings(settings_file):
     """Import the given settings file if it exists."""
     try:

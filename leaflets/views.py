@@ -1,17 +1,24 @@
+import momoko
 from tornado.web import RequestHandler, Application, url
-from etc import options
-from tornado import ioloop, httpserver
+from tornado import ioloop, httpserver, gen
+
+from leaflets.etc import options
 
 
 class MainHandler(RequestHandler):
+    @gen.coroutine
     def get(self):
+        conn = yield self.application.db.connect()  #self.connection()
+        result = yield conn.execute('select 1')
+        print(result)
         self.render('sandra.html')
 
 
-if __name__ == "__main__":
-    import logging
-    logging.basicConfig()
+def setup_app():
+    """Set the application up.
 
+    :returns: the application instance
+    """
     app = Application([
             url(r"/", MainHandler),
         ],
@@ -21,8 +28,27 @@ if __name__ == "__main__":
 
     io_instance = ioloop.IOLoop.instance()
 
+    app.db = momoko.Pool(
+         dsn='dbname={name} user={user} password={password} host={host} port={port}'.format(
+            name=options.DB_NAME,
+            user=options.DB_USER,
+            password=options.DB_PASSWORD,
+            host=options.DB_HOST,
+            port=options.DB_PORT
+        ),
+        size=1,
+        ioloop=io_instance,
+    )
+    return app
+
+
+if __name__ == "__main__":
+    import logging
+    logging.basicConfig()
+
+    app = setup_app()
     http_server = httpserver.HTTPServer(app)
     http_server.listen(options.PORT)
     print('Starting application on port %d' % options.PORT)
-    io_instance.start()
+    ioloop.IOLoop.current().start()
 

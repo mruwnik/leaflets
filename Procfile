@@ -1,1 +1,1 @@
-web: python leaflets/views.py --config_file=leaflets/etc/heroku.py
+web: python -m leaflets.views --config_file=leaflets/etc/heroku.py
