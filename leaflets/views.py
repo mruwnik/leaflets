@@ -23,5 +23,6 @@ if __name__ == "__main__":
 
     http_server = httpserver.HTTPServer(app)
     http_server.listen(options.PORT)
+    print('Starting application on port %d' % options.PORT)
     io_instance.start()
 
