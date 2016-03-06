@@ -64,4 +64,5 @@ target/
 
 # local settings
 leaflets/etc/local.py
+heroku
 

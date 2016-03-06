@@ -5,3 +5,4 @@ pylama==6.3.4
 pylama_gjslint==0.0.7
 pylama_pylint==2.0.0
 pylint==1.4.4
+pytest-tornado==0.4.5
