@@ -3,9 +3,9 @@ from tornado.web import Application, url
 from tornado import ioloop, httpserver
 
 from leaflets.etc import options
-from leaflets.views.auth import LoginHandler
-from leaflets.views.base import BaseHandler
-from leaflets.views import uimodules
+from leaflets.views import (
+    LoginHandler, BaseHandler, AddUserHandler, LogOutHandler, uimodules
+)
 
 
 def setup_app():
@@ -16,13 +16,16 @@ def setup_app():
     app = Application(
         [
             url(r"/", BaseHandler),
-            url(r'/login', LoginHandler, name='login'),
+            url(LoginHandler.url, LoginHandler, name='login'),
+            url(LogOutHandler.url, LogOutHandler, name='logout'),
+            url(AddUserHandler.url, AddUserHandler, name='add_user'),
         ],
         debug=options.DEBUG,
         template_path=options.TEMPLATES,
         cookie_secret=options.SECRET_KEY,
         xsrf_cookies=True,
         ui_methods=uimodules,
+        login_url=LoginHandler.url,
     )
     return app
 

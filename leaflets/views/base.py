@@ -3,8 +3,12 @@ from tornado import gen
 
 
 class BaseHandler(RequestHandler):
-    @gen.coroutine
+
     def get(self):
         self.render('sandra.html')
+
+    def get_current_user(self):
+        return self.get_secure_cookie('user_id')
+
 
 

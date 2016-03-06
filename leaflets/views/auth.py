@@ -12,9 +12,15 @@ class LoginHandler(BaseHandler):
 
     BAD_PASSWORD = 'The provided password and user do not match'
 
-    def get(self):
+    url = '/login'
+
+    @property
+    def form(self):
+        return LoginForm(self.request.arguments)
+
+    def get(self, form=None):
         """Show the login form."""
-        self.render('login.html', login_form=LoginForm())
+        self.render('simple_form.html', form=form or self.form, url=self.url)
 
     @classmethod
     def hash(self, passwd):
@@ -36,20 +42,33 @@ class LoginHandler(BaseHandler):
             'SELECT id FROM users WHERE username = %s AND password_hash = %s',
             (form.name.data, self.hash(form.password.data))
         )
-        raise gen.Return(result.fetchone())
+        user_id = result.fetchone()
+        raise gen.Return(user_id and user_id[0])
 
     @gen.coroutine
     def post(self):
         """Log in a user."""
-        form = LoginForm(self.request.arguments)
+        form = self.form
         if not form.validate():
-            self.render('login.html', login_form=form)
+            return self.get(form)
+
+        user_id = yield self.get_user(form)
+        if user_id:
+            self.set_secure_cookie("user_id", str(user_id))
+            self.redirect("/")
         else:
-            user = yield self.get_user(form)
-            if user:
-                self.set_secure_cookie("user_id", user.id)
-                self.redirect("/")
-            else:
-                form.password.errors.append(self.BAD_PASSWORD)
-                self.render('login.html', login_form=form)
+            form.password.errors.append(self.BAD_PASSWORD)
+            self.get(form)
+
+
+class LogOutHandler(BaseHandler):
+
+    """Handle logging out."""
+
+    url = '/logout'
+
+    def get(self):
+        """Log out."""
+        self.clear_cookie('user_id')
+        self.redirect("/")
 

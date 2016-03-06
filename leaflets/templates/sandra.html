@@ -1,2 +1,10 @@
-Witaj Sandro!<br>
+<a href="{{ reverse_url('add_user') }}">{{ _('add user') }}</a>
+<span style="margin-right: 20px;"></span>
+{% if current_user %}
+    <a href="{{ reverse_url('logout') }}">{{ _('logout') }} user {{current_user}}</a>
+{% else %}
+    <a href="{{ reverse_url('login') }}">{{ _('login') }}</a>
+{% end %}
+
+<h1>Witaj Sandro!</h1><br>
 Póki co tu nic nie ma - jutro pokombinuje nad tym by zrobić prostą liste adresow w Jastrzębiu
