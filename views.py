@@ -1,6 +1,5 @@
-import os
-
 from tornado.web import RequestHandler, Application, url
+from etc import options
 from tornado import ioloop, httpserver
 
 
@@ -9,19 +8,20 @@ class MainHandler(RequestHandler):
         self.render('sandra.html')
 
 
-app = Application([
-            url(r"/", MainHandler),
-        ],
-        debug=True,
-        template_path='templates',
-    )
-
-
 if __name__ == "__main__":
     import logging
     logging.basicConfig()
+
+    app = Application([
+            url(r"/", MainHandler),
+        ],
+        debug=options.DEBUG,
+        template_path=options.TEMPLATES,
+    )
+
+    io_instance = ioloop.IOLoop.instance()
+
     http_server = httpserver.HTTPServer(app)
-    port = int(os.environ.get("PORT", 5000))
-    http_server.listen(port)
-    ioloop.IOLoop.instance().start()
+    http_server.listen(options.PORT)
+    io_instance.start()
 
