@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <table>
+        <tr>
+            <th>{{ _('lat') }}</th>
+            <th>{{ _('lon') }}</th>
+            <th>{{ _('country') }}</th>
+            <th>{{ _('town') }}</th>
+            <th>{{ _('postcode') }}</th>
+            <th>{{ _('street') }}</th>
+            <th>{{ _('house_number') }}</th>
+        </tr>
+        {% for lat, lon, country, town, postcode, street, house in addresses %}
+        <tr>
+            <td>{{ lat }}</td>
+            <td>{{ lon }}</td>
+            <td>{{ country }}</td>
+            <td>{{ town }}</td>
+            <td>{{ postcode }}</td>
+            <td>{{ street }}</td>
+            <td>{{ house }}</td>
+        </tr>
+        {% end %}
+    </table>
+{% end %}

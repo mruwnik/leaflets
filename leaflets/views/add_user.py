@@ -56,7 +56,7 @@ class AddUserHandler(LoginHandler):
         """Add a new user with the given params."""
         conn = yield self.application.db.connect()
         yield conn.execute(
-            'INSERT INTO users (username, password_hash, email) VALUES (%s, %s, %s)',
+            'INSERT INTO users (username, password_hash, email, admin) VALUES (%s, %s, %s, False)',
             (username, self.hash(password), email)
         )
 

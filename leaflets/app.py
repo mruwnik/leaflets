@@ -4,7 +4,8 @@ from tornado import ioloop, httpserver
 
 from leaflets.etc import options
 from leaflets.views import (
-    LoginHandler, BaseHandler, AddUserHandler, LogOutHandler, uimodules
+    LoginHandler, BaseHandler, AddUserHandler, LogOutHandler, AddressImportHandler, AddressListHandler,
+    uimodules
 )
 
 
@@ -19,6 +20,8 @@ def setup_app():
             url(LoginHandler.url, LoginHandler, name='login'),
             url(LogOutHandler.url, LogOutHandler, name='logout'),
             url(AddUserHandler.url, AddUserHandler, name='add_user'),
+            url(AddressImportHandler.url, AddressImportHandler, name='import_addresses'),
+            url(AddressListHandler.url, AddressListHandler, name='list_addresses'),
         ],
         debug=options.DEBUG,
         template_path=options.TEMPLATES,
