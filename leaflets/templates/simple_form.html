@@ -1,6 +1,5 @@
-<html>
-    <body>
-        {% raw render_form(form, url) %}
-    </body>
-</html>
+{% extends "base.html" %}
 
+{% block body %}
+    {% raw render_form(form, url) %}
+{% end %}
