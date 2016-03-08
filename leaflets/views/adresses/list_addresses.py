@@ -1,6 +1,7 @@
 import logging
 
 from tornado import gen
+from momoko.exceptions import PartiallyConnectedError
 
 from leaflets.views.base import BaseHandler
 
@@ -15,8 +16,11 @@ class AddressListHandler(BaseHandler):
 
     @gen.coroutine
     def get(self):
-        conn = yield self.application.db.connect()
-        addresses = yield conn.execute(
-            'SELECT lat, lon, country, town, postcode, street, house FROM addresses'
-        )
+        try:
+            conn = yield self.application.db.connect()
+            addresses = yield conn.execute(
+                'SELECT lat, lon, country, town, postcode, street, house FROM addresses'
+            )
+        except PartiallyConnectedError:
+            addresses = []
         self.render('list_addresses.html', addresses=addresses)

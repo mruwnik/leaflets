@@ -158,3 +158,42 @@ def admin(database):
     with patch('leaflets.views.BaseHandler.get_current_user', return_value=1), \
          patch('leaflets.views.BaseHandler.is_admin', property(is_admin)):
         yield
+
+
+ADDRESSES = [
+    (50.4569326, 19.2629951, 'Siewierz', '42-470', 'Długa', '2'),
+    (50.4671732, 19.6581435, 'Pilica', '42-436', 'Armii Krajowej', '2'),
+    (49.6979663, 19.1803986, 'Żywiec-Pietrzykowice', '34-300', 'Wesoła', '5'),
+    (50.2987945, 18.6890583, 'Gliwice', '44-100', 'Generała Jarosława Dąbrowskiego', '18'),
+    (50.2831121, 18.6633475, 'Gliwice', '', 'Rybnicka', '31'),
+    (50.2227530, 18.6750804, 'Knurów', '44-190', 'Księdza Alojzego Koziełka', '8'),
+    (50.4083606, 19.4800624, 'Ogrodzieniec', '', 'Centuria', ''),
+    (49.8277328, 19.0502823, 'Bielsko-Biała', '', 'Mostowa', '5'),
+    (49.8273954, 19.0501131, 'Bielsko-Biała', '', 'Mostowa', '5'),
+    (49.8272465, 19.0494004, 'Bielsko-Biała', '', 'Mostowa', '5'),
+    (50.3082116, 18.6776321, 'Gliwice', '44-100', 'Warszawska', '35'),
+    (50.3177967, 18.7708699, 'Zabrze', '41-819', 'Gdańska', '22'),
+    (50.3863792, 18.5754243, '', '44-120', 'Węgorza', '1'),
+    (50.2971028, 18.6492137, '', '', 'Generała Władysława Andersa', '12'),
+    (50.3054516, 18.6318022, '', '', 'Kozielska', '128'),
+    (50.2938838, 18.8192230, 'Zabrze', '41-806', 'Jerzego Wyciska', '1'),
+    (50.3167368, 18.5902134, '', '', 'Kozielska', '297'),
+    (50.3115804, 18.7580428, 'Zabrze', '41-819', 'Grunwaldzka', '46'),
+    (50.5260720, 19.5087337, 'Zawiercie', '42-400', 'Skarżycka', '11'),
+    (50.2700593, 18.3703886, 'Kotlarnia', '47-246', 'Dębowa', '3'),
+    (50.2221554, 19.0670677, 'Katowice', '40-467', 'Plac Pod Lipami', '1'),
+    (50.2214011, 19.0644236, 'Katowice', '40-476', 'Plac Pod Lipami', '9'),
+]
+
+
+@pytest.fixture
+def addresses(database):
+    """Static addresses in the database."""
+    with database.cursor() as c:
+        for address in ADDRESSES:
+            c.execute(
+                "INSERT INTO addresses (lat, lon, town, postcode, street, house) VALUES "
+                "(%s, %s, %s, %s, %s, %s)", address
+            )
+    database.commit()
+    return ADDRESSES
