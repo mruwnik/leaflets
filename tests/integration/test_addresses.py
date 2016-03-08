@@ -95,7 +95,7 @@ def test_list_addresses(addresses, admin, http_client, base_url, app_with_db, da
     """Check whether the list of addresses is correctly generated."""
     url = app_with_db.reverse_url('list_addresses')
 
-    response = yield http_client.fetch(base_url + url)
+    response = yield http_client.fetch(base_url + url + '?output=html')
     assert response.code == 200
 
     soup = BeautifulSoup(response.body, 'html.parser')

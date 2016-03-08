@@ -11,7 +11,7 @@
             <th>{{ _('street') }}</th>
             <th>{{ _('house_number') }}</th>
         </tr>
-        {% for lat, lon, country, town, postcode, street, house in addresses %}
+        {% for id, lat, lon, country, town, postcode, street, house in addresses %}
         <tr>
             <td>{{ lat }}</td>
             <td>{{ lon }}</td>

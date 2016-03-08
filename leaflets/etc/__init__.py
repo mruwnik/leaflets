@@ -13,13 +13,13 @@ define('config_file', '', help='The settings to use')
 
 define('DEBUG', False)
 define('TEMPLATES', os.path.join(BASE_DIR, 'templates'), help='The location of all HTML templates')
+define('STATIC_FILES', os.path.join(BASE_DIR, 'static'), help='The location of all static files')
 define('SECRET_KEY', '123456', help='A secret key used e.g. for secure cookies')
 
 
 # test params
 
 define('POSTGRES_LOCATION', '/usr/lib/postgresql/', help='Where postgres is installed')
-
 
 
 DATABASE_PARAMS = {

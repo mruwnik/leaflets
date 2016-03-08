@@ -1,5 +1,22 @@
 <html>
+    <head>
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+    </head>
     <body>
+        {% block header %}
+            <a href="{{ reverse_url('add_user') }}">{{ _('add user') }}</a>
+            <span style="margin-right: 20px;"></span>
+            {% if current_user %}
+                <a href="{{ reverse_url('logout') }}">{{ _('logout') }} user {{current_user}}</a>
+            {% else %}
+                <a href="{{ reverse_url('login') }}">{{ _('login') }}</a>
+            {% end %}
+        {% end %}
         {% block body %}{% end %}
+        {% block map %}{% end %}
+        <script src="//code.jquery.com/jquery-1.7.1.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet-providers/1.1.7/leaflet-providers.min.js"></script>
+        <script src="{{ static_url('js/map.js') }}"></script>
     </body>
 </html>

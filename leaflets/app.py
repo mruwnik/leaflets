@@ -26,6 +26,7 @@ def setup_app():
         debug=options.DEBUG,
         template_path=options.TEMPLATES,
         cookie_secret=options.SECRET_KEY,
+        static_path=options.STATIC_FILES,
         xsrf_cookies=True,
         ui_methods=uimodules,
         login_url=LoginHandler.url,
