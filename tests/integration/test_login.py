@@ -58,7 +58,7 @@ def test_login_password(xsrf_client, base_url, app_with_db, database):
 
     # The password is unhashed, so shouldn't match - login should fail
     with database.cursor() as c:
-        c.execute("INSERT INTO users VALUES (12, 'test', 'test', 'test')")
+        c.execute("INSERT INTO users VALUES (12, 'test', 'test', 'test', False)")
         database.commit()
 
     attempt_login(will_fail=True)

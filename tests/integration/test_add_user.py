@@ -1,8 +1,9 @@
-
 import pytest
-from tornado.httpclient import HTTPRequest
+
+from mock import Mock, patch
 
 from leaflets.views import AddUserHandler
+from leaflets.views import BaseHandler
 
 
 @pytest.mark.gen_test
@@ -40,3 +41,28 @@ def test_add_user(xsrf_client, base_url, app_with_db, database):
     # matching passwords - the user should be added
     add_user('test', 1)
 
+
+@pytest.mark.gen_test
+def test_admin_user(app_with_db, database):
+    """Check whether users get correctly added."""
+
+    async def add_user(is_admin):
+        """Add a new user to the database."""
+        with database.cursor() as c:
+            c.execute('DELETE FROM users')
+            c.execute("INSERT INTO users (id, name, email, password_hash, admin) VALUES "
+                      "(1, 'test', 'test@asd.sd', 'test', %s)", (is_admin,))
+
+    def check_if_admin(expected):
+        """Check if the current user is an admin."""
+        with patch('leaflets.views.BaseHandler.get_current_user', return_value=1):
+            handler = BaseHandler(app_with_db, Mock())
+            is_admin = yield handler.is_admin
+            assert is_admin is expected
+
+    # no user in the database - not admin
+    check_if_admin(False)
+
+    for is_admin in True, False:
+        add_user(is_admin)
+        check_if_admin(is_admin)

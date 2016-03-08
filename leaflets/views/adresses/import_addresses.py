@@ -48,14 +48,16 @@ class AddressImportHandler(BaseHandler):
         conn = yield self.application.db.connect()
         reader = csv.reader(self.bytes_split(upload_file['body'], '\n'), delimiter='\t')
 
-        for lat, lon, town, postcode, street, house in reader:
+        for row in reader:
             try:
-                print(float(lat), float(lon), town, postcode, street, house)
+                lat, lon, town, postcode, street, house = row
                 yield conn.execute(
                     "INSERT INTO addresses (lat, lon, country, town, postcode, street, house) "
                     "VALUES (%s, %s, 'Polska', %s, %s, %s, %s)",
                     (float(lat), float(lon), town, postcode, street, house)
                 )
+            except (ValueError, TypeError, UnboundLocalError):
+                logger.warn('invalid address provided: %s', row)
             except IntegrityError:
-                logger.warn('found duplicate for %s', (lat, lon, town, postcode, street, house))
+                logger.warn('found duplicate for %s', row)
         self.redirect("/")
