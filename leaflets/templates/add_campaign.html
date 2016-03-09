@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>{{ _('Add a new campaign') }}</h1>
+
+    <form id="add-campaign-form" method="post" action="{{ reverse_url('add_campaign') }}">
+        {% module xsrf_form_html() %}
+        {{ _('Campaign name') }}: <input type="text" name="name" value="{{ name }}"><br>
+        {% for id in addresses %}
+            <input type="hidden" name="addresses[]" value="{{ id }}">
+        {% end %}
+        <input type="submit" value="{{ _('Create campaign') }}">
+    </form>
+
+    <div class="controls">
+        <button id="show-selector">{{ _('toggle selector') }}</button>
+        <button class="selector-control" id="select-area">{{ _('select area') }}</button>
+        <button class="selector-control" id="deselect-area">{{ _('deselect area') }}</button>
+    </div>
+{% end %}
+
+{% block map %}
+    <div id="map-container" style="height: 800px;"></div>
+{% end %}

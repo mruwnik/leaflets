@@ -1,14 +1,16 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <h1>Witaj Sandro!</h1><br>
+    <h1>Już się nie witam</h1><br>
     Nie mam pełnej listy adresów na Giszowcu, bo jakiś nie wiadomo jaki z calego śląska. Póki co tylko wczytałem
     <a href="{{ reverse_url('list_addresses') }}">tyle</a><br>
     Możesz se klikać na te czerwone kropki i się pokaże adres. Jutro spróbuje wygenerować całą listę tych adresów.<br>
     Jak chcesz inną mapę, to pooglądaj se <a href="http://leaflet-extras.github.io/leaflet-providers/preview/">tutaj</a>
     czy nie ma lepszej.<br>
     Te czerwone kropki też mogę pozmieniać. Tak w zasadzie to wszystko tam idzie zmieniać, tylko trza powiedzieć jak.
-    <br><br>
+    <br><br><br><br>
+    <a href="{{ reverse_url('add_campaign') }}">Tutaj</a> możesz sobie zobaczyć jak póki co można tworzyć taka kampanię ulotkową<br>
+    <br><br><br><br>
 {% end %}
 
 {% block map %}

@@ -1,0 +1,9 @@
+div.controls {
+    margin: 20px;
+}
+
+div.location-filter.button-container
+    a.enable-button{
+       display: none;
+    }
+}
