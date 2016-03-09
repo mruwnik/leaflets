@@ -1,4 +1,5 @@
 import csv
+import json
 from io import StringIO
 
 import pytest
@@ -23,7 +24,7 @@ def generate_address(i):
     ([generate_address(i % 50) for i in range(100)], 50),
     ([generate_address(i) for i in range(100)], 100),
 ))
-def asd_test_add_addresses(admin, xsrf_client, base_url, app_with_db, database, addresses_list, count):
+def test_add_addresses(admin, xsrf_client, base_url, app_with_db, database, addresses_list, count):
     """Check whether addresses are correctly imported."""
     url = app_with_db.reverse_url('import_addresses')
 
@@ -63,7 +64,7 @@ def asd_test_add_addresses(admin, xsrf_client, base_url, app_with_db, database, 
     'dsa	19.6581435	Pilica	42-436	Armii Krajowej	2',  # invalid lat
     '50.4671732	1fewew	Pilica	42-436	Armii Krajowej	2',  # invalid lon
 ))
-def asd_test_add_addresses_bad(admin, xsrf_client, base_url, app_with_db, database, addresses_list):
+def test_add_addresses_bad(admin, xsrf_client, base_url, app_with_db, database, addresses_list):
     """Check whether bad addresses are correctly skipped."""
     url = app_with_db.reverse_url('import_addresses')
 
@@ -103,3 +104,57 @@ def test_list_addresses(addresses, admin, http_client, base_url, app_with_db, da
     for row, address in zip(soup.find_all('tr')[1:], addresses):
         lat, lon, country, town, postcode, street, house_number = [td.getText() for td in row.find_all('td')]
         assert address == (float(lat), float(lon), town, postcode, street, house_number)
+
+
+@pytest.mark.parametrize('type', ('?output=json', ''))
+@pytest.mark.gen_test
+def test_list_addresses_json(addresses, admin, http_client, base_url, app_with_db, database, type):
+    """Check whether the list of addresses is correctly generated when json is desired."""
+    url = app_with_db.reverse_url('list_addresses')
+
+    # get the json from the server
+    response = yield http_client.fetch(base_url + url + type)
+    assert response.code == 200
+    results = json.loads(response.body.decode('utf8'))
+
+    # get all rows from the database
+    with database.cursor() as c:
+        c.execute('SELECT id, lat, lon, country, town, postcode, street, house FROM addresses')
+        rows = c.fetchall()
+
+    # make sure that the amounts are correct
+    assert rows
+    assert len(rows) == len(results)
+
+    # make sure the contents are correct
+    for row in rows:
+        address_dict = dict(zip(['lat', 'lon', 'country', 'town', 'postcode', 'street', 'house'], row[1:]))
+        assert results[str(row[0])] == address_dict
+
+
+@pytest.mark.gen_test
+def test_find_addresses(addresses, admin, xsrf_client, base_url, app_with_db, database):
+    """Check whether the list of addresses is correctly generated when json is desired."""
+    url = base_url + app_with_db.reverse_url('list_addresses')
+
+    # get all rows from the database
+    with database.cursor() as c:
+        c.execute('SELECT id, lat, lon, country, town, postcode, street, house FROM addresses')
+        rows = c.fetchall()
+
+    # get the json from the server
+    post_data = {'addresses[]': [row[0] for row in rows]}
+    request = yield xsrf_client.xsrf_request(url, post_data)
+    response = yield xsrf_client.fetch(request)
+    assert response.code == 200
+
+    results = json.loads(response.body.decode('utf8'))
+
+    # make sure that the amounts are correct
+    assert rows
+    assert len(rows) == len(results)
+
+    # make sure the contents are correct
+    for row in rows:
+        address_dict = dict(zip(['lat', 'lon', 'country', 'town', 'postcode', 'street', 'house'], row[1:]))
+        assert results[str(row[0])] == address_dict

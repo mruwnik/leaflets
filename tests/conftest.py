@@ -112,7 +112,7 @@ def xsrf_client(http_client, app, base_url):
 
         request = HTTPRequest(
             url, 'POST',
-            body=urlencode(data),
+            body=urlencode(data, doseq=True),
             headers=headers,
         )
         return request
