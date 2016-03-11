@@ -1,9 +1,12 @@
-{% extends "base.html" %}
+{% extends "map.html" %}
 
 {% block body %}
     <form method="post" enctype="multipart/form-data" action="{{ reverse_url('import_addresses') }}">
         {% module xsrf_form_html() %}
-        CSV file to import: <input type="file" name="csv"/><br>
+        {{ _('CSV file to import') }}: <input type="file" name="csv"/><br>
+        {{ _('The provided file should be a tab delimited CSV file with the following columns')}}:<br>
+        {{ _('"lat", "lon", "town", "postcode", "street", "house".') }}<br>
+        Click <a href="{{ static_url('example_addresses.csv') }}">here</a> for an example file.<br>
         <input type="submit" value="{{ _('import') }}">
     </form>
 {% end %}

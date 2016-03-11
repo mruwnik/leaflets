@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "map.html" %}
 
 {% block body %}
     <h1>Już się nie witam</h1><br>
@@ -11,8 +11,4 @@
     <br><br><br><br>
     <a href="{{ reverse_url('add_campaign') }}">Tutaj</a> możesz sobie zobaczyć jak póki co można tworzyć taka kampanię ulotkową<br>
     <br><br><br><br>
-{% end %}
-
-{% block map %}
-    <div id="map-container" style="height: 800px;"></div>
 {% end %}
