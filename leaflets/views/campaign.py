@@ -17,8 +17,7 @@ class AddCampaignHandler(BaseHandler):
         :param LoginForm form: the login form
         :returns: the user's id, or None if could be found
         """
-        conn = yield self.application.db.connect()
-        result = yield conn.execute(
+        result = yield self.application.db.execute(
             'SELECT id FROM users WHERE username = %s AND password_hash = %s',
             (form.name.data, self.hash(form.password.data))
         )

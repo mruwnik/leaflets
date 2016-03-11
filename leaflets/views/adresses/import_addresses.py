@@ -47,13 +47,12 @@ class AddressImportHandler(BaseHandler):
             return self.render('upload_addresses.html')
 
         upload_file, = csv_data
-        conn = yield self.application.db.connect()
         reader = csv.reader(self.bytes_split(upload_file['body'], '\n'), delimiter='\t')
 
         for row in reader:
             try:
                 lat, lon, town, postcode, street, house = row
-                yield conn.execute(
+                yield self.application.db.execute(
                     "INSERT INTO addresses (lat, lon, country, town, postcode, street, house) "
                     "VALUES (%s, %s, 'Polska', %s, %s, %s, %s)",
                     (float(lat), float(lon), town, postcode, street, house)
@@ -62,6 +61,7 @@ class AddressImportHandler(BaseHandler):
                 logger.warn('invalid address provided: %s', row)
             except IntegrityError:
                 logger.warn('found duplicate for %s', row)
+
         self.redirect("/")
 
 
@@ -93,13 +93,12 @@ class AddressSearchHandler(BaseHandler):
         if abs(north) - abs(south) + abs(east) - abs(west) > 0.05:
             raise HTTPError(400, 'the provided bounding box is too large')
 
-        conn = yield self.application.db.connect()
         for row in find_addresses((south, west, north, east)):
             try:
                 lat, lon, town, postcode, street, house = row
                 if not all([lat, lon, street, house]):
                     raise ValueError
-                yield conn.execute(
+                yield self.application.db.execute(
                     "INSERT INTO addresses (lat, lon, country, town, postcode, street, house) "
                     "VALUES (%s, %s, 'Polska', %s, %s, %s, %s)",
                     (float(lat), float(lon), town or '', postcode or '', street, house)

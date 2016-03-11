@@ -32,8 +32,7 @@ class AddressListHandler(BaseHandler):
             return self.write({'error': 'bad bounding args'})
 
         try:
-            conn = yield self.application.db.connect()
-            addresses = yield conn.execute(
+            addresses = yield self.application.db.execute(
                 'SELECT id, lat, lon, country, town, postcode, street, house FROM addresses '
                 'WHERE lat < %s AND lat > %s AND lon < %s AND lon > %s', (north, south, east, west)
             )
@@ -57,8 +56,7 @@ class AddressListHandler(BaseHandler):
             return self.write({})
 
         try:
-            conn = yield self.application.db.connect()
-            addresses = yield conn.execute(
+            addresses = yield self.application.db.execute(
                 'SELECT id, lat, lon, country, town, postcode, street, house FROM addresses '
                 'WHERE id IN %s', (tuple(map(int, address_ids)), )
             )
@@ -66,4 +64,5 @@ class AddressListHandler(BaseHandler):
             addresses = []
         except ValueError:
             logger.error('Invalid ids provided: %s', address_ids)
+
         self.write(as_dict(addresses))
