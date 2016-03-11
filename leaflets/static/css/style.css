@@ -6,4 +6,7 @@ div.location-filter.button-container
     a.enable-button{
        display: none;
     }
+
+div.map-errors {
+    color: red;
 }

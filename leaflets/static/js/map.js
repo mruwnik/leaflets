@@ -83,7 +83,7 @@ var AddressSelector = {
 
     showAddresses: function(address_ids) {
         var params = {
-            'addresses[]': address_ids === undefined ? AddressSelector.selectedIds() : address_ids,
+            'addresses[]': address_ids || AddressSelector.selectedIds(),
             '_xsrf': AddressSelector.form.find('[name="_xsrf"]').val()
         };
         return $.post('/addresses/list', params, function(addresses) {
@@ -93,6 +93,20 @@ var AddressSelector = {
                     return [[address.lat, address.lon]];
                 })
             )
+        });
+    },
+
+    findAddresses: function(boundingBox) {
+        var boundingBox = boundingBox || AddressSelector.currentBounds();
+            params = {
+                '_xsrf': AddressSelector.form.find('[name="_xsrf"]').val()
+            };
+        return $.post('/addresses/search', $.extend(params, boundingBox), function(results) {
+            mapErrors.text('');
+            AddressSelector.addresses = AddressSelector.updateForm(
+                AddressSelector.addMarkers($.extend(results, AddressSelector.addresses)));
+        }).error(function(error) {
+            mapErrors.text(error.responseText);
         });
     }
 };
@@ -110,12 +124,25 @@ function findAddresses (boundingBox) {
 };
 
 
+var showSelector = $('#show-selector'),
+    selectAreaButton = $('#select-area').hide(),
+    deselectAreaButton = $('#deselect-area').hide()
+    mapButtons = $('.selector-control'),
+    mapErrors = $('.map-errors');
+
+showSelector.click(function(){
+    if(AddressSelector.locationFilter.isEnabled()){
+        mapButtons.hide()
+        AddressSelector.locationFilter.disable()
+    } else {
+        mapButtons.show()
+        AddressSelector.locationFilter.enable()
+    }
+    return false;
+});
+
 if (window.location.pathname == "/campaign/add") {
     AddressSelector.showAddresses().done(function(addresses) {AddressSelector.addresses = addresses; });
-
-    var showSelector = $('#show-selector'),
-        selectAreaButton = $('#select-area').hide(),
-        deselectAreaButton = $('#deselect-area').hide();
 
     selectAreaButton.click(function(){
         AddressSelector.selectArea(AddressSelector.currentBounds());
@@ -124,19 +151,13 @@ if (window.location.pathname == "/campaign/add") {
     deselectAreaButton.click(function(){
         AddressSelector.deselectArea(AddressSelector.currentBounds());
     });
-
-    showSelector.click(function(){
-        var buttons = $('.selector-control');
-        if(AddressSelector.locationFilter.isEnabled()){
-            AddressSelector.locationFilter.disable()
-            buttons.hide();
-        } else {
-            AddressSelector.locationFilter.enable()
-            buttons.show();
-        }
-        return false;
+} else if (window.location.pathname == "/addresses/import") {
+    AddressSelector.form = $('form');
+    selectAreaButton.click(function(){
+        AddressSelector.findAddresses();
     });
 } else {
+    showSelector.hide();
     findAddresses({
         north: 50.226828,
         west: 19.056873,
