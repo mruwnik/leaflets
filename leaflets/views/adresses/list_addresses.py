@@ -4,6 +4,7 @@ from tornado import gen
 from momoko.exceptions import PartiallyConnectedError
 
 from leaflets.views.base import BaseHandler
+from leaflets.views.adresses.address_utils import as_dict
 
 logger = logging.getLogger()
 
@@ -13,13 +14,6 @@ class AddressListHandler(BaseHandler):
     """Import address CSV files."""
 
     url = '/addresses/list'
-
-    def as_dict(self, rows):
-        """Return the given rows as a dict."""
-        def to_dict(row):
-            return dict(zip(['lat', 'lon', 'country', 'town', 'postcode', 'street', 'house'], row[1:]))
-
-        return {row[0]: to_dict(row) for row in rows}
 
     @gen.coroutine
     def get(self):
@@ -49,7 +43,7 @@ class AddressListHandler(BaseHandler):
         if self.get_argument('output', None) == 'html':
             self.render('list_addresses.html', addresses=addresses)
         else:
-            self.write(self.as_dict(addresses))
+            self.write(as_dict(addresses))
 
     @gen.coroutine
     def post(self):
@@ -60,7 +54,7 @@ class AddressListHandler(BaseHandler):
         address_ids = self.get_arguments('addresses[]')
 
         if not address_ids:
-            self.write({})
+            return self.write({})
 
         try:
             conn = yield self.application.db.connect()
@@ -72,4 +66,4 @@ class AddressListHandler(BaseHandler):
             addresses = []
         except ValueError:
             logger.error('Invalid ids provided: %s', address_ids)
-        self.write(self.as_dict(addresses))
+        self.write(as_dict(addresses))
