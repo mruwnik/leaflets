@@ -4,6 +4,7 @@ from tornado import gen
 
 from leaflets.views.base import BaseHandler
 from leaflets.forms import LoginForm
+from leaflets.models import User
 
 
 class LoginHandler(BaseHandler):
@@ -30,19 +31,16 @@ class LoginHandler(BaseHandler):
         """
         return sha512(passwd.encode('utf-8')).hexdigest()
 
-    @gen.coroutine
     def get_user(self, form):
         """Get the user from the provided form.
 
         :param LoginForm form: the login form
-        :returns: the user's id, or None if could be found
+        :returns: the use, or None if could not be found
         """
-        result = yield self.application.db.execute(
-            'SELECT id FROM users WHERE username = %s AND password_hash = %s',
-            (form.name.data, self.hash(form.password.data))
-        )
-        user_id = result.fetchone()
-        raise gen.Return(user_id and user_id[0])
+        return User.query.filter(
+            User.username == form.name.data,
+            User.password_hash == self.hash(form.password.data)
+        ).scalar()
 
     @gen.coroutine
     def post(self):
@@ -51,9 +49,9 @@ class LoginHandler(BaseHandler):
         if not form.validate():
             return self.get(form)
 
-        user_id = yield self.get_user(form)
-        if user_id:
-            self.set_secure_cookie("user_id", str(user_id))
+        user = self.get_user(form)
+        if user:
+            self.set_secure_cookie("user_id", str(user.id))
             self.redirect("/")
         else:
             form.password.errors.append(self.BAD_PASSWORD)

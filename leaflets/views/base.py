@@ -1,6 +1,8 @@
 from tornado.web import RequestHandler
 from tornado import gen
 
+from leaflets import database
+
 
 class BaseHandler(RequestHandler):
 
@@ -20,3 +22,9 @@ class BaseHandler(RequestHandler):
         result = yield conn.execute('SELECT admin FROM users WHERE id = %s', (self.get_current_user(), ))
         is_admin = result.fetchone()
         raise gen.Return(is_admin and is_admin[0])
+
+    def prepare(self):
+        database.session()
+
+    def on_finish(self):
+        database.session.remove()
