@@ -9,21 +9,32 @@ def avg(values):
     :param list values: the values for which the average is to be calculated
     :return: the average
     """
-    return sum(values) / len(values) if values else 0
+    return float(sum(values)) / len(values) if values else 0
+
+
+def coords_center(coords):
+    return list(map(avg, zip(*coords)))
 
 
 def coords(feature):
     """Get the coordinates from the given features dict.
 
+    The feature stores points as (lon, lat) so they must be reversed.
+
     :param dict feature: a feature as is returned by overpass
     :return: (lat, lon)
     """
     geometry = feature['geometry']
+    coords = geometry['coordinates']
+
+    if not coords:
+        return None, None
+
     geo_type = geometry['type'].lower()
     if geo_type == 'point':
-        lon, lat = geometry['coordinates']
+        lon, lat = coords
     elif geo_type == 'linestring':
-        lon, lat = list(map(avg, zip(*geometry['coordinates'])))
+        lon, lat = coords_center(coords)
     return lat, lon
 
 

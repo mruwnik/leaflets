@@ -71,6 +71,11 @@ class AddressSearchHandler(BaseHandler):
 
     url = '/addresses/search'
 
+    BAD_BOUNDING_BOX = 'bad bounding args'
+    OVERSIZED_BOUNDING_BOX = 'the provided bounding box is too large'
+    NO_BOUNDING_BOX = 'no bounding box'
+    BAD_COORDS = 'invalid coordinartes provided'
+
     @authenticated
     @gen.coroutine
     def post(self):
@@ -80,18 +85,18 @@ class AddressSearchHandler(BaseHandler):
             raise HTTPError(403)
 
         try:
-            north = float(self.get_argument('north', 90))
-            south = float(self.get_argument('south', -90))
-            east = float(self.get_argument('east', 180))
-            west = float(self.get_argument('west', -180))
+            north = float(self.get_argument('north'))
+            south = float(self.get_argument('south'))
+            east = float(self.get_argument('east'))
+            west = float(self.get_argument('west'))
         except ValueError:
-            raise HTTPError(400, 'bad bounding args')
+            raise HTTPError(400, reason=self.BAD_BOUNDING_BOX)
 
-        if not (north and south and east and west):
-            raise HTTPError(400, 'no bounding box')
+        if not all([-90.0 < north < 90.0, -90.0 < south < 90.0, -180.0 < east < 180.0, -180.0 < west < 180.0]):
+            raise HTTPError(400, reason=self.BAD_COORDS)
 
         if abs(north) - abs(south) + abs(east) - abs(west) > 0.05:
-            raise HTTPError(400, 'the provided bounding box is too large')
+            raise HTTPError(400, reason=self.OVERSIZED_BOUNDING_BOX)
 
         for row in find_addresses((south, west, north, east)):
             try:

@@ -56,6 +56,9 @@ def app(io_loop):
 def app_with_db(app, io_loop, database):
     """Get the application with the database attached."""
     attach_database(io_loop, app)
+
+    # make sure that the database is connected to the application
+    app.db.connect()
     yield app
     app.db.close()
 
