@@ -20,20 +20,28 @@ def render_form(handler, form, action):
     )
 
 
+def render_errors(handler, field):
+    """Render all errors of a field.
+
+    :param RequestHandler handler: the handler that is rendering the form
+    :param wtforms.Field field: the field to be rendered
+    :rtype: str
+    """
+    if not field.errors:
+        return ''
+
+    error_msgs = '\n'.join(['<li>%s</li>' % handler.locale.translate(error) for error in field.errors])
+    return '<ul class=errors>%s</ul>' % error_msgs
+
+
 def render_field(handler, field):
     """Render a single wtform field.
 
     :param RequestHandler handler: the handler that is rendering the form
     :param wtforms.Field field: the field to be rendered
     """
-    errors = ''
-    if field.errors:
-        error_msgs = '\n'.join(['<li>%s</li>' % error for error in field.errors])
-        errors = '<ul class=errors>%s</ul>' % error_msgs
-
     return '<label>{label}</label>: {field}{errors}<br>'.format(
-        label=field.label,
+        label=handler.locale.translate(field.label),
         field=field,
-        errors=errors,
+        errors=render_errors(handler, field),
     )
-

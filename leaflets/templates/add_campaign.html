@@ -5,8 +5,11 @@
 
     <form id="add-campaign-form" method="post" action="{{ reverse_url('add_campaign') }}">
         {% module xsrf_form_html() %}
-        {{ _('Campaign name') }}: <input type="text" name="name" value="{{ name }}"><br>
-        {% for id in addresses %}
+        {% raw render_field(form.name) %}
+        {% raw render_field(form.desc) %}
+        {% raw render_field(form.start) %}
+        {% raw render_errors(form.addresses) %}
+        {% for id in form.addresses.data %}
             <input type="hidden" name="addresses[]" value="{{ id }}">
         {% end %}
         <input type="submit" value="{{ _('Create campaign') }}">

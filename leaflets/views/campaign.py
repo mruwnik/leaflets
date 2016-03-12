@@ -1,6 +1,7 @@
 from tornado import gen
 
 from leaflets.views.base import BaseHandler
+from leaflets.forms.campaign import CampaignForm
 
 
 class AddCampaignHandler(BaseHandler):
@@ -8,7 +9,7 @@ class AddCampaignHandler(BaseHandler):
     url = '/campaign/add'
 
     def get(self):
-        self.render('add_campaign.html', name='', addresses=[])
+        self.render('add_campaign.html', form=CampaignForm())
 
     @gen.coroutine
     def get_user(self, form):
@@ -26,11 +27,9 @@ class AddCampaignHandler(BaseHandler):
 
     @gen.coroutine
     def post(self):
-        name = self.get_argument('name')
-        addresses = self.get_arguments('addresses[]')
+        form = CampaignForm(self.request.arguments)
+        if not form.validate():
+            return self.render('add_campaign.html', form=form)
 
-        if not name or not addresses:
-            return self.render('add_campaign.html', name=name, addresses=addresses)
-
-        self.render('add_campaign.html', name=name, addresses=addresses)
+        self.render('add_campaign.html', form=form)
 

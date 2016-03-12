@@ -50,6 +50,7 @@ def attach_database(io_instance, app):
         size=1,
         ioloop=io_instance,
     )
+    app.db.connect()
 
 
 if __name__ == "__main__":
