@@ -9,7 +9,7 @@ PROJECT_DIR = os.path.join(BASE_DIR, '..')
 
 
 define('PORT', 5000, help='The port where the application listens at')
-define('config_file', '', help='The settings to use')
+define('config_file', os.environ.get('LEAFLETS_TEST', ''), help='The settings to use')
 
 define('DEBUG', False)
 define('TEMPLATES', os.path.join(BASE_DIR, 'templates'), help='The location of all HTML templates')
@@ -45,11 +45,10 @@ def import_settings(settings_file):
 parse_command_line()
 
 # Import the various settings files
-for settings_file in os.path.join(SETTINGS_DIR, 'local.py'), options.config_file:
+for settings_file in os.path.join(SETTINGS_DIR, 'local.py'), os.path.join(SETTINGS_DIR, options.config_file):
     import_settings(settings_file)
 
 # The command line options should be more important than those in the settings,
 # so import them once again - otherwise they might have been overwritten
 # while importing from the files.
 parse_command_line()
-
