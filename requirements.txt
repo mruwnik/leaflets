@@ -1,6 +1,0 @@
-WTForms==2.1
-tornado==4.3
-wtforms-tornado==0.0.2
-Momoko==2.2.2
-alembic==0.8.4
-overpass==0.3.1

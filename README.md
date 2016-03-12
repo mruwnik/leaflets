@@ -40,7 +40,7 @@ A more friendly alternative is [virtualenvwrapper](https://virtualenvwrapper.rea
 * Install dependancies
 
 To install all the required packages, go to wherever the project is and execute the following for it all to be automatically downloaded and installed:
-`pip install -r requirements.txt`
+`python setup.py install`
 
 * Run the database migrations
 
@@ -65,3 +65,6 @@ Execute the following from the project directory:
 
 Open `localhost:5000` in your browser to see if the webpage is working.
 
+* To run tests, call:
+
+`pip install -e  '.[tests]'` to initially set everything up, after which `py.test` will run all tests
