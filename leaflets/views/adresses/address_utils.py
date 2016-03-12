@@ -94,6 +94,6 @@ def find_addresses(bbox):
 def as_dict(rows):
     """Return the given rows as a dict."""
     def to_dict(row):
-        return dict(zip(['lat', 'lon', 'country', 'town', 'postcode', 'street', 'house'], row[1:]))
+        return {key: getattr(row, key) for key in ['lat', 'lon', 'country', 'town', 'postcode', 'street', 'house']}
 
-    return {row[0]: to_dict(row) for row in rows}
+    return {row.id: to_dict(row) for row in rows}

@@ -11,15 +11,15 @@
             <th>{{ _('street') }}</th>
             <th>{{ _('house_number') }}</th>
         </tr>
-        {% for id, lat, lon, country, town, postcode, street, house in addresses %}
+        {% for address in addresses %}
         <tr>
-            <td>{{ lat }}</td>
-            <td>{{ lon }}</td>
-            <td>{{ country }}</td>
-            <td>{{ town }}</td>
-            <td>{{ postcode }}</td>
-            <td>{{ street }}</td>
-            <td>{{ house }}</td>
+            <td>{{ address.lat }}</td>
+            <td>{{ address.lon }}</td>
+            <td>{{ address.country }}</td>
+            <td>{{ address.town }}</td>
+            <td>{{ address.postcode }}</td>
+            <td>{{ address.street }}</td>
+            <td>{{ address.house }}</td>
         </tr>
         {% end %}
     </table>

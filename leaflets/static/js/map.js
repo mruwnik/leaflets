@@ -106,7 +106,7 @@ var AddressSelector = {
             AddressSelector.addresses = AddressSelector.updateForm(
                 AddressSelector.addMarkers($.extend(results, AddressSelector.addresses)));
         }).error(function(error) {
-            mapErrors.text(error.responseText);
+            mapErrors.text(error.statusText);
         });
     }
 };

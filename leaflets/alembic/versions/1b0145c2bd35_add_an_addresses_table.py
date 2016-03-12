@@ -27,7 +27,8 @@ def upgrade():
         sa.Column('lat', sa.Float, nullable=False),
         sa.Column('lon', sa.Float, nullable=False),
         sa.PrimaryKeyConstraint('id'),
-        sa.UniqueConstraint('house', 'street', 'town', 'postcode', 'country')
+        sa.UniqueConstraint('house', 'street', 'town', 'postcode', 'country', name='unique_address'),
+        sa.Index('coords_index', 'lat', 'lon'),
     )
 
 

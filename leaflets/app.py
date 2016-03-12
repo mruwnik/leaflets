@@ -1,11 +1,10 @@
-import momoko
 from tornado.web import Application, url
 from tornado import ioloop, httpserver
 
 from leaflets.etc import options
 from leaflets.views import (
-    LoginHandler, BaseHandler, AddUserHandler, LogOutHandler, AddressImportHandler, AddressListHandler,
-    AddCampaignHandler, AddressSearchHandler,
+    LoginHandler, BaseHandler, AddUserHandler, LogOutHandler, CSVImportHandler, AddressListHandler,
+    AddCampaignHandler, AddressSearchHandler, AddressImportHandler,
     uimodules
 )
 
@@ -22,6 +21,7 @@ def setup_app():
             url(LogOutHandler.url, LogOutHandler, name='logout'),
             url(AddUserHandler.url, AddUserHandler, name='add_user'),
             url(AddressImportHandler.url, AddressImportHandler, name='import_addresses'),
+            url(CSVImportHandler.url, CSVImportHandler, name='csv_addresses'),
             url(AddressListHandler.url, AddressListHandler, name='list_addresses'),
             url(AddressSearchHandler.url, AddressSearchHandler, name='search_addresses'),
 
@@ -38,21 +38,6 @@ def setup_app():
     return app
 
 
-def attach_database(io_instance, app):
-    app.db = momoko.Pool(
-        dsn='dbname={name} user={user} password={password} host={host} port={port}'.format(
-            name=options.DB_NAME,
-            user=options.DB_USER,
-            password=options.DB_PASSWORD,
-            host=options.DB_HOST,
-            port=options.DB_PORT
-        ),
-        size=1,
-        ioloop=io_instance,
-    )
-    app.db.connect()
-
-
 if __name__ == "__main__":
     import logging
     logging.basicConfig()
@@ -60,7 +45,6 @@ if __name__ == "__main__":
     app = setup_app()
 
     io_instance = ioloop.IOLoop.instance()
-    attach_database(io_instance, app)
 
     http_server = httpserver.HTTPServer(app)
     http_server.listen(options.PORT)

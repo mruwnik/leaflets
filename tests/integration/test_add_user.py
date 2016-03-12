@@ -7,9 +7,9 @@ from leaflets.views import BaseHandler
 
 
 @pytest.mark.gen_test
-def test_add_user(xsrf_client, base_url, app_with_db, database):
+def test_add_user(xsrf_client, base_url, app, database):
     """Check whether users get correctly added."""
-    url = app_with_db.reverse_url('add_user')
+    url = app.reverse_url('add_user')
 
     async def add_user(password, users_count):
         """Attempt to add a new user and validate the result."""
@@ -43,7 +43,7 @@ def test_add_user(xsrf_client, base_url, app_with_db, database):
 
 
 @pytest.mark.gen_test
-def test_admin_user(app_with_db, database):
+def test_admin_user(app, database):
     """Check whether users get correctly added."""
 
     async def add_user(is_admin):
@@ -56,7 +56,7 @@ def test_admin_user(app_with_db, database):
     def check_if_admin(expected):
         """Check if the current user is an admin."""
         with patch('leaflets.views.BaseHandler.get_current_user', return_value=1):
-            handler = BaseHandler(app_with_db, Mock())
+            handler = BaseHandler(app, Mock())
             is_admin = yield handler.is_admin
             assert is_admin is expected
 

@@ -33,9 +33,9 @@ def test_login_bad_values(xsrf_client, base_url, app, good_field):
 
 
 @pytest.mark.gen_test
-def test_login_password(xsrf_client, base_url, app_with_db, database):
+def test_login_password(xsrf_client, base_url, app, database):
     """Check whether the login page validates passwords."""
-    url = app_with_db.reverse_url('login')
+    url = app.reverse_url('login')
 
     async def attempt_login(will_fail):
         """Attempt to log in and validate the result."""

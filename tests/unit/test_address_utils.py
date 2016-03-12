@@ -5,6 +5,7 @@ from hypothesis import given
 import hypothesis.strategies as st
 
 from leaflets.views.adresses.address_utils import as_dict, avg, coords, geo_field, get_address, coords_center
+from leaflets.models import Address
 
 
 @st.composite
@@ -123,5 +124,5 @@ def sample_row(draw):
 @given(results=st.lists(sample_row()))
 def test_as_dict(results):
     """Check whether rows are correctly converted to dicts."""
-    rows_w_ids = [[i] + list(row.values()) for i, row in enumerate(results)]
+    rows_w_ids = [Address(id=i, **row) for i, row in enumerate(results)]
     assert as_dict(rows_w_ids) == {i: dict(row) for i, row in enumerate(results)}

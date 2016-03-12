@@ -9,13 +9,15 @@ from tornado.web import authenticated, HTTPError
 
 from leaflets.views.base import BaseHandler
 from leaflets.views.adresses.address_utils import find_addresses
+from leaflets import database
+from leaflets.models import Address
 
 logger = logging.getLogger()
 
 
 class AddressImportHandler(BaseHandler):
 
-    """Import address CSV files."""
+    """Import addresses."""
 
     url = '/addresses/import'
 
@@ -23,6 +25,33 @@ class AddressImportHandler(BaseHandler):
     def get(self):
         """Show the import form."""
         self.render('upload_addresses.html')
+
+    def import_addresses(self, addresses):
+        for row in addresses:
+            try:
+                lat, lon, town, postcode, street, house = row
+                country = 'Polska'
+
+                address = Address(
+                    lat=float(lat), lon=float(lon), town=town, postcode=postcode,
+                    street=street, house=house, country=country
+                )
+
+                if address.is_unique:
+                    database.session.add(address)
+                else:
+                    logger.warn('found duplicate for %s', row)
+            except (ValueError, TypeError, UnboundLocalError):
+                logger.warn('invalid address provided: %s', row)
+
+        database.session.commit()
+
+
+class CSVImportHandler(AddressImportHandler):
+
+    """Import address CSV files."""
+
+    url = '/addresses/import_csv'
 
     def bytes_split(self, to_split, delimeter='\w'):
         """Split the given bytes stream like str.split() would.
@@ -48,24 +77,12 @@ class AddressImportHandler(BaseHandler):
 
         upload_file, = csv_data
         reader = csv.reader(self.bytes_split(upload_file['body'], '\n'), delimiter='\t')
-
-        for row in reader:
-            try:
-                lat, lon, town, postcode, street, house = row
-                yield self.application.db.execute(
-                    "INSERT INTO addresses (lat, lon, country, town, postcode, street, house) "
-                    "VALUES (%s, %s, 'Polska', %s, %s, %s, %s)",
-                    (float(lat), float(lon), town, postcode, street, house)
-                )
-            except (ValueError, TypeError, UnboundLocalError):
-                logger.warn('invalid address provided: %s', row)
-            except IntegrityError:
-                logger.warn('found duplicate for %s', row)
+        self.import_addresses(reader)
 
         self.redirect("/")
 
 
-class AddressSearchHandler(BaseHandler):
+class AddressSearchHandler(AddressImportHandler):
 
     """Search for addresses using the Overpass API."""
 
@@ -98,20 +115,7 @@ class AddressSearchHandler(BaseHandler):
         if abs(north) - abs(south) + abs(east) - abs(west) > 0.05:
             raise HTTPError(400, reason=self.OVERSIZED_BOUNDING_BOX)
 
-        for row in find_addresses((south, west, north, east)):
-            try:
-                lat, lon, town, postcode, street, house = row
-                if not all([lat, lon, street, house]):
-                    raise ValueError
-                yield self.application.db.execute(
-                    "INSERT INTO addresses (lat, lon, country, town, postcode, street, house) "
-                    "VALUES (%s, %s, 'Polska', %s, %s, %s, %s)",
-                    (float(lat), float(lon), town or '', postcode or '', street, house)
-                )
-            except (ValueError, TypeError, UnboundLocalError):
-                logger.warn('invalid address found: %s', row)
-            except IntegrityError:
-                logger.warn('found a duplicate for %s', row)
+        self.import_addresses(find_addresses((south, west, north, east)))
 
         url_params = urlencode({'north': north, 'south': south, 'east': east, 'west': west})
         self.redirect(self.reverse_url('list_addresses') + '?' + url_params)

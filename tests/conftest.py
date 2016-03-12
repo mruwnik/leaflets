@@ -12,9 +12,11 @@ from tornado.httpclient import HTTPRequest
 from alembic.config import Config
 from alembic import command as alembic_command
 
-from leaflets.app import setup_app, attach_database
+from leaflets.app import setup_app
 from leaflets.views import BaseHandler  # noqa
+from leaflets.models import User, Address
 from leaflets.etc import options
+from leaflets import database as db
 
 options.DB_USER = 'postgres'
 options.DB_PASSWORD = None
@@ -38,11 +40,8 @@ def database(postgresdb):
 
     yield postgresdb
 
-    with postgresdb.cursor() as c:
-        c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
-        tables = c.fetchall()
-        for table, in tables:
-            c.execute('DROP TABLE %s' % table)
+    db.session.close_all()
+    db.engine.dispose()
 
 
 @pytest.fixture
@@ -50,17 +49,6 @@ def app(io_loop):
     """The application to be used for tests."""
     app = setup_app()
     return app
-
-
-@pytest.yield_fixture
-def app_with_db(app, io_loop, database):
-    """Get the application with the database attached."""
-    attach_database(io_loop, app)
-
-    # make sure that the database is connected to the application
-    app.db.connect()
-    yield app
-    app.db.close()
 
 
 def encode_multipart_formdata(fields, files):
@@ -152,8 +140,9 @@ def xsrf_client(http_client, app, base_url):
 
 @pytest.yield_fixture
 def admin(database):
-    with database.cursor() as c:
-        c.execute("INSERT INTO users VALUES (1, 'test', 'test@asd.sd', 'test', True)")
+    session = db.session()
+    session.add(User(id=1, username='test', email='test@sdf.df', password_hash='test', admin=True))
+    session.commit()
 
     async def is_admin(self):
         return 1

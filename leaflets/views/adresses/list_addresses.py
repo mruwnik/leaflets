@@ -5,6 +5,8 @@ from momoko.exceptions import PartiallyConnectedError
 
 from leaflets.views.base import BaseHandler
 from leaflets.views.adresses.address_utils import as_dict
+from leaflets.models import Address
+
 
 logger = logging.getLogger()
 
@@ -32,10 +34,9 @@ class AddressListHandler(BaseHandler):
             return self.write({'error': 'bad bounding args'})
 
         try:
-            addresses = yield self.application.db.execute(
-                'SELECT id, lat, lon, country, town, postcode, street, house FROM addresses '
-                'WHERE lat < %s AND lat > %s AND lon < %s AND lon > %s', (north, south, east, west)
-            )
+            addresses = Address.query.filter(
+                Address.lat < north, Address.lat > south, Address.lon < east, Address.lon > west
+            ).order_by(Address.id).all()
         except PartiallyConnectedError:
             addresses = []
 
@@ -56,10 +57,7 @@ class AddressListHandler(BaseHandler):
             return self.write({})
 
         try:
-            addresses = yield self.application.db.execute(
-                'SELECT id, lat, lon, country, town, postcode, street, house FROM addresses '
-                'WHERE id IN %s', (tuple(map(int, address_ids)), )
-            )
+            addresses = Address.query.filter(Address.id.in_(address_ids)).all()
         except PartiallyConnectedError:
             addresses = []
         except ValueError:

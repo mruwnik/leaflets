@@ -6,6 +6,7 @@ import pytest
 from bs4 import BeautifulSoup
 
 from leaflets.views import AddressSearchHandler
+from leaflets.models import Address
 
 
 def generate_address(i):
@@ -26,9 +27,9 @@ def generate_address(i):
     ([generate_address(i % 50) for i in range(100)], 50),
     ([generate_address(i) for i in range(100)], 100),
 ))
-def test_add_addresses(admin, xsrf_client, base_url, app_with_db, database, addresses_list, count):
+def test_add_addresses(admin, xsrf_client, base_url, app, addresses_list, count):
     """Check whether addresses are correctly imported."""
-    url = app_with_db.reverse_url('import_addresses')
+    url = app.reverse_url('csv_addresses')
 
     # generate a csv file
     csv_data = StringIO()
@@ -44,17 +45,19 @@ def test_add_addresses(admin, xsrf_client, base_url, app_with_db, database, addr
     response = yield xsrf_client.fetch(request)
     assert response.code == 200
 
-    with database.cursor() as c:
-        c.execute("SELECT count(*) FROM addresses")
-        assert c.fetchone() == (count,)
+    addresses = Address.query.all()
+    assert len(addresses) == count
 
-        c.execute("SELECT lat, lon, town, postcode, street, house FROM addresses ORDER BY id")
-        for row, address in zip(c.fetchall(), addresses_list):
-            # check whether the lats and lons are the same
-            assert round(row[0], 4) == round(address[0], 4)
-            assert round(row[1], 4) == round(address[1], 4)
-            # check the rest of the fields
-            assert row[2:] == address[2:]
+    for db_address, address in zip(addresses, addresses_list):
+        lat, lon, town, postcode, street, house = address
+        # check whether the lats and lons are the same
+        assert round(db_address.lat, 4) == round(lat, 4)
+        assert round(db_address.lon, 4) == round(lon, 4)
+        # check the rest of the fields
+        assert db_address.town == town
+        assert db_address.postcode == postcode
+        assert db_address.street == street
+        assert db_address.house == house
 
 
 @pytest.mark.gen_test
@@ -66,9 +69,9 @@ def test_add_addresses(admin, xsrf_client, base_url, app_with_db, database, addr
     'dsa	19.6581435	Pilica	42-436	Armii Krajowej	2',  # invalid lat
     '50.4671732	1fewew	Pilica	42-436	Armii Krajowej	2',  # invalid lon
 ))
-def test_add_addresses_bad(admin, xsrf_client, base_url, app_with_db, database, addresses_list):
+def test_add_addresses_bad(admin, xsrf_client, base_url, app, database, addresses_list):
     """Check whether bad addresses are correctly skipped."""
-    url = app_with_db.reverse_url('import_addresses')
+    url = app.reverse_url('csv_addresses')
 
     async def send_addresses(addresses, expected_count):
         # send the file
@@ -94,9 +97,9 @@ def test_add_addresses_bad(admin, xsrf_client, base_url, app_with_db, database, 
 
 
 @pytest.mark.gen_test
-def test_list_addresses(addresses, admin, http_client, base_url, app_with_db, database):
+def test_list_addresses(addresses, admin, http_client, base_url, app, database):
     """Check whether the list of addresses is correctly generated."""
-    url = app_with_db.reverse_url('list_addresses')
+    url = app.reverse_url('list_addresses')
 
     response = yield http_client.fetch(base_url + url + '?output=html')
     assert response.code == 200
@@ -110,9 +113,9 @@ def test_list_addresses(addresses, admin, http_client, base_url, app_with_db, da
 
 @pytest.mark.parametrize('type', ('?output=json', ''))
 @pytest.mark.gen_test
-def test_list_addresses_json(addresses, admin, http_client, base_url, app_with_db, database, type):
+def test_list_addresses_json(addresses, admin, http_client, base_url, app, database, type):
     """Check whether the list of addresses is correctly generated when json is desired."""
-    url = app_with_db.reverse_url('list_addresses')
+    url = app.reverse_url('list_addresses')
 
     # get the json from the server
     response = yield http_client.fetch(base_url + url + type)
@@ -155,9 +158,9 @@ def check_error(client, url, post_data, error):
     (91, AddressSearchHandler.BAD_COORDS),
     (71, AddressSearchHandler.OVERSIZED_BOUNDING_BOX),
 ))
-def test_find_addresses_bad_lat(admin, xsrf_client, base_url, app_with_db, lat, error):
+def test_find_addresses_bad_lat(admin, xsrf_client, base_url, app, lat, error):
     """Check whether bad latitudes are validated."""
-    url = base_url + app_with_db.reverse_url('search_addresses')
+    url = base_url + app.reverse_url('search_addresses')
 
     check_error(xsrf_client, url, {'north': lat, 'south': 0.0, 'east': 0.3, 'west': 0.2}, error)
     check_error(xsrf_client, url, {'north': 0.0, 'south': lat, 'east': 0.3, 'west': 0.2}, error)
@@ -171,18 +174,18 @@ def test_find_addresses_bad_lat(admin, xsrf_client, base_url, app_with_db, lat, 
     (-181, AddressSearchHandler.BAD_COORDS),
     (71, AddressSearchHandler.OVERSIZED_BOUNDING_BOX),
 ))
-def test_find_addresses_bad_lon(admin, xsrf_client, base_url, app_with_db, lon, error):
+def test_find_addresses_bad_lon(admin, xsrf_client, base_url, app, lon, error):
     """Check whether bad longitudes are validated."""
-    url = base_url + app_with_db.reverse_url('search_addresses')
+    url = base_url + app.reverse_url('search_addresses')
 
     check_error(xsrf_client, url, {'north': 0.0, 'south': 0.0, 'east': 0.3, 'west': lon}, error)
     check_error(xsrf_client, url, {'north': 0.0, 'south': 0.0, 'east': lon, 'west': 0.2}, error)
 
 
 @pytest.mark.parametrize('dir', ('north', 'south', 'east', 'west'))
-def test_find_addresses_missing_direction(admin, xsrf_client, base_url, app_with_db, dir):
+def test_find_addresses_missing_direction(admin, xsrf_client, base_url, app, dir):
     """Check whether missing paramaters cause an error."""
-    url = base_url + app_with_db.reverse_url('search_addresses')
+    url = base_url + app.reverse_url('search_addresses')
     params = {key: 1 for key in ('north', 'south', 'east', 'west') if key != dir}
 
     check_error(xsrf_client, url, params, AddressSearchHandler.NO_BOUNDING_BOX)
