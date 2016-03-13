@@ -124,6 +124,20 @@ function findAddresses (boundingBox) {
 };
 
 
+Campaign = {
+    id: $('input[name="campaign_id"]').val(),
+    show: function(id) {
+        return $.get('/campaign/addresses', {campaign_id: id || Campaign.id}, function(addresses) {
+            map.fitBounds(
+                $.map(addresses, function(address, addr_id) {
+                    addMarker(address);
+                    return [[address.lat, address.lon]];
+                })
+            )
+        });
+    }
+};
+
 var showSelector = $('#show-selector'),
     selectAreaButton = $('#select-area').hide(),
     deselectAreaButton = $('#deselect-area').hide()
@@ -156,6 +170,9 @@ if (window.location.pathname == "/campaign/add") {
     selectAreaButton.click(function(){
         AddressSelector.findAddresses();
     });
+} else if (window.location.pathname.lastIndexOf('/campaign', 0) == 0) {
+    showSelector.hide();
+    Campaign.show();
 } else {
     showSelector.hide();
     findAddresses({
