@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, String, Enum, DateTime, Integer, Text, ForeignKey
+from sqlalchemy import Column, String, Enum, DateTime, Integer, Text, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from leaflets.database import Base
@@ -28,6 +28,9 @@ class Campaign(Base):
     """A leaflets campaign."""
 
     __tablename__ = 'campaigns'
+    __table_args__ = (
+        UniqueConstraint('name', 'user_id', name='unique_campaign_name'),
+    )
 
     id = Column(Integer, nullable=False, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)

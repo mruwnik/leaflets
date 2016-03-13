@@ -1,8 +1,10 @@
+from sqlalchemy.exc import IntegrityError
 from tornado import gen
 from tornado.web import authenticated
 
 from leaflets.views.base import BaseHandler
 from leaflets.forms.campaign import CampaignForm
+from leaflets.models import Campaign
 
 
 class AddCampaignHandler(BaseHandler):
@@ -11,7 +13,7 @@ class AddCampaignHandler(BaseHandler):
     url = '/campaign/add'
 
     def get(self):
-        self.render('add_campaign.html', form=CampaignForm())
+        self.render('campaign/add_campaign.html', form=CampaignForm())
 
     @authenticated
     @gen.coroutine
@@ -20,5 +22,23 @@ class AddCampaignHandler(BaseHandler):
         if not form.validate():
             return self.render('add_campaign.html', form=form)
 
-        form.save(self.get_current_user())
-        self.render('add_campaign.html', form=form)
+        try:
+            form.save(self.get_current_user())
+        except IntegrityError:
+            form.name.errors += ['There already is a campaign with this name']
+            self.render('add_campaign.html', form=form)
+
+        self.redirect(self.reverse_url('list_campaigns'))
+
+
+class ListCampaignsHandler(BaseHandler):
+    """Show all campaigns for the given user."""
+
+    url = '/campaign/list'
+
+    @authenticated
+    def get(self):
+        self.render(
+            'campaign/list_campaigns.html',
+            campaigns=Campaign.query.filter(Campaign.user_id == self.get_current_user()).all()
+        )

@@ -23,6 +23,7 @@ def upgrade():
         sa.Column('desc', sa.Text(), nullable=True),
         sa.Column('start', sa.DateTime(), nullable=False),
         sa.Column('created', sa.DateTime(), nullable=False),
+        sa.UniqueConstraint('name', 'user_id', name='unique_campaign_name'),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     )

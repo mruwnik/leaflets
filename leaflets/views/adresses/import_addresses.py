@@ -23,7 +23,7 @@ class AddressImportHandler(BaseHandler):
     @authenticated
     def get(self):
         """Show the import form."""
-        self.render('upload_addresses.html')
+        self.render('addresses/upload_addresses.html')
 
     def import_addresses(self, addresses):
         for row in addresses:
@@ -72,7 +72,7 @@ class CSVImportHandler(AddressImportHandler):
 
         csv_data = self.request.files.get('csv')
         if not csv_data:
-            return self.render('upload_addresses.html')
+            return self.render('addresses/upload_addresses.html')
 
         upload_file, = csv_data
         reader = csv.reader(self.bytes_split(upload_file['body'], '\n'), delimiter='\t')

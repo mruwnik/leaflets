@@ -41,7 +41,7 @@ class AddressListHandler(BaseHandler):
             addresses = []
 
         if self.get_argument('output', None) == 'html':
-            self.render('list_addresses.html', addresses=addresses)
+            self.render('addresses/list_addresses.html', addresses=addresses)
         else:
             self.write(as_dict(addresses))
 

@@ -1,0 +1,20 @@
+{% extends "../base.html" %}
+
+{% block body %}
+    <table>
+        <tr>
+            <th>{{ _('name') }}</th>
+            <th>{{ _('description') }}</th>
+            <th>{{ _('start') }}</th>
+            <th>{{ _('actions') }}</th>
+        </tr>
+        {% for campaign in campaigns %}
+        <tr>
+            <td>{{ campaign.name }}</td>
+            <td>{{ campaign.desc }}</td>
+            <td>{{ campaign.start }}</td>
+            <td>{{ campaign.id }}</td>
+        </tr>
+        {% end %}
+    </table>
+{% end %}

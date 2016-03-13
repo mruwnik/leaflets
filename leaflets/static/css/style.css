@@ -10,3 +10,7 @@ div.location-filter.button-container
 div.map-errors {
     color: red;
 }
+
+table, th, td {
+    border: 1px solid black;
+}
