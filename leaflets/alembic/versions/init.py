@@ -16,16 +16,15 @@ depends_on = None
 
 
 def upgrade():
-    op.create_table(
-        'users',
+    op.create_table('users',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('username', sa.String(length=256), nullable=False),
-        sa.Column('email', sa.String(length=256), nullable=False),
+        sa.Column('username', sa.String(length=255), nullable=False),
+        sa.Column('email', sa.String(length=255), nullable=False),
         sa.Column('password_hash', sa.String(), nullable=False),
-        sa.Column('admin', sa.Boolean(), nullable=False, default=False),
-        sa.PrimaryKeyConstraint('id'),
-        sa.UniqueConstraint('username')
+        sa.Column('admin', sa.Boolean(), nullable=False),
+        sa.PrimaryKeyConstraint('id')
     )
+    op.create_index(op.f('ix_users_username'), 'users', ['username'], unique=True)
 
 
 def downgrade():

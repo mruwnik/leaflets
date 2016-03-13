@@ -7,6 +7,10 @@ class Address(Base):
     """An address."""
 
     __tablename__ = 'addresses'
+    __table_args__ = (
+        UniqueConstraint('house', 'street', 'town', 'postcode', 'country', name='unique_address'),
+        Index('coords_index', 'lat', 'lon'),
+    )
 
     id = Column(Integer, nullable=False, primary_key=True)
     house = Column(String(length=1024), nullable=True)
@@ -17,8 +21,6 @@ class Address(Base):
     lat = Column(Float, nullable=False)
     lon = Column(Float, nullable=False)
 
-    UniqueConstraint('house', 'street', 'town', 'postcode', 'country', name='unique_address')
-    Index('coords_index', 'lat', 'lon')
 
     @property
     def is_unique(self):
