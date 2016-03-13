@@ -1,6 +1,9 @@
 {% extends "../base.html" %}
 
 {% block body %}
+    <br><br>
+    <a href="{{ reverse_url('add_campaign') }}">{{ _('add campaign') }}</a>
+    <br><br>
     <table>
         <tr>
             <th>{{ _('name') }}</th>

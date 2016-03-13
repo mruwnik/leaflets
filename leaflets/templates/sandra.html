@@ -1,14 +1,24 @@
 {% extends "map.html" %}
 
 {% block body %}
-    <h1>Już się nie witam</h1><br>
-    Nie mam pełnej listy adresów na Giszowcu, bo jakiś nie wiadomo jaki z calego śląska. Póki co tylko wczytałem
-    <a href="{{ reverse_url('list_addresses') }}">tyle</a><br>
-    Możesz se klikać na te czerwone kropki i się pokaże adres. Jutro spróbuje wygenerować całą listę tych adresów.<br>
+    <h1>Tyle</h1><br>
+
+    Co poprawiać? Z mojej strony chciałbym upiększyć kod, bo aż wstyd taki szpetny kod mieć, ale z twojego punktu
+    widzenia to nic nie zmienia. Trza by to wszystko upiększyć, bo teraz jest szpetny jak but. Podejrzewam, że
+    dobrze by było zrobić specjalną wersję mobilną która też będzie ładnie ostylowana w css. Ale oprócz tego,
+    podstawowa funkcjonalność już jest. Póki co trzeba ręcznie odświeżać stronę by zobaczyć jak ktoś inny coś
+    zmienia, ale to jeszcze poprawię. Zastanawiam się jeszcze nad następującymi rzeczmi: <br><br>
+    - czy zrobić osobny podzbiór użytkowników tak by wiele użytkowników podpiąc do jednej kampanii? teraz każdy ma swoje<br>
+    - czy tylko pozwalać adminom tworzyć nowe kampanie?<br>
+    - jak porozkładać rzeczy na stronie?<br>
+    - tłumaczenie napisów na stronie. Starałem się robić to tak by łatwo szło zmieniać język, ale trza to po prostu wklepać<br>
+    <br><br>
     Jak chcesz inną mapę, to pooglądaj se <a href="http://leaflet-extras.github.io/leaflet-providers/preview/">tutaj</a>
     czy nie ma lepszej.<br>
     Te czerwone kropki też mogę pozmieniać. Tak w zasadzie to wszystko tam idzie zmieniać, tylko trza powiedzieć jak.
     <br><br><br><br>
-    <a href="{{ reverse_url('add_campaign') }}">Tutaj</a> możesz sobie zobaczyć jak póki co można tworzyć taka kampanię ulotkową<br>
-    <br><br><br><br>
+    Baza danych na tej stronie jest ograniczona do 10000 wpisów w wesji bazowej. Każdy adres to jeden wpis, no i przypisanie
+    do kampanii to drugi wpis. Więc póki co ilość adresów jest ograniczona, co oznacza że nie można np. cały śląsk zaznaczyć.<br>
+    Administratorzy mogą dodać nowych użytkowników i dodać nowe adresy (co odpowiada na przynajmniej 1 z powyższych pytań).
+    <br><br>
 {% end %}

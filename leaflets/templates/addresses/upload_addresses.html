@@ -1,6 +1,7 @@
 {% extends "../map.html" %}
 
 {% block body %}
+    <h1>{{ _('Import from CSV file') }}</h1>
     <form method="post" enctype="multipart/form-data" action="{{ reverse_url('csv_addresses') }}">
         {% module xsrf_form_html() %}
         {{ _('CSV file to import') }}: <input type="file" name="csv"/><br>
@@ -9,4 +10,7 @@
         Click <a href="{{ static_url('example_addresses.csv') }}">here</a> for an example file.<br>
         <input type="submit" value="{{ _('import') }}">
     </form>
+    <br><br>
+    <h1>{{ _('Import by map selection') }}</h1>
+    {{ _('You can only select a limited area at once, so if you choose too large an area, an error will appear') }}
 {% end %}
