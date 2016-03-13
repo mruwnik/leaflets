@@ -44,6 +44,16 @@ def database(postgresdb):
     db.engine.dispose()
 
 
+@pytest.yield_fixture
+def db_session(database):
+    from leaflets import database
+    session = database.session()
+
+    yield session
+
+    session.close()
+
+
 @pytest.fixture
 def app(io_loop):
     """The application to be used for tests."""
@@ -139,10 +149,9 @@ def xsrf_client(http_client, app, base_url):
 
 
 @pytest.yield_fixture
-def admin(database):
-    session = db.session()
-    session.add(User(id=1, username='test', email='test@sdf.df', password_hash='test', admin=True))
-    session.commit()
+def admin(db_session):
+    db_session.add(User(id=1, username='test', email='test@sdf.df', password_hash='test', admin=True))
+    db_session.commit()
 
     async def is_admin(self):
         return 1
@@ -179,13 +188,12 @@ ADDRESSES = [
 
 
 @pytest.fixture
-def addresses(database):
+def addresses(db_session):
     """Static addresses in the database."""
-    with database.cursor() as c:
-        for address in ADDRESSES:
-            c.execute(
-                "INSERT INTO addresses (lat, lon, town, postcode, street, house) VALUES "
-                "(%s, %s, %s, %s, %s, %s)", address
-            )
-    database.commit()
-    return ADDRESSES
+    addresses = [
+        Address(lat=lat, lon=lon, town=town, postcode=postcode, street=street, house=house)
+        for lat, lon, town, postcode, street, house in ADDRESSES
+    ]
+    db_session.add_all(addresses)
+    db_session.commit()
+    return addresses

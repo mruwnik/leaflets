@@ -4,6 +4,9 @@ from wtforms import StringField, DateTimeField, SelectMultipleField
 from wtforms.validators import DataRequired
 from wtforms_tornado import Form
 
+from leaflets.models import CampaignAddress, Campaign
+from leaflets import database
+
 
 class CampaignForm(Form):
 
@@ -25,3 +28,15 @@ class CampaignForm(Form):
     desc = StringField('desc')
     start = DateTimeField('start', default=datetime.now())
     addresses = SelectMultipleField('addresses[]', validators=[DataRequired('No addresses selected')])
+
+    def save(self):
+        campaign = Campaign(
+            name=self.name.data,
+            desc=self.desc.data,
+            start=self.start.data,
+        )
+        database.session.add(campaign)
+        for addr_id in self.addresses.data:
+            database.session.add(
+                CampaignAddress(campaign=campaign, address_id=addr_id))
+        database.session.commit()

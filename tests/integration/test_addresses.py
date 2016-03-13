@@ -108,7 +108,12 @@ def test_list_addresses(addresses, admin, http_client, base_url, app, database):
 
     for row, address in zip(soup.find_all('tr')[1:], addresses):
         lat, lon, country, town, postcode, street, house_number = [td.getText() for td in row.find_all('td')]
-        assert address == (float(lat), float(lon), town, postcode, street, house_number)
+        assert address.lat == float(lat)
+        assert address.lon == float(lon)
+        assert address.town == town
+        assert address.postcode == postcode
+        assert address.street == street
+        assert address.house == house_number
 
 
 @pytest.mark.parametrize('type', ('?output=json', ''))
