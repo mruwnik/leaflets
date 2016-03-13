@@ -30,3 +30,9 @@ class Address(Base):
             Address.house == self.house,
             Address.country == self.country
         ).scalar() is None
+
+    def serialise(self):
+        """Return this address as a dict."""
+        return {
+            key: getattr(self, key) for key in ['id', 'lat', 'lon', 'country', 'town', 'postcode', 'street', 'house']
+        }

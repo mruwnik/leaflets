@@ -91,11 +91,6 @@ def find_addresses(bbox):
     return map(get_address, points['features'])
 
 
-def as_dict(rows):
-    """Return the given rows as a dict."""
-    def to_dict(row):
-        return {
-            key: getattr(row, key) for key in ['id', 'lat', 'lon', 'country', 'town', 'postcode', 'street', 'house']
-        }
-
-    return {row.id: to_dict(row) for row in rows}
+def as_dict(addresses):
+    """Return the given addresses as a dict."""
+    return {addr.id: addr.serialise() for addr in addresses}

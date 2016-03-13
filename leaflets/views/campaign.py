@@ -3,7 +3,6 @@ from tornado import gen
 from tornado.web import authenticated, HTTPError
 
 from leaflets.views.base import BaseHandler
-from leaflets.views.adresses.address_utils import as_dict
 from leaflets.forms.campaign import CampaignForm
 from leaflets.models import Campaign, CampaignAddress, AddressStates
 from leaflets import database
@@ -79,10 +78,12 @@ class CampaignAddressesHandler(CampaignHandler):
 
     @authenticated
     def get(self):
-        self.write(as_dict(self.campaign.addresses))
+        """Get all addresses for this campaign."""
+        self.write({addr.address_id: addr.serialised_address() for addr in self.campaign.campaign_addresses})
 
     @authenticated
     def post(self):
+        """Mark or unmark an address in the given campaign."""
         is_selected = self.get_argument('selected')
         if is_selected is None:
             raise HTTPError(403, reason='No selection provided')
@@ -97,6 +98,6 @@ class CampaignAddressesHandler(CampaignHandler):
         if not address:
             raise HTTPError(403, reason='No such address found')
 
-        address.state = AddressStates.marked if is_selected else AddressStates.selected
+        address.state = AddressStates.marked if is_selected.lower() == 'true' else AddressStates.selected
         database.session.commit()
         self.write({'result': 'ok'})

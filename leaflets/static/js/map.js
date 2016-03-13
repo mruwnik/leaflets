@@ -133,20 +133,20 @@ Campaign = {
 
     unmarked: {
         color: 'red',
-        fillColor: '#f03',
         fillOpacity: 0.5
     },
     pending: {
-        color: 'red',
-        fillColor: 'blue',
+        color: 'grren',
         fillOpacity: 0.5
     },
     marked: {
         color: 'blue',
-        fillColor: 'blue',
         fillOpacity: 0.5
     },
     changeState: function(marker, isMarked) {
+        marker.setStyle(Campaign.pending);
+        marker.state = 'pending';
+
         var marked = isMarked ? 'marked' : 'unmarked',
             params = {
                 campaign: Campaign.id,
@@ -168,11 +168,12 @@ Campaign = {
     },
     addMarker: function(address) {
         var position = [address.lat, address.lon],
-            marker = L.circle(position, 5, Campaign.unmarked)
+            state = address.state == 'marked' ? 'marked' : 'unmarked',
+            marker = L.circle(position, 5, Campaign[state])
                         .on('click', Campaign.toggleSelection)
                         .addTo(map);
             marker.address = address;
-            marker.state = 'unmarked';
+            marker.state = state;
         return [position];
     },
     show: function(id) {

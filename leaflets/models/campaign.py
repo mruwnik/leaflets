@@ -23,6 +23,10 @@ class CampaignAddress(Base):
     campaign = relationship('Campaign', backref='campaign_addresses')
     address = relationship('Address', backref='campaign_addresses')
 
+    def serialised_address(self):
+        """Return the linked address as a dict."""
+        return dict((('state', self.state),), **self.address.serialise())
+
 
 class Campaign(Base):
     """A leaflets campaign."""

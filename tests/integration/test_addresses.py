@@ -90,8 +90,8 @@ def test_add_addresses_bad(admin, xsrf_client, base_url, app, database, addresse
 
     # the 2 good addresses should be saved
     yield send_addresses(
-        '49.8277328	19.0502823	Bielsko-Biała		Mostowa	5\n'
-         + addresses_list + '\n'
+        '49.8277328	19.0502823	Bielsko-Biała		Mostowa	5\n' +
+        addresses_list + '\n'
         '49.8273954	19.0501131	Bielsko-Biała		Mostowa	2\n', 2
     )
 
