@@ -7,7 +7,7 @@ from leaflets.models import Campaign
 
 
 @pytest.mark.gen_test
-def test_add_campaign(xsrf_client, base_url, db_session, addresses):
+def test_add_campaign(xsrf_client, base_url, db_session, addresses, admin):
     """Check whether campaigns are correctly created."""
     url = base_url + AddCampaignHandler.url
     now = datetime.utcnow().replace(microsecond=0)
@@ -35,6 +35,7 @@ def test_add_campaign(xsrf_client, base_url, db_session, addresses):
     assert campaign.desc == 'description'
     assert campaign.start == start
     assert now <= campaign.created <= datetime.utcnow()
+    assert campaign.user_id == admin
 
     # check whether all addresses were attached
     for addr in campaign.addresses:

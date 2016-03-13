@@ -19,11 +19,13 @@ depends_on = None
 def upgrade():
     op.create_table('campaigns',
         sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('user_id', sa.Integer(), nullable=False),
         sa.Column('name', sa.String(), nullable=False),
         sa.Column('desc', sa.Text(), nullable=True),
         sa.Column('start', sa.DateTime(), nullable=False),
         sa.Column('created', sa.DateTime(), nullable=False),
-        sa.PrimaryKeyConstraint('id')
+        sa.PrimaryKeyConstraint('id'),
+        sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     )
     op.create_table('campaign_address',
         sa.Column('campaign_id', sa.Integer(), nullable=False),
@@ -38,6 +40,6 @@ def upgrade():
 
 def downgrade():
     db = op.get_bind()
-    db.execute('DROP TYPE address_states')
     op.drop_table('campaign_address')
     op.drop_table('campaigns')
+    db.execute('DROP TYPE address_states')

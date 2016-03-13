@@ -10,8 +10,18 @@ from leaflets import database
 
 class CampaignForm(Form):
 
+    name = StringField('name', validators=[DataRequired()])
+    desc = StringField('desc')
+    start = DateTimeField('start', default=datetime.now())
+    addresses = SelectMultipleField('addresses[]', validators=[DataRequired('No addresses selected')])
+
     def __init__(self, *args, **kwargs):
+        """Initialise this form."""
         super(CampaignForm, self).__init__(*args, **kwargs)
+
+        # set up the addresses field. This is done this way, as the addresses are
+        # a variable list of hidden fields, so there is no decent way to set them up
+        # as a static field
         try:
             if args:
                 addresses = args[0].get('addresses[]', [])
@@ -24,19 +34,21 @@ class CampaignForm(Form):
         except (TypeError, IndexError):
             self.addresses.data = self.addresses.choices = []
 
-    name = StringField('name', validators=[DataRequired()])
-    desc = StringField('desc')
-    start = DateTimeField('start', default=datetime.now())
-    addresses = SelectMultipleField('addresses[]', validators=[DataRequired('No addresses selected')])
+    def save(self, user_id):
+        """Save the campaign in this form to the database.
 
-    def save(self):
+        :param int user_id: the id of the user to which this campaign should be attached.
+        :return: the resulting campaign
+        """
         campaign = Campaign(
             name=self.name.data,
             desc=self.desc.data,
             start=self.start.data,
+            user_id=user_id,
         )
         database.session.add(campaign)
         for addr_id in self.addresses.data:
             database.session.add(
                 CampaignAddress(campaign=campaign, address_id=addr_id))
         database.session.commit()
+        return campaign

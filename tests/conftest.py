@@ -158,7 +158,7 @@ def admin(db_session):
 
     with patch('leaflets.views.BaseHandler.get_current_user', return_value=1), \
          patch('leaflets.views.BaseHandler.is_admin', property(is_admin)):
-        yield
+        yield 1
 
 
 ADDRESSES = [

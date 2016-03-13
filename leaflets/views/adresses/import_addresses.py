@@ -3,7 +3,6 @@ import re
 import logging
 from urllib.parse import urlencode
 
-from psycopg2 import IntegrityError
 from tornado import gen
 from tornado.web import authenticated, HTTPError
 

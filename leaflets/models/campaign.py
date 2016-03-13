@@ -30,11 +30,13 @@ class Campaign(Base):
     __tablename__ = 'campaigns'
 
     id = Column(Integer, nullable=False, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     name = Column(String, nullable=False)
     desc = Column(Text, nullable=True)
     start = Column(DateTime, nullable=False, default=datetime.utcnow)
     created = Column(DateTime, nullable=False, default=datetime.utcnow)
 
+    user = relationship('User', backref='campaigns')
     addresses = relationship(
         'Address',
         secondary=CampaignAddress.__table__,
