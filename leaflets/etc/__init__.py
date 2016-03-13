@@ -1,6 +1,6 @@
 import os
 
-from tornado.options import define, options, parse_config_file, parse_command_line
+from tornado.options import define, options, parse_config_file, parse_command_line, Error
 
 
 SETTINGS_DIR = os.path.abspath(os.path.split(__file__)[0])
@@ -46,7 +46,10 @@ def import_settings(settings_file):
         pass
 
 # Parse the command line to see if any config file was provided
-parse_command_line()
+try:
+    parse_command_line()
+except Error as e:
+    print(e)
 
 # Import the various settings files
 for settings_file in os.path.join(SETTINGS_DIR, 'local.py'), options.config_file:
@@ -55,4 +58,7 @@ for settings_file in os.path.join(SETTINGS_DIR, 'local.py'), options.config_file
 # The command line options should be more important than those in the settings,
 # so import them once again - otherwise they might have been overwritten
 # while importing from the files.
-parse_command_line()
+try:
+    parse_command_line()
+except Error as e:
+    print(e)

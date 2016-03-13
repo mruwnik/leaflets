@@ -1,6 +1,12 @@
 var map = L.map('map-container').setView([50.223262, 19.070912], 16);
 L.tileLayer.provider('OpenStreetMap.Mapnik').addTo(map);
 
+
+function formatAddress(address) {
+    return address.street + ' ' + address.house + ',<br>' + address.postcode + ' ' + address.town;
+}
+
+
 function addressMarker(address) {
     var colours = {
         color: 'red',
@@ -9,10 +15,8 @@ function addressMarker(address) {
     };
     var position = [address.lat, address.lon],
         marker = L.circle(position, 5, colours)
-                   .bindPopup(
-                        address.street + ' ' + address.house + ',<br>' +
-                        address.postcode + ' ' + address.town
-                   ).addTo(map);
+                   .bindPopup(formatAddress(address))
+                   .addTo(map);
     return marker;
 }
 
@@ -126,12 +130,56 @@ function findAddresses (boundingBox) {
 
 Campaign = {
     id: $('input[name="campaign_id"]').val(),
+
+    unmarked: {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5
+    },
+    pending: {
+        color: 'red',
+        fillColor: 'blue',
+        fillOpacity: 0.5
+    },
+    marked: {
+        color: 'blue',
+        fillColor: 'blue',
+        fillOpacity: 0.5
+    },
+    changeState: function(marker, isMarked) {
+        var marked = isMarked ? 'marked' : 'unmarked',
+            params = {
+                campaign: Campaign.id,
+                address: marker.address.id,
+                selected: isMarked,
+                '_xsrf': $('[name="_xsrf"]').val()
+            };
+        return $.post('/campaign/addresses', params, function(result) {
+            marker.setStyle(Campaign[marked]);
+            marker.state = marked;
+        });
+    },
+    toggleSelection: function(event) {
+        if(this.state == 'marked') {
+            Campaign.changeState(this, false);
+        } else if(this.state == 'unmarked') {
+            Campaign.changeState(this, true);
+        }
+    },
+    addMarker: function(address) {
+        var position = [address.lat, address.lon],
+            marker = L.circle(position, 5, Campaign.unmarked)
+                        .on('click', Campaign.toggleSelection)
+                        .addTo(map);
+            marker.address = address;
+            marker.state = 'unmarked';
+        return [position];
+    },
     show: function(id) {
-        return $.get('/campaign/addresses', {campaign_id: id || Campaign.id}, function(addresses) {
+        return $.get('/campaign/addresses', {campaign: id || Campaign.id}, function(addresses) {
             map.fitBounds(
                 $.map(addresses, function(address, addr_id) {
-                    addMarker(address);
-                    return [[address.lat, address.lon]];
+                    return Campaign.addMarker(address);
                 })
             )
         });

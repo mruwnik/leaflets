@@ -6,4 +6,5 @@
     <br><br>
     {{ _('start date:') }} {{ campaign.start }}
     <input type="hidden" name="campaign_id" value="{{ campaign.id }}"/>
+    {% module xsrf_form_html() %}
 {% end %}

@@ -13,7 +13,7 @@ packages += [
 files = ["things/*"]
 
 setup(
-    name='leafletse',
+    name='leaflets',
     version='0.1',
     description='Display addresses to have laeflets delivered to them',
     author='Daniel O\'Connell',

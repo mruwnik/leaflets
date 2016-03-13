@@ -5,7 +5,8 @@ from tornado.web import authenticated, HTTPError
 from leaflets.views.base import BaseHandler
 from leaflets.views.adresses.address_utils import as_dict
 from leaflets.forms.campaign import CampaignForm
-from leaflets.models import Campaign
+from leaflets.models import Campaign, CampaignAddress, AddressStates
+from leaflets import database
 
 
 class AddCampaignHandler(BaseHandler):
@@ -45,13 +46,12 @@ class ListCampaignsHandler(BaseHandler):
         )
 
 
-class ShowCampaignsHandler(BaseHandler):
-    """Show a given campaign."""
+class CampaignHandler(BaseHandler):
+    """The base class for campaign handlers."""
 
-    url = '/campaign'
-
-    @authenticated
-    def get(self):
+    @property
+    def campaign(self):
+        """Get the campaign to be shown."""
         campaign = Campaign.query.filter(
             Campaign.id == self.get_argument('campaign'),
             Campaign.user_id == self.get_current_user()
@@ -59,23 +59,44 @@ class ShowCampaignsHandler(BaseHandler):
 
         if not campaign:
             raise HTTPError(403, reason='No such campaign found')
+        return campaign
 
-        self.render('campaign/show.html', campaign=campaign)
 
-
-class CampaignAddressesHandler(BaseHandler):
+class ShowCampaignsHandler(CampaignHandler):
     """Show a given campaign."""
+
+    url = '/campaign'
+
+    @authenticated
+    def get(self):
+        self.render('campaign/show.html', campaign=self.campaign)
+
+
+class CampaignAddressesHandler(CampaignHandler):
+    """Get a campaign's addresses."""
 
     url = '/campaign/addresses'
 
     @authenticated
     def get(self):
-        campaign = Campaign.query.filter(
-            Campaign.id == self.get_argument('campaign_id'),
-            Campaign.user_id == self.get_current_user()
+        self.write(as_dict(self.campaign.addresses))
+
+    @authenticated
+    def post(self):
+        is_selected = self.get_argument('selected')
+        if is_selected is None:
+            raise HTTPError(403, reason='No selection provided')
+
+        campaign = self.campaign
+
+        address = CampaignAddress.query.filter(
+            CampaignAddress.campaign == campaign,
+            CampaignAddress.address_id == self.get_argument('address')
         ).scalar()
 
-        if not campaign:
-            raise HTTPError(403, reason='No such campaign found')
+        if not address:
+            raise HTTPError(403, reason='No such address found')
 
-        self.write(as_dict(campaign.addresses))
+        address.state = AddressStates.marked if is_selected else AddressStates.selected
+        database.session.commit()
+        self.write({'result': 'ok'})
