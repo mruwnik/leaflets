@@ -111,6 +111,7 @@ def test_get_addresses(feature):
 def sample_row(draw):
     """Get a sample database row."""
     return OrderedDict((
+        ('id', draw(st.integers(min_value=1))),
         ('lat', draw(st.floats(min_value=-180, max_value=180))),
         ('lon', draw(st.floats(min_value=-90, max_value=90))),
         ('country', draw(st.sampled_from(['Cintra', 'Arnor', 'Arrakis', 'Gondor']))),
@@ -124,5 +125,5 @@ def sample_row(draw):
 @given(results=st.lists(sample_row()))
 def test_as_dict(results):
     """Check whether rows are correctly converted to dicts."""
-    rows_w_ids = [Address(id=i, **row) for i, row in enumerate(results)]
-    assert as_dict(rows_w_ids) == {i: dict(row) for i, row in enumerate(results)}
+    rows_w_ids = [Address(**row) for row in results]
+    assert as_dict(rows_w_ids) == {row['id']: dict(row) for row in results}

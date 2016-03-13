@@ -66,7 +66,7 @@ class CSVImportHandler(AddressImportHandler):
     @gen.coroutine
     def post(self):
         """Import the given csv file."""
-        is_admin = yield self.is_admin
+        is_admin = self.is_admin
         if not is_admin:
             raise HTTPError(403)
 
@@ -96,7 +96,7 @@ class AddressSearchHandler(AddressImportHandler):
     @gen.coroutine
     def post(self):
         """Find all addresses within the given bounding box."""
-        is_admin = yield self.is_admin
+        is_admin = self.is_admin
         if not is_admin:
             raise HTTPError(403)
 

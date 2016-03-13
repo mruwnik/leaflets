@@ -138,7 +138,7 @@ def test_list_addresses_json(addresses, admin, http_client, base_url, app, datab
 
     # make sure the contents are correct
     for row in rows:
-        address_dict = dict(zip(['lat', 'lon', 'country', 'town', 'postcode', 'street', 'house'], row[1:]))
+        address_dict = dict(zip(['id', 'lat', 'lon', 'country', 'town', 'postcode', 'street', 'house'], row))
         assert results[str(row[0])] == address_dict
 
 

@@ -1,5 +1,4 @@
 from tornado.web import RequestHandler
-from tornado import gen
 
 from leaflets import database
 from leaflets.models import User
@@ -16,10 +15,13 @@ class BaseHandler(RequestHandler):
         return user_id and int(user_id)
 
     @property
-    @gen.coroutine
     def is_admin(self):
         """Check whether the current user is an admin."""
-        user = User.query.get(self.get_current_user())
+        user_id = self.get_current_user()
+        if not user_id:
+            return None
+
+        user = User.query.get(user_id)
         return user and user.admin
 
     def prepare(self):

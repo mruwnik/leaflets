@@ -10,12 +10,16 @@
     </head>
     <body>
         {% block header %}
-            <a href="{{ reverse_url('add_user') }}">{{ _('add user') }}</a>
+            {% if is_admin() %}
+                <a href="{{ reverse_url('add_user') }}">{{ _('add user') }}</a>
+                <a href="{{ reverse_url('import_addresses') }}">{{ _('import addresses') }}</a>
+            {% end %}
             <span style="margin-right: 20px;"></span>
             {% if current_user %}
-                <a href="{{ reverse_url('logout') }}">{{ _('logout') }} user {{current_user}}</a>
+                <a href="{{ reverse_url('list_campaigns') }}">{{ _('campaigns') }}</a>
+                <a href="{{ reverse_url('logout') }}" class="right">{{ _('logout') }} user {{current_user}}</a>
             {% else %}
-                <a href="{{ reverse_url('login') }}">{{ _('login') }}</a>
+                <a href="{{ reverse_url('login') }}" class="right">{{ _('login') }}</a>
             {% end %}
         {% end %}
         {% block body %}{% end %}

@@ -45,3 +45,8 @@ def render_field(handler, field):
         field=field,
         errors=render_errors(handler, field),
     )
+
+
+def is_admin(handler):
+    """Check whether the current user is an admin."""
+    return handler.is_admin
