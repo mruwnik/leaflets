@@ -6,7 +6,6 @@ Create Date: 2016-03-13 01:00:10.230526
 """
 from alembic import op
 import sqlalchemy as sa
-from leaflets.models.campaign import AddressStates
 
 
 # revision identifiers, used by Alembic.

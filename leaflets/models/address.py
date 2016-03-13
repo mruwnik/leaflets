@@ -21,7 +21,6 @@ class Address(Base):
     lat = Column(Float, nullable=False)
     lon = Column(Float, nullable=False)
 
-
     @property
     def is_unique(self):
         return session.query(Address.id).filter(

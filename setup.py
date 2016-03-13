@@ -18,7 +18,7 @@ setup(
     description='Display addresses to have laeflets delivered to them',
     author='Daniel O\'Connell',
     author_email='tojad99@gmail.com',
-    packages = packages,
+    packages=packages,
     install_requires=[
         'WTForms==2.1',
         'tornado==4.3',
