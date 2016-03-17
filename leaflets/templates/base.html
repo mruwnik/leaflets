@@ -16,7 +16,7 @@
             {% end %}
             <span style="margin-right: 20px;"></span>
             {% if current_user %}
-                <a href="{{ reverse_url('list_campaigns') }}">{{ _('campaigns') }}</a>
+                <a href="{{ reverse_url('list_campaign') }}">{{ _('campaigns') }}</a>
                 <a href="{{ reverse_url('logout') }}" class="right">{{ _('logout') }} user {{current_user}}</a>
             {% else %}
                 <a href="{{ reverse_url('login') }}" class="right">{{ _('login') }}</a>

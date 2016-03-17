@@ -1,12 +1,8 @@
-from tornado.web import Application, url
+from tornado.web import Application
 from tornado import ioloop, httpserver
 
 from leaflets.etc import options
-from leaflets.views import (
-    LoginHandler, BaseHandler, AddUserHandler, LogOutHandler, CSVImportHandler, AddressListHandler,
-    AddCampaignHandler, AddressSearchHandler, AddressImportHandler, ListCampaignsHandler, ShowCampaignsHandler,
-    CampaignAddressesHandler, uimodules
-)
+from leaflets.views import handlers, uimodules, LoginHandler
 
 
 def setup_app():
@@ -15,22 +11,7 @@ def setup_app():
     :returns: the application instance
     """
     app = Application(
-        [
-            url(r"/", BaseHandler),
-            url(LoginHandler.url, LoginHandler, name='login'),
-            url(LogOutHandler.url, LogOutHandler, name='logout'),
-            url(AddUserHandler.url, AddUserHandler, name='add_user'),
-
-            url(AddressImportHandler.url, AddressImportHandler, name='import_addresses'),
-            url(CSVImportHandler.url, CSVImportHandler, name='csv_addresses'),
-            url(AddressListHandler.url, AddressListHandler, name='list_addresses'),
-            url(AddressSearchHandler.url, AddressSearchHandler, name='search_addresses'),
-
-            url(AddCampaignHandler.url, AddCampaignHandler, name='add_campaign'),
-            url(ListCampaignsHandler.url, ListCampaignsHandler, name='list_campaigns'),
-            url(ShowCampaignsHandler.url, ShowCampaignsHandler, name='show_campaign'),
-            url(CampaignAddressesHandler.url, CampaignAddressesHandler, name='campaign_addresses'),
-        ],
+        [handler.get_url() for handler in handlers],
         debug=options.DEBUG,
         template_path=options.TEMPLATES,
         cookie_secret=options.SECRET_KEY,

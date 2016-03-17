@@ -51,6 +51,7 @@ class CSVImportHandler(AddressImportHandler):
     """Import address CSV files."""
 
     url = '/addresses/import_csv'
+    name = 'csv_addresses'
 
     def bytes_split(self, to_split, delimeter='\w'):
         """Split the given bytes stream like str.split() would.

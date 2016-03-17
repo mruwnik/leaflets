@@ -29,7 +29,7 @@ class AddCampaignHandler(BaseHandler):
             form.name.errors += ['There already is a campaign with this name']
             self.render('campaign/add.html', form=form)
 
-        self.redirect(self.reverse_url('list_campaigns'))
+        self.redirect(ListCampaignsHandler.url)
 
 
 class ListCampaignsHandler(BaseHandler):
@@ -65,6 +65,7 @@ class ShowCampaignsHandler(CampaignHandler):
     """Show a given campaign."""
 
     url = '/campaign'
+    name = 'show_campaign'
 
     @authenticated
     def get(self):

@@ -7,8 +7,16 @@ from leaflets.views.campaign import (
 )
 
 
+handlers = (
+    LoginHandler, LogOutHandler, AddUserHandler, BaseHandler,
+    AddressSearchHandler, AddressImportHandler, AddressListHandler, CSVImportHandler,
+    AddCampaignHandler, ListCampaignsHandler, ShowCampaignsHandler, CampaignAddressesHandler
+)
+
+
 __all__ = (
     LoginHandler, LogOutHandler, AddUserHandler, BaseHandler,
     AddressSearchHandler, AddressImportHandler, AddressListHandler, CSVImportHandler,
     AddCampaignHandler, ListCampaignsHandler, ShowCampaignsHandler, CampaignAddressesHandler,
+    handlers
 )

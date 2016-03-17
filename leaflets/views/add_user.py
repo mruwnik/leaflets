@@ -7,6 +7,7 @@ from leaflets import database
 class AddUserHandler(LoginHandler):
 
     url = '/add_user'
+    name = 'add_user'
 
     PASSWORD_MISMATCH = 'The passwords do not match'
     EXISTING_USER = 'There already is a user with that username'

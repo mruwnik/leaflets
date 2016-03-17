@@ -16,6 +16,7 @@ class AddressListHandler(BaseHandler):
     """Import address CSV files."""
 
     url = '/addresses/list'
+    name = 'list_addresses'
 
     @gen.coroutine
     def get(self):
