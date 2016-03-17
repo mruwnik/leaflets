@@ -1,0 +1,177 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1\n"
+"Last-Translator: Daniel O'Connell <tojad99@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+#: ./leaflets/forms/auth
+msgid "user_name"
+msgstr "Nazwa użytkownika"
+
+msgid "password"
+msgstr "Hasło"
+
+msgid "repeat_password"
+msgstr "Powtórzone hasło"
+
+msgid "email"
+msgstr "Email"
+
+msgid "The passwords do not match"
+msgstr "Hasła nie są takie same"
+
+msgid "bad bounding args"
+msgstr "Podano błędny obszar"
+
+msgid "the provided bounding box is too large"
+msgstr "Podany obszar jest zbyt duży"
+
+msgid "no bounding box"
+msgstr "Nie podano obszaru"
+
+msgid "invalid coordinartes provided"
+msgstr "Podano błędne współrzędne"
+
+msgid "There already is a user with that username"
+msgstr "Już istnieje użytkownik z taką nazwą użytkownika"
+
+msgid "No selection provided"
+msgstr "Niczego nie wybrano"
+
+msgid "No such address found"
+msgstr "Nie odnaleziona takiego adresu"
+
+msgid "No such campaign found"
+msgstr "Nie odnależono takiej kampanii"
+
+msgid "There already is a campaign with this name"
+msgstr "Już istniej kampania z taką nazwą"
+
+msgid "No addresses selected"
+msgstr "Nie wybrano żadnych adresów"
+
+#: ./leaflets/templates/addresses/list_addresses.html:6
+msgid "lat"
+msgstr "Wysokość"
+
+#: ./leaflets/templates/addresses/list_addresses.html:7
+msgid "lon"
+msgstr "Szerokość"
+
+#: ./leaflets/templates/addresses/list_addresses.html:8
+msgid "country"
+msgstr "Kraj"
+
+#: ./leaflets/templates/addresses/list_addresses.html:9
+msgid "town"
+msgstr "Miasto"
+
+#: ./leaflets/templates/addresses/list_addresses.html:10
+msgid "postcode"
+msgstr "Kod pocztowy"
+
+#: ./leaflets/templates/addresses/list_addresses.html:11
+msgid "street"
+msgstr "Ulica"
+
+#: ./leaflets/templates/addresses/list_addresses.html:12
+msgid "house_number"
+msgstr "Nr budynku"
+
+#: ./leaflets/templates/addresses/upload_addresses.html:4
+msgid "Import from CSV file"
+msgstr "Wczytaj z pliku CSV"
+
+#: ./leaflets/templates/addresses/upload_addresses.html:7
+msgid "CSV file to import"
+msgstr "Podaj plik CSV"
+
+#: ./leaflets/templates/addresses/upload_addresses.html:8
+msgid "The provided file should be a tab delimited CSV file with the following columns"
+msgstr "Podany plik powinien być plikiem CSV mając następujące kolumny rozdzielone tabulatorami"
+
+#: ./leaflets/templates/addresses/upload_addresses.html:9
+msgid "\"lat\", \"lon\", \"town\", \"postcode\", \"street\", \"house\"."
+msgstr "\"Wysokość\", \"Szerokość\", \"Miasto\", \"Kod pocztowy\", \"Ulica\", \"Nr budynku\"."
+
+#: ./leaflets/templates/addresses/upload_addresses.html:9
+msgid "Click"
+msgstr "Kliknij"
+
+#: ./leaflets/templates/addresses/upload_addresses.html:9
+msgid "here"
+msgstr "tutaj"
+
+#: ./leaflets/templates/addresses/upload_addresses.html:9
+msgid "for an example file"
+msgstr "by zobaczyć przykładowy plik"
+
+#: ./leaflets/templates/addresses/upload_addresses.html:14
+msgid "Import by map selection"
+msgstr "Wycztaj poprzez wybieranie z mapy"
+
+#: ./leaflets/templates/addresses/upload_addresses.html:15
+msgid "You can only select a limited area at once, so if you choose too large an area, an error will appear"
+msgstr "Na raz można tylko wczytać ograniczony obszar, więc jeżeli zbyt duży obszar zostanie wybrany, wyświetli się komunikat błędu"
+
+#: ./leaflets/templates/base.html:14
+msgid "add user"
+msgstr "Dodaj użytkownika"
+
+#: ./leaflets/templates/base.html:15
+msgid "import_addresses"
+msgstr "Wczytaj adresy"
+
+#: ./leaflets/templates/base.html:19
+msgid "campaigns"
+msgstr "Kampanie"
+
+#: ./leaflets/templates/base.html:20
+msgid "logout"
+msgstr "Wyloguj"
+
+#: ./leaflets/templates/base.html:22
+msgid "login"
+msgstr "Zaloguj"
+
+#: ./leaflets/templates/campaign/list.html:5
+msgid "add_campaign"
+msgstr "Dodaj nową kampanię"
+
+#: ./leaflets/templates/campaign/list.html:9
+msgid "campaign_name"
+msgstr "Nazwa kampani"
+
+#: ./leaflets/templates/campaign/list.html:10
+msgid "description"
+msgstr "Opis kampani"
+
+#: ./leaflets/templates/campaign/list.html:12
+msgid "actions"
+msgstr "Czynności"
+
+#: ./leaflets/templates/campaign/list.html:20
+msgid "show_campaign"
+msgstr "Pokaż kampanię"
+
+#: ./leaflets/templates/campaign/show.html:7
+msgid "start_date"
+msgstr "Data rozpoczęcia kampani"
+
+#: ./leaflets/templates/map.html:5
+msgid "toggle_selector"
+msgstr "Ukryj/pokaż zaznacznika"
+
+#: ./leaflets/templates/map.html:6
+msgid "select_area"
+msgstr "Zaznacz obszar"
+
+#: ./leaflets/templates/map.html:7
+msgid "deselect_area"
+msgstr "Odznacz obszar"
+

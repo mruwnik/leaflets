@@ -1,0 +1,173 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1\n"
+"Last-Translator: Daniel O'Connell <tojad99@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+#: ./leaflets/forms/auth
+msgid "user_name"
+msgstr "User name"
+
+msgid "password"
+msgstr "Password"
+
+msgid "repeat_password"
+msgstr "Repeat password"
+
+msgid "email"
+msgstr "Email"
+
+msgid "The passwords do not match"
+msgstr ""
+
+msgid "bad bounding args"
+msgstr "An invalid bounding box was provided"
+
+msgid "the provided bounding box is too large"
+msgstr "The provided bounding box is too large"
+
+msgid "no bounding box"
+msgstr "No bounding box provided"
+
+msgid "invalid coordinartes provided"
+msgstr "Invalid coordinartes provided"
+
+msgid "There already is a user with that username"
+msgstr ""
+
+msgid "No selection provided"
+msgstr ""
+
+msgid "No such address found"
+msgstr ""
+
+msgid "No such campaign found"
+msgstr ""
+
+msgid "There already is a campaign with this name"
+msgstr ""
+
+msgid "No addresses selected"
+msgstr ""
+
+#: ./leaflets/templates/addresses/list_addresses.html:6
+msgid "lat"
+msgstr "Latitude"
+
+#: ./leaflets/templates/addresses/list_addresses.html:7
+msgid "lon"
+msgstr "Longitude"
+
+#: ./leaflets/templates/addresses/list_addresses.html:8
+msgid "country"
+msgstr "Country"
+
+#: ./leaflets/templates/addresses/list_addresses.html:9
+msgid "town"
+msgstr "Town"
+
+#: ./leaflets/templates/addresses/list_addresses.html:10
+msgid "postcode"
+msgstr "Postcode"
+
+#: ./leaflets/templates/addresses/list_addresses.html:11
+msgid "street"
+msgstr "Street"
+
+#: ./leaflets/templates/addresses/list_addresses.html:12
+msgid "house_number"
+msgstr "House number"
+
+#: ./leaflets/templates/addresses/upload_addresses.html:4
+msgid "Import from CSV file"
+msgstr ""
+
+#: ./leaflets/templates/addresses/upload_addresses.html:7
+msgid "CSV file to import"
+msgstr ""
+
+#: ./leaflets/templates/addresses/upload_addresses.html:8
+msgid "The provided file should be a tab delimited CSV file with the following columns"
+msgstr ""
+
+#: ./leaflets/templates/addresses/upload_addresses.html:9
+msgid "Click"
+msgstr ""
+
+#: ./leaflets/templates/addresses/upload_addresses.html:9
+msgid "here"
+msgstr ""
+
+#: ./leaflets/templates/addresses/upload_addresses.html:9
+msgid "for an example file"
+msgstr ""
+
+#: ./leaflets/templates/addresses/upload_addresses.html:9
+msgid "\"lat\", \"lon\", \"town\", \"postcode\", \"street\", \"house\"."
+msgstr ""
+
+#: ./leaflets/templates/addresses/upload_addresses.html:14
+msgid "Import by map selection"
+msgstr ""
+
+#: ./leaflets/templates/addresses/upload_addresses.html:15
+msgid "You can only select a limited area at once, so if you choose too large an area, an error will appear"
+msgstr ""
+
+#: ./leaflets/templates/base.html:14
+msgid "add user"
+msgstr "Add a user"
+
+#: ./leaflets/templates/base.html:15
+msgid "import_addresses"
+msgstr "Import addresses"
+
+#: ./leaflets/templates/base.html:19
+msgid "campaigns"
+msgstr "Campaigns"
+
+#: ./leaflets/templates/base.html:20
+msgid "logout"
+msgstr "Log out"
+
+#: ./leaflets/templates/base.html:22
+msgid "login"
+msgstr "Log in"
+
+#: ./leaflets/templates/campaign/list.html:5
+msgid "add_campaign"
+msgstr "Add a new campaign"
+
+#: ./leaflets/templates/campaign/list.html:9
+msgid "campaign_name"
+msgstr "Campaign name"
+
+#: ./leaflets/templates/campaign/list.html:10
+msgid "description"
+msgstr "Campaign description"
+
+#: ./leaflets/templates/campaign/list.html:12
+msgid "actions"
+msgstr "Actions"
+
+#: ./leaflets/templates/campaign/list.html:20
+msgid "show_campaign"
+msgstr "Show campaign"
+
+#: ./leaflets/templates/campaign/show.html:7
+msgid "start_date"
+msgstr "Campaign start"
+
+#: ./leaflets/templates/map.html:5
+msgid "toggle_selector"
+msgstr "Toggle map selector"
+
+#: ./leaflets/templates/map.html:6
+msgid "select_area"
+msgstr "Select area"
+
+#: ./leaflets/templates/map.html:7
+msgid "deselect_area"
+msgstr "Deselect area"
+

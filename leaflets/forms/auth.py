@@ -4,16 +4,16 @@ from wtforms_tornado import Form
 
 
 class LoginForm(Form):
-    name = StringField('name', validators=[DataRequired()])
+    name = StringField('user_name', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])
 
 
 class AddUserForm(Form):
     PASSWORD_MISMATCH = 'The passwords do not match'
 
-    name = StringField('name', validators=[DataRequired()])
+    name = StringField('user_name', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])
-    password_repeat = PasswordField('repeat password', validators=[DataRequired()])
+    password_repeat = PasswordField('repeat_password', validators=[DataRequired()])
     email = StringField('email', validators=[DataRequired(), Email()])
 
     def validate_password(self, field):

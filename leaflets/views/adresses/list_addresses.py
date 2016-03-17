@@ -32,7 +32,7 @@ class AddressListHandler(BaseHandler):
             east = float(self.get_argument('east', 180))
             west = float(self.get_argument('west', -180))
         except ValueError:
-            return self.write({'error': 'bad bounding args'})
+            return self.write({'error': self.locale.translate(u'bad bounding args')})
 
         try:
             addresses = Address.query.filter(

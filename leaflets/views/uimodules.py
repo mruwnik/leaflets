@@ -41,7 +41,7 @@ def render_field(handler, field):
     :param wtforms.Field field: the field to be rendered
     """
     return '<label>{label}</label>: {field}{errors}<br>'.format(
-        label=handler.locale.translate(field.label),
+        label=handler.locale.translate(field.label.text),
         field=field,
         errors=render_errors(handler, field),
     )

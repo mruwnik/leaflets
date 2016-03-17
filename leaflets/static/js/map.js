@@ -105,6 +105,7 @@ var AddressSelector = {
             params = {
                 '_xsrf': AddressSelector.form.find('[name="_xsrf"]').val()
             };
+        mapErrors.text('searching for addresses...');
         return $.post('/addresses/search', $.extend(params, boundingBox), function(results) {
             mapErrors.text('');
             AddressSelector.addresses = AddressSelector.updateForm(
@@ -194,6 +195,7 @@ var showSelector = $('#show-selector'),
     mapErrors = $('.map-errors');
 
 showSelector.click(function(){
+    mapErrors.text('');
     if(AddressSelector.locationFilter.isEnabled()){
         mapButtons.hide()
         AddressSelector.locationFilter.disable()

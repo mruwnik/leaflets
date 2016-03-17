@@ -1,4 +1,5 @@
 from tornado.web import Application
+from tornado.locale import load_gettext_translations
 from tornado import ioloop, httpserver
 
 from leaflets.etc import options
@@ -20,6 +21,7 @@ def setup_app():
         ui_methods=uimodules,
         login_url=LoginHandler.url,
     )
+    load_gettext_translations(options.LOCALE_DIR, 'messages')
     return app
 
 

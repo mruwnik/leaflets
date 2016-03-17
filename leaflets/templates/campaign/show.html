@@ -4,7 +4,7 @@
     <h1>{{ campaign.name }}</h1>
     {{ campaign.desc }}
     <br><br>
-    {{ _('start date:') }} {{ campaign.start }}
+    {{ _('start_date') }}: {{ campaign.start }}
     <input type="hidden" name="campaign_id" value="{{ campaign.id }}"/>
     {% module xsrf_form_html() %}
 {% end %}

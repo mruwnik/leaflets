@@ -12,7 +12,7 @@
         {% block header %}
             {% if is_admin() %}
                 <a href="{{ reverse_url('add_user') }}">{{ _('add user') }}</a>
-                <a href="{{ reverse_url('import_addresses') }}">{{ _('import addresses') }}</a>
+                <a href="{{ reverse_url('import_addresses') }}">{{ _('import_addresses') }}</a>
             {% end %}
             <span style="margin-right: 20px;"></span>
             {% if current_user %}

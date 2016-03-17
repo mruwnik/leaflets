@@ -10,12 +10,10 @@ packages += [
     'leaflets.alembic.versions',
 ]
 
-files = ["things/*"]
-
 setup(
     name='leaflets',
     version='0.1',
-    description='Display addresses to have laeflets delivered to them',
+    description='Display addresses to have leaflets delivered to them',
     author='Daniel O\'Connell',
     author_email='tojad99@gmail.com',
     packages=packages,

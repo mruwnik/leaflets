@@ -2,13 +2,13 @@
 
 {% block body %}
     <br><br>
-    <a href="{{ reverse_url('add_campaign') }}">{{ _('add campaign') }}</a>
+    <a href="{{ reverse_url('add_campaign') }}">{{ _('add_campaign') }}</a>
     <br><br>
     <table>
         <tr>
-            <th>{{ _('name') }}</th>
+            <th>{{ _('campaign_name') }}</th>
             <th>{{ _('description') }}</th>
-            <th>{{ _('start') }}</th>
+            <th>{{ _('start_date') }}</th>
             <th>{{ _('actions') }}</th>
         </tr>
         {% for campaign in campaigns %}
@@ -17,7 +17,7 @@
             <td>{{ campaign.desc }}</td>
             <td>{{ campaign.start }}</td>
             <td>
-                <a href="{{ reverse_url('show_campaign') }}?campaign={{campaign.id}}">{{ _('show campaign') }}</a>
+                <a href="{{ reverse_url('show_campaign') }}?campaign={{campaign.id}}">{{ _('show_campaign') }}</a>
             </td>
         </tr>
         {% end %}

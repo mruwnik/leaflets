@@ -10,9 +10,9 @@ from leaflets import database
 
 class CampaignForm(Form):
 
-    name = StringField('name', validators=[DataRequired()])
-    desc = StringField('desc')
-    start = DateTimeField('start', default=datetime.now())
+    name = StringField('campaign_name', validators=[DataRequired()])
+    desc = StringField('description')
+    start = DateTimeField('start_date', default=datetime.now())
     addresses = SelectMultipleField('addresses[]', validators=[DataRequired('No addresses selected')])
 
     def __init__(self, *args, **kwargs):

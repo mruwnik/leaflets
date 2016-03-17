@@ -7,8 +7,8 @@
         {{ _('CSV file to import') }}: <input type="file" name="csv"/><br>
         {{ _('The provided file should be a tab delimited CSV file with the following columns')}}:<br>
         {{ _('"lat", "lon", "town", "postcode", "street", "house".') }}<br>
-        Click <a href="{{ static_url('example_addresses.csv') }}">here</a> for an example file.<br>
-        <input type="submit" value="{{ _('import') }}">
+        {{ _('Click') }} <a href="{{ static_url('example_addresses.csv') }}"> {{ _('here') }} </a> {{ _('for an example file') }}.<br>
+        <input type="submit" value="{{ _('import_addresses') }}">
     </form>
     <br><br>
     <h1>{{ _('Import by map selection') }}</h1>

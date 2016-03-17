@@ -57,7 +57,7 @@ class CampaignHandler(BaseHandler):
         ).scalar()
 
         if not campaign:
-            raise HTTPError(403, reason='No such campaign found')
+            raise HTTPError(403, reason=self.locale.translate('No such campaign found'))
         return campaign
 
 
@@ -87,7 +87,7 @@ class CampaignAddressesHandler(CampaignHandler):
         """Mark or unmark an address in the given campaign."""
         is_selected = self.get_argument('selected')
         if is_selected is None:
-            raise HTTPError(403, reason='No selection provided')
+            raise HTTPError(403, reason=self.locale.translate('No selection provided'))
 
         campaign = self.campaign
 
@@ -97,7 +97,7 @@ class CampaignAddressesHandler(CampaignHandler):
         ).scalar()
 
         if not address:
-            raise HTTPError(403, reason='No such address found')
+            raise HTTPError(403, reason=self.locale.translate('No such address found'))
 
         address.state = AddressStates.marked if is_selected.lower() == 'true' else AddressStates.selected
         database.session.commit()
