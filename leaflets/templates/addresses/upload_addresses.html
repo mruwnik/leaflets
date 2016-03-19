@@ -14,3 +14,8 @@
     <h1>{{ _('Import by map selection') }}</h1>
     {{ _('You can only select a limited area at once, so if you choose too large an area, an error will appear') }}
 {% end %}
+
+{% block map-options %}
+    data-marker="Marker"
+    data-address-handler="AddressAdder"
+ {% end %}

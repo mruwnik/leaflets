@@ -35,7 +35,7 @@ class AddressImportHandler(BaseHandler):
                     lat=float(lat), lon=float(lon), town=town, postcode=postcode,
                     street=street, house=house, country=country
                 )
-
+                print(address)
                 if address.is_unique:
                     database.session.add(address)
                 else:

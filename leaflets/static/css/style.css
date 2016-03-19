@@ -18,3 +18,7 @@ table, th, td {
 .right{
     float: right;
 }
+
+#map-container {
+    height: 800px;
+}

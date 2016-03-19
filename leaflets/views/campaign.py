@@ -83,6 +83,7 @@ class CampaignAddressesHandler(CampaignHandler):
         self.write({addr.address_id: addr.serialised_address() for addr in self.campaign.campaign_addresses})
 
     @authenticated
+    @gen.coroutine
     def post(self):
         """Mark or unmark an address in the given campaign."""
         is_selected = self.get_argument('selected')

@@ -8,3 +8,9 @@
     <input type="hidden" name="campaign_id" value="{{ campaign.id }}"/>
     {% module xsrf_form_html() %}
 {% end %}
+
+{% block map-controls %}{% end %}
+{% block map-options %}
+    data-marker="CampaignMarker"
+    data-address-handler="DisplaySelector"
+{% end %}}

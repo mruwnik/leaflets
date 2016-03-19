@@ -1,11 +1,18 @@
 {% extends "base.html" %}
 
 {% block map %}
+    {% block map-controls %}
     <div class="controls">
         <button id="show-selector">{{ _('toggle_selector') }}</button>
         <button class="selector-control" id="select-area">{{ _('select_area') }}</button>
         <button class="selector-control" id="deselect-area">{{ _('deselect_area') }}</button>
     </div>
+    {% end %}
     <div class="map-errors"></div>
-    <div id="map-container" style="height: 800px;"></div>
+    <div id="map-container"
+         {% block map-options %}
+            data-marker="Marker"
+            data-address-handler="DisplaySelector"
+         {% end %}>
+    </div>
 {% end %}
