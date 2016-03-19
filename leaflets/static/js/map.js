@@ -1,5 +1,32 @@
 var map = L.map('map-container').setView([50.223262, 19.070912], 16);
 L.tileLayer.provider('OpenStreetMap.Mapnik').addTo(map);
+var markersLayer = L.markerClusterGroup({
+    showCoverageOnHover: false,
+    removeOutsideVisibleBounds: true,
+    disableClusteringAtZoom: 19,
+    iconCreateFunction: function(cluster) {
+       var childCount = cluster.getChildCount();
+
+        var selected = cluster.getAllChildMarkers().reduce(function(prev, curr) {
+            return prev + (curr.state == 'marked' ? 1 : 0);
+        }, 0);
+
+        var c = ' marker-cluster-';
+        if (childCount == selected) {
+            c += 'all-selected';
+        } else if (selected > 0) {
+            c += 'some-selected';
+        } else {
+            c += 'none-selected';
+        }
+
+        return new L.DivIcon({
+            html: '<div><span>' + childCount + '</span></div>',
+            className: 'marker-cluster' + c,
+            iconSize: new L.Point(40, 40)
+        });
+    }
+}).addTo(map);
 
 
 /**
@@ -18,8 +45,7 @@ Marker = function(address) {
     this.address = address;
     this.position = [address.lat, address.lon];
     this.marker = L.circle(this.position, 5, colours)
-                   .bindPopup(this.formatAddress(address))
-                   .addTo(map);
+                   .bindPopup(this.formatAddress(address));
 };
 Marker.prototype = {};
 Marker.prototype.formatAddress = function(address) {
@@ -47,10 +73,10 @@ CampaignMarker = function(address){
     self.campaignId = CampaignMarker.campaignId()
     self.position = [address.lat, address.lon],
     self.state = address.state == 'marked' ? 'marked' : 'unmarked',
-    self.marker = L.circle(this.position, 5, this.currentColour())
-                    .on('click', function(e) { self.selected(self.state != 'marked'); })
-                    .addTo(map);
+    self.marker = L.circleMarker(this.position, this.currentColour())
+                    .on('click', function(e) { self.selected(self.state != 'marked'); });
     self.address = address;
+    self.marker.state = self.state;
 };
 CampaignMarker.prototype = {};
 /**
@@ -70,15 +96,18 @@ CampaignMarker.url = '/campaign/addresses';
 CampaignMarker.prototype.colours = {
     unmarked: {
         color: 'red',
-        fillOpacity: 0.5
+        fillOpacity: 0.5,
+        radius: 15
     },
     pending: {
         color: 'gray',
-        fillOpacity: 0.5
+        fillOpacity: 0.5,
+        radius: 15
     },
     marked: {
         color: 'blue',
-        fillOpacity: 0.5
+        fillOpacity: 0.5,
+        radius: 15
     }
 };
 /**
@@ -112,7 +141,9 @@ CampaignMarker.prototype.selected = function(isMarked) {
         };
     return $.post('/campaign/addresses', params, function(result) {
         self.state = marked;
+        marker.state = marked;
         marker.setStyle(self.currentColour());
+        markersLayer.refreshClusters([marker]);
     });
 }
 
@@ -134,15 +165,18 @@ MarkersGetter = function(markerClass, params, fitResults, method) {
     method = method.toLowerCase() == 'post' ? $.post : $.get;
 
     return method(markerClass.url, params, function(addresses) {
-        var points = $.map(addresses, function(address) {
-            if (MarkersGetter.markers[address.id] === undefined) {
-                var marker = new markerClass(address);
-                MarkersGetter.markers[marker.address.id] = marker;
-            }
-            return [marker.position];
-        });
+        var markers = [],
+            points = $.map(addresses, function(address) {
+                if (MarkersGetter.markers[address.id] === undefined) {
+                    var marker = new markerClass(address);
+                    MarkersGetter.markers[marker.address.id] = marker;
+                    markers.push(marker.marker);
+                }
+                return [marker.position];
+            });
+        markersLayer.addLayers(markers);
         if (fitResults) {
-            map.fitBounds();
+            map.fitBounds(points);
         }
     });
 };
