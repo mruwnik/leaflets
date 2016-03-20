@@ -107,3 +107,23 @@ def test_websocket_campaign_addresses_state(xsrf_client, base_url, db_session, c
             addr.state = choice(states)
             db_session.commit()
             check_change_state(addr, state)
+
+
+@pytest.mark.gen_test
+def test_websocket_campaign_addresses_broadcast(xsrf_client, base_url, db_session, campaign, admin):
+    """Check whether all handlers receive broadcasts."""
+    conns = []
+    for conn in range(10):
+        conn = yield websocket_connect(base_url.replace('http', 'ws') + MarkCampaignHandler.url)
+        conns.append(conn)
+
+    addr = campaign.campaign_addresses[0]
+    conn.write_message(json.dumps({
+        'campaign': campaign.id,
+        'address': addr.address_id,
+        'state': AddressStates.selected
+    }))
+
+    for conn in conns:
+        msg = yield conn.read_message()
+        assert json.loads(msg) == addr.serialised_address()

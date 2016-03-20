@@ -126,7 +126,7 @@ CampaignMarker.prototype.initSocket = function() {
         return CampaignMarker.prototype.socket;
     }
 
-    var socket = new WebSocket('ws://' + window.location.host + '/campaign/mark')
+    var socket = new WebSocket('wss://' + window.location.host + '/campaign/mark')
 
     socket.onmessage = function (event) {
         var address = JSON.parse(event.data),

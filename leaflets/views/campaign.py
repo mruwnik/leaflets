@@ -3,11 +3,11 @@ import json
 from sqlalchemy.exc import IntegrityError
 from tornado import gen
 from tornado.web import authenticated, HTTPError
-from tornado.websocket import WebSocketHandler
+from tornado.websocket import WebSocketHandler, WebSocketClosedError
 
 from leaflets.views.base import BaseHandler
 from leaflets.forms.campaign import CampaignForm
-from leaflets.models import Campaign, CampaignAddress, AddressStates
+from leaflets.models import Campaign, CampaignAddress
 from leaflets import database
 
 
@@ -111,10 +111,12 @@ class CampaignAddressesHandler(WebSocketHandler, CampaignHandler):
 class MarkCampaignHandler(WebSocketHandler, CampaignHandler):
 
     url = '/campaign/mark'
+    handlers = []
 
     @authenticated
     def open(self):
-        pass
+        """Add the handler to the list of active handlers."""
+        MarkCampaignHandler.handlers.append(self)
 
     def write_error(self, error_msg):
         """Send an error message as a json object.
@@ -122,6 +124,18 @@ class MarkCampaignHandler(WebSocketHandler, CampaignHandler):
         :param str error_msg: the message to be sent
         """
         self.write_message(json.dumps({'error': self.locale.translate(error_msg)}))
+
+    @classmethod
+    def broadcast(cls, message):
+        """Send the provided message to all handlers.
+
+        :param str message: the message to be send
+        """
+        for handler in cls.handlers:
+            try:
+                handler.write_message(message)
+            except WebSocketClosedError as e:
+                cls.remove_handler(handler)
 
     @authenticated
     @gen.coroutine
@@ -152,7 +166,20 @@ class MarkCampaignHandler(WebSocketHandler, CampaignHandler):
         address.state = state
         database.session.commit()
 
-        self.write_message(json.dumps(address.serialised_address()))
+        self.broadcast(json.dumps(address.serialised_address()))
+
+    @classmethod
+    def remove_handler(cls, handler):
+        """Remove the provided handler from the list of handlers.
+
+        :param WebSocketHandler handler: the handler to be removed.
+        """
+        try:
+            index = cls.handlers.index(handler)
+            cls.handlers = cls.handlers[:index] + cls.handlers[index + 1:]
+        except ValueError:
+            pass
 
     def on_close(self):
-        pass
+        """Remove this handler."""
+        self.remove_handler(self)
