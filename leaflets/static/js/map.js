@@ -99,17 +99,17 @@ CampaignMarker.prototype.colours = {
     selected: {
         color: 'red',
         fillOpacity: 0.5,
-        radius: 15
+        radius: 25
     },
     pending: {
         color: 'gray',
         fillOpacity: 0.5,
-        radius: 15
+        radius: 25
     },
     marked: {
         color: 'blue',
         fillOpacity: 0.5,
-        radius: 15
+        radius: 25
     }
 };
 /**
@@ -126,7 +126,7 @@ CampaignMarker.prototype.initSocket = function() {
         return CampaignMarker.prototype.socket;
     }
 
-    var socket = new WebSocket('ws://127.0.0.1:5000/campaign/mark')
+    var socket = new WebSocket('ws://' + window.location.host + '/campaign/mark')
 
     socket.onmessage = function (event) {
         var address = JSON.parse(event.data),
@@ -141,14 +141,13 @@ CampaignMarker.prototype.initSocket = function() {
     return socket;
 };
 
-CampaignMarker.prototype.initSocket();
-
 /**
     Send a message to the websocket.
 
     If the socket has been disconnected, reconnect and resend the message.
  **/
 CampaignMarker.prototype.sendMessage = function(message) {
+    message = JSON.stringify(message);
     if (this.socket.readyState > 1) {
         this.initSocket();
     }
@@ -170,7 +169,28 @@ CampaignMarker.prototype.sendMessage = function(message) {
     }
 }
 /**
-    Handle the selection/deselection of a point.
+    Handle the selection/deselection of a point via normal POST.
+ **/
+CampaignMarker.prototype.postMessage = function(params) {
+    params['_xsrf'] = $('[name="_xsrf"]').val();
+    return $.post('/campaign/addresses', params, function(result) {
+        var point = MarkersGetter.markers[params.address],
+            marker = point.marker;
+        marker.state = params.state;
+        marker.setStyle(point.currentColour());
+        markersLayer.refreshClusters([marker]);
+    });
+}
+
+if (WebSocket !== undefined) {
+    CampaignMarker.prototype.initSocket();
+    CampaignMarker.prototype.updater = CampaignMarker.prototype.sendMessage;
+} else {
+    CampaignMarker.prototype.updater = CampaignMarker.prototype.postMessage;
+}
+
+/**
+    Handle the selection/deselection of a point via websockets.
  **/
 CampaignMarker.prototype.selected = function(isMarked) {
     // The state is already being updated
@@ -181,11 +201,11 @@ CampaignMarker.prototype.selected = function(isMarked) {
     this.marker.setStyle(this.colours.pending);
     this.marker.state = 'pending';
 
-    this.sendMessage(JSON.stringify({
+    this.updater({
         campaign: this.campaignId,
         address: this.address.id,
         state: isMarked ? 'marked' : 'selected'
-    }));
+    });
 }
 
 

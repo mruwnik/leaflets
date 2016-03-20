@@ -89,8 +89,8 @@ class CampaignAddressesHandler(WebSocketHandler, CampaignHandler):
     @gen.coroutine
     def post(self):
         """Mark or unmark an address in the given campaign."""
-        is_selected = self.get_argument('selected')
-        if is_selected is None:
+        state = self.get_argument('state')
+        if state is None:
             raise HTTPError(403, reason=self.locale.translate('No selection provided'))
 
         campaign = self.campaign
@@ -103,7 +103,7 @@ class CampaignAddressesHandler(WebSocketHandler, CampaignHandler):
         if not address:
             raise HTTPError(403, reason=self.locale.translate('No such address found'))
 
-        address.state = AddressStates.marked if is_selected.lower() == 'true' else AddressStates.selected
+        address.state = state
         database.session.commit()
         self.write({'result': 'ok'})
 
@@ -124,6 +124,7 @@ class MarkCampaignHandler(WebSocketHandler, CampaignHandler):
         self.write_message(json.dumps({'error': self.locale.translate(error_msg)}))
 
     @authenticated
+    @gen.coroutine
     def on_message(self, message):
         """Handle an address being selected.
 
