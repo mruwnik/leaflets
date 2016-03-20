@@ -59,6 +59,7 @@ Marker.defaultBounds = {
 }
 Marker.url = '/addresses/list';
 
+
 /**
 
    A map marker circle that handles campaign addresses.
@@ -72,13 +73,14 @@ CampaignMarker = function(address){
     var self = this;
     self.campaignId = CampaignMarker.campaignId()
     self.position = [address.lat, address.lon],
-    self.state = address.state == 'marked' ? 'marked' : 'unmarked',
-    self.marker = L.circleMarker(this.position, this.currentColour())
-                    .on('click', function(e) { self.selected(self.state != 'marked'); });
     self.address = address;
-    self.marker.state = self.state;
+    self.marker = L.circleMarker(this.position, this.currentColour())
+                    .on('click', function(e) { self.selected(self.marker.state != 'marked'); });
+    self.marker.state = address.state;
 };
+
 CampaignMarker.prototype = {};
+
 /**
     Get the id of the campaign to which all markers pertain.
  **/
@@ -94,7 +96,7 @@ CampaignMarker.url = '/campaign/addresses';
     All possible marker set ups.
  **/
 CampaignMarker.prototype.colours = {
-    unmarked: {
+    selected: {
         color: 'red',
         fillOpacity: 0.5,
         radius: 15
@@ -114,37 +116,76 @@ CampaignMarker.prototype.colours = {
     Return the marker colour for the current state.
  **/
 CampaignMarker.prototype.currentColour = function() {
-    return this.colours[this.state || 'pending'];
+    var marker = this.marker || this.address;
+    return this.colours[marker.state || 'pending'];
 };
+CampaignMarker.prototype.initSocket = function() {
+
+    // If the socket is already initialised and working, just return
+    if (CampaignMarker.prototype.socket && CampaignMarker.prototype.socket.readyState <= 1) {
+        return CampaignMarker.prototype.socket;
+    }
+
+    var socket = new WebSocket('ws://127.0.0.1:5000/campaign/mark')
+
+    socket.onmessage = function (event) {
+        var address = JSON.parse(event.data),
+            point = MarkersGetter.markers[address.id],
+            marker = point.marker;
+        marker.state = address.state;
+        marker.setStyle(point.currentColour());
+        markersLayer.refreshClusters([marker]);
+    };
+
+    CampaignMarker.prototype.socket = socket;
+    return socket;
+};
+
+CampaignMarker.prototype.initSocket();
+
+/**
+    Send a message to the websocket.
+
+    If the socket has been disconnected, reconnect and resend the message.
+ **/
+CampaignMarker.prototype.sendMessage = function(message) {
+    if (this.socket.readyState > 1) {
+        this.initSocket();
+    }
+
+    try {
+        this.socket.send(message);
+    } catch (err) {
+        this.initSocket();
+        var self = this,
+            // Pretend to asynchronisly wait for the connection to be available.
+            repeater = setTimeout(function(){
+                if (self.socket.readyState < 1) { // 0 means that the connection is being initialised
+                    return;
+                } else if (self.socket.readyState == 1) { // 1 means that the connection is receiving messages
+                    self.socket.send(message);
+                }
+                clearTimeout(repeater); // any value other than 0 should cause the function to finish
+            }, 100);
+    }
+}
 /**
     Handle the selection/deselection of a point.
  **/
 CampaignMarker.prototype.selected = function(isMarked) {
-
     // The state is already being updated
-    if (this.state == 'pending') {
+    if (this.marker.state == 'pending') {
         return;
     }
 
-    var marker = this.marker,
-        self = this;
+    this.marker.setStyle(this.colours.pending);
+    this.marker.state = 'pending';
 
-    marker.setStyle(this.colours.pending);
-    marker.state = 'pending';
-
-    var marked = isMarked ? 'marked' : 'unmarked',
-        params = {
-            campaign: this.campaignId,
-            address: this.address.id,
-            selected: isMarked,
-            '_xsrf': $('[name="_xsrf"]').val()
-        };
-    return $.post('/campaign/addresses', params, function(result) {
-        self.state = marked;
-        marker.state = marked;
-        marker.setStyle(self.currentColour());
-        markersLayer.refreshClusters([marker]);
-    });
+    this.sendMessage(JSON.stringify({
+        campaign: this.campaignId,
+        address: this.address.id,
+        state: isMarked ? 'marked' : 'selected'
+    }));
 }
 
 

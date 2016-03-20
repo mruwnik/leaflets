@@ -1,6 +1,9 @@
+import json
+
 from sqlalchemy.exc import IntegrityError
 from tornado import gen
 from tornado.web import authenticated, HTTPError
+from tornado.websocket import WebSocketHandler
 
 from leaflets.views.base import BaseHandler
 from leaflets.forms.campaign import CampaignForm
@@ -72,7 +75,7 @@ class ShowCampaignsHandler(CampaignHandler):
         self.render('campaign/show.html', campaign=self.campaign)
 
 
-class CampaignAddressesHandler(CampaignHandler):
+class CampaignAddressesHandler(WebSocketHandler, CampaignHandler):
     """Get a campaign's addresses."""
 
     url = '/campaign/addresses'
@@ -103,3 +106,52 @@ class CampaignAddressesHandler(CampaignHandler):
         address.state = AddressStates.marked if is_selected.lower() == 'true' else AddressStates.selected
         database.session.commit()
         self.write({'result': 'ok'})
+
+
+class MarkCampaignHandler(WebSocketHandler, CampaignHandler):
+
+    url = '/campaign/mark'
+
+    @authenticated
+    def open(self):
+        pass
+
+    def write_error(self, error_msg):
+        """Send an error message as a json object.
+
+        :param str error_msg: the message to be sent
+        """
+        self.write_message(json.dumps({'error': self.locale.translate(error_msg)}))
+
+    @authenticated
+    def on_message(self, message):
+        """Handle an address being selected.
+
+        :param str message: the json encoded parameters of the address
+        """
+        try:
+            message = json.loads(message)
+            state = message.get('state')
+            address_id = message.get('address')
+            campaign_id = message.get('campaign')
+        except (json.decoder.JSONDecodeError, AttributeError):
+            return self.write_error('invalid_json')
+
+        if state is None:
+            self.write_error('No selection provided')
+
+        address = CampaignAddress.query.filter(
+            CampaignAddress.campaign_id == campaign_id,
+            CampaignAddress.address_id == address_id
+        ).scalar()
+
+        if not address:
+            self.write_error('No such address found')
+
+        address.state = state
+        database.session.commit()
+
+        self.write_message(json.dumps(address.serialised_address()))
+
+    def on_close(self):
+        pass

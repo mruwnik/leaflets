@@ -3,8 +3,9 @@ from datetime import datetime, timedelta
 from random import choice
 
 import pytest
+from tornado.websocket import websocket_connect
 
-from leaflets.views import AddCampaignHandler, CampaignAddressesHandler
+from leaflets.views import AddCampaignHandler, CampaignAddressesHandler, MarkCampaignHandler
 from leaflets.models import Campaign, AddressStates
 
 
@@ -84,3 +85,25 @@ def test_post_campaign_addresses_state(xsrf_client, base_url, db_session, campai
             addr.state = choice(states)
             db_session.commit()
             check_address_state(addr, state)
+
+
+@pytest.mark.gen_test
+def test_websocket_campaign_addresses_state(xsrf_client, base_url, db_session, campaign, admin):
+    """Check whether setting a state via websockets works."""
+    conn = yield websocket_connect(base_url.replace('http', 'ws') + MarkCampaignHandler.url)
+
+    def check_change_state(addr, state):
+        conn.write_message(json.dumps({
+            'campaign': campaign.id,
+            'address': addr.address_id,
+            'state': state
+        }))
+        msg = yield conn.read_message()
+        assert json.loads(msg) == addr.serialised_address()
+
+    states = [AddressStates.selected, AddressStates.marked, AddressStates.removed]
+    for state in states:
+        for addr in campaign.campaign_addresses:
+            addr.state = choice(states)
+            db_session.commit()
+            check_change_state(addr, state)
