@@ -1,3 +1,6 @@
+from leaflets.models import User
+
+
 def render_form(handler, form, action):
     """Render the provided form to HTML.
 
@@ -50,3 +53,13 @@ def render_field(handler, field):
 def is_admin(handler):
     """Check whether the current user is an admin."""
     return handler.is_admin
+
+
+def current_user_name(handler):
+    """Get the name of the current user."""
+    user_id = handler.get_current_user()
+    if not user_id:
+        return None
+
+    user = User.query.get(user_id)
+    return user and user.username

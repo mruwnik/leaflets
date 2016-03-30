@@ -1,9 +1,9 @@
 var map = L.map('map-container').setView([50.223262, 19.070912], 16);
 L.tileLayer.provider('OpenStreetMap.Mapnik').addTo(map);
 var markersLayer = L.markerClusterGroup({
-    showCoverageOnHover: false,
+    showCoverageOnHover: true,
     removeOutsideVisibleBounds: true,
-    disableClusteringAtZoom: 19,
+    disableClusteringAtZoom: 20,
     iconCreateFunction: function(cluster) {
        var childCount = cluster.getChildCount();
 
@@ -52,10 +52,10 @@ Marker.prototype.formatAddress = function(address) {
     return address.street + ' ' + address.house + ',<br>' + address.postcode + ' ' + address.town;
 };
 Marker.defaultBounds = {
-    north: 50.226828,
-    west: 19.056873,
-    south: 50.217513,
-    east: 19.084700
+    north: 54.226828,
+    west: 1.056873,
+    south: 40.217513,
+    east: 109.084700
 }
 Marker.url = '/addresses/list';
 
@@ -126,7 +126,7 @@ CampaignMarker.prototype.initSocket = function() {
         return CampaignMarker.prototype.socket;
     }
 
-    var socket = new WebSocket('wss://' + window.location.host + '/campaign/mark')
+    var socket = new WebSocket(window.location.origin.replace('http', 'ws') + '/campaign/mark');
 
     socket.onmessage = function (event) {
         var address = JSON.parse(event.data),
@@ -182,10 +182,10 @@ CampaignMarker.prototype.postMessage = function(params) {
     });
 }
 
-if (WebSocket !== undefined) {
+try {
     CampaignMarker.prototype.initSocket();
     CampaignMarker.prototype.updater = CampaignMarker.prototype.sendMessage;
-} else {
+} catch(err) {
     CampaignMarker.prototype.updater = CampaignMarker.prototype.postMessage;
 }
 
@@ -228,8 +228,9 @@ MarkersGetter = function(markerClass, params, fitResults, method) {
     return method(markerClass.url, params, function(addresses) {
         var markers = [],
             points = $.map(addresses, function(address) {
-                if (MarkersGetter.markers[address.id] === undefined) {
-                    var marker = new markerClass(address);
+                var marker = MarkersGetter.markers[address.id];
+                if (marker === undefined) {
+                    marker = new markerClass(address);
                     MarkersGetter.markers[marker.address.id] = marker;
                     markers.push(marker.marker);
                 }
@@ -280,6 +281,9 @@ BaseAddressSelector.prototype.init = function() {
 };
 BaseAddressSelector.prototype.selectArea = function() {};
 BaseAddressSelector.prototype.deselectArea = function() {};
+BaseAddressSelector.prototype.showLocationFilter = function() {;
+    this.locationFilter.enable();
+}
 
 
 /** A simple selector that only displays addresses **/
@@ -290,6 +294,32 @@ DisplaySelector = new BaseAddressSelector();
     Handle adding new addresses to the system.
  **/
 AddressAdder = new BaseAddressSelector();
+
+AddressAdder.init = function() {
+    MarkersGetter(mapControls.markerClass);
+    this.locationFilter.on('change', function(event, a, b) {
+        var bounds = event.bounds;
+        if(Math.abs(bounds.getNorth()) - Math.abs(bounds.getSouth())
+            + Math.abs(bounds.getEast()) - Math.abs(bounds.getWest()) > 0.05) {
+            $('.leaflet-zoom-animated g path').attr('fill', 'red');
+        } else {
+            $('.leaflet-zoom-animated g path').attr('fill', 'black');
+        }
+    });
+};
+/**
+    Show the location filter.
+
+    Also make sure that its initial size is in the allowed bounds.
+ **/
+AddressAdder.showLocationFilter = function() {;
+    this.locationFilter.enable();
+    var bounds = this.locationFilter.getBounds(),
+        center = bounds.getCenter();
+    bounds._southWest = {lat: center.lat - 0.01, lng: center.lng - 0.015};
+    bounds._northEast = {lat: center.lat + 0.01, lng: center.lng + 0.015};
+    this.locationFilter.setBounds(bounds);
+}
 AddressAdder.selectArea = function(boundingBox) {
     var boundingBox = boundingBox || this.currentBounds();
         params = {
@@ -298,7 +328,7 @@ AddressAdder.selectArea = function(boundingBox) {
     mapControls.errors.text('searching for addresses...');
     return $.post('/addresses/search', $.extend(params, boundingBox), function(results) {
         mapControls.errors.text('');
-        AddressAdder.markers = $.extend($.map(results, AddressAdder.newMarker), AddressAdder.markers);
+        MarkersGetter(Marker, boundingBox, false);
     }).error(function(error) {
         mapControls.errors.text(error.statusText);
     });
@@ -393,8 +423,8 @@ mapControls.showSelector.click(function(){
         mapControls.mapButtons.hide()
         mapControls.addressHandler.locationFilter.disable()
     } else {
-        mapControls.mapButtons.show()
-        mapControls.addressHandler.locationFilter.enable()
+        mapControls.mapButtons.show();
+        mapControls.addressHandler.showLocationFilter();
     }
     return false;
 });

@@ -35,7 +35,6 @@ class AddressImportHandler(BaseHandler):
                     lat=float(lat), lon=float(lon), town=town, postcode=postcode,
                     street=street, house=house, country=country
                 )
-                print(address)
                 if address.is_unique:
                     database.session.add(address)
                 else:
@@ -115,7 +114,10 @@ class AddressSearchHandler(AddressImportHandler):
         if abs(north) - abs(south) + abs(east) - abs(west) > 0.05:
             raise HTTPError(400, reason=self.locale.translate(self.OVERSIZED_BOUNDING_BOX))
 
-        self.import_addresses(find_addresses((south, west, north, east)))
+        addresses = list(find_addresses((south, west, north, east)))
+        self.import_addresses(addresses)
 
-        url_params = urlencode({'north': north, 'south': south, 'east': east, 'west': west})
-        self.redirect(self.reverse_url('list_addresses') + '?' + url_params)
+        self.write({
+            'imported': len(addresses),
+            'bounds': {'north': north, 'south': south, 'east': east, 'west': west}
+        })

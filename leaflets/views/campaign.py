@@ -105,6 +105,9 @@ class CampaignAddressesHandler(WebSocketHandler, CampaignHandler):
 
         address.state = state
         database.session.commit()
+
+        MarkCampaignHandler.broadcast(json.dumps(address.serialised_address()))
+
         self.write({'result': 'ok'})
 
 
