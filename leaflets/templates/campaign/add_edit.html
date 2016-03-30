@@ -1,9 +1,9 @@
 {% extends "../map.html" %}
 
 {% block body %}
-    <h1>{{ _('add_campaign') }}</h1>
+    <h1>{{ _(view) }}</h1>
 
-    <form id="add-campaign-form" method="post" action="{{ reverse_url('add_campaign') }}">
+    <form id="campaign-form" method="post" action="{{ reverse_url(view) }}">
         {% module xsrf_form_html() %}
         {% raw render_field(form.name) %}
         {% raw render_field(form.desc) %}
@@ -12,7 +12,14 @@
         {% for id in form.addresses.data %}
             <input type="hidden" name="addresses[]" value="{{ id }}">
         {% end %}
-        <input type="submit" value="{{ _('Create campaign') }}">
+        <input type="submit" value="{{ _(view) }}">
+        {% try %}
+            <input type="hidden" name="campaign" value="{{ campaign.id }}"/>
+        {% except %}
+            {# if the previous line blows up coz there is no campaign, it leaves a hanging element #}
+            "/>
+        {% end %}
+
     </form>
 {% end %}
 

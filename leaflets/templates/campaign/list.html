@@ -18,6 +18,7 @@
             <td>{{ campaign.start }}</td>
             <td>
                 <a href="{{ reverse_url('show_campaign') }}?campaign={{campaign.id}}">{{ _('show_campaign') }}</a>
+                <a href="{{ reverse_url('edit_campaign') }}?campaign={{campaign.id}}">{{ _('edit_campaign') }}</a>
             </td>
         </tr>
         {% end %}

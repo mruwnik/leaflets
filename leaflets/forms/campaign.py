@@ -52,3 +52,26 @@ class CampaignForm(Form):
                 CampaignAddress(campaign=campaign, address_id=addr_id))
         database.session.commit()
         return campaign
+
+    def update(self, campaign):
+        """Update the given campaign.
+
+        :param campaign: the campaign to be updated
+        :return: the campaign
+        """
+        campaign.name = self.name.data
+        campaign.desc = self.desc.data
+        campaign.start = self.start.data
+
+        selected_ids = set(map(int, self.addresses.data))
+
+        for addr in campaign.campaign_addresses:
+            if addr.address_id not in selected_ids:
+                database.session.delete(addr)
+
+        campaign_addresses = {addr.address_id for addr in campaign.campaign_addresses}
+        for addr_id in selected_ids - campaign_addresses:
+            database.session.add(
+                CampaignAddress(campaign=campaign, address_id=addr_id))
+        database.session.commit()
+        return campaign

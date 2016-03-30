@@ -68,3 +68,8 @@ Open `localhost:5000` in your browser to see if the webpage is working.
 * To run tests, call:
 
 `pip install -e  '.[tests]'` to initially set everything up, after which `py.test` will run all tests
+
+
+# i18n
+
+The basics are outlined in [the gettext documentation](https://docs.python.org/3/library/gettext.html). The general idea is for each language to have their own entry in `leaflets/locale` where each string in the program has its own entry. This has to be manually maintained, which is a hassle, but there you are. After updating a translations file (`messages.pot`), it has to be compiled to a machine readable form. This is done by executing `msgfmt messages.pot` in the folder with the translations. Once that is done, it should suffice to restart the application for the new translations to be used.

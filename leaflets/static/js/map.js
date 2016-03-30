@@ -346,7 +346,7 @@ AddressAdder.selectArea = function(boundingBox) {
  *
  **/
 CampaignAddressSelector = new BaseAddressSelector();
-CampaignAddressSelector.form = $('#add-campaign-form'),
+CampaignAddressSelector.form = $('#campaign-form'),
 
 /** Get all selected address ids from the form **/
 CampaignAddressSelector.selectedIds = function() {

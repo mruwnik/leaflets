@@ -159,6 +159,10 @@ msgstr "Czynności"
 msgid "show_campaign"
 msgstr "Pokaż kampanię"
 
+#: ./leaflets/templates/campaign/list.html:21
+msgid "edit_campaign"
+msgstr "Edytuj kampanię"
+
 #: ./leaflets/templates/campaign/show.html:7
 msgid "start_date"
 msgstr "Data rozpoczęcia kampani"

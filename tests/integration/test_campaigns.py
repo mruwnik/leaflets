@@ -5,8 +5,10 @@ from random import choice
 import pytest
 from tornado.websocket import websocket_connect
 
-from leaflets.views import AddCampaignHandler, CampaignAddressesHandler, MarkCampaignHandler
-from leaflets.models import Campaign, AddressStates
+from leaflets.views import (
+    AddCampaignHandler, CampaignAddressesHandler, MarkCampaignHandler, EditCampaignHandler
+)
+from leaflets.models import Campaign, AddressStates, Address
 
 
 @pytest.mark.gen_test
@@ -43,6 +45,47 @@ def test_add_campaign(xsrf_client, base_url, db_session, addresses, admin):
     # check whether all addresses were attached
     for addr in campaign.addresses:
         assert addr.id in address_ids
+
+
+@pytest.mark.gen_test
+def test_edit_campaign(xsrf_client, base_url, db_session, addresses, campaign, admin):
+    """Check whether campaigns are correctly edited."""
+    url = base_url + EditCampaignHandler.url
+    start = campaign.start + timedelta(days=2)
+
+    # add an extra address to see if it will be added to the campaign
+    added_address = Address(lat=1, lon=2, town='bla', postcode='23432', street='few', house='23')
+    db_session.add(added_address)
+    db_session.commit()
+
+    # change what addresses are attached to the campaign
+    new_addresses = addresses[::2] + [added_address]
+    address_ids = [addr.id for addr in new_addresses]
+
+    # send an edit campaign request
+    post_data = {
+        'name': 'new test',
+        'desc': 'new description',
+        'start': start.strftime("%Y-%m-%d %H:%M:%S"),
+        'addresses[]': address_ids,
+        'campaign': campaign.id,
+    }
+    request = yield xsrf_client.xsrf_request(url, post_data)
+    response = yield xsrf_client.fetch(request)
+
+    assert response.code == 200
+
+    # refresh the session
+    db_session.commit()
+    campaign = Campaign.query.get(campaign.id)
+    # check whether the campaign was updated
+    assert campaign.name == 'new test'
+    assert campaign.desc == 'new description'
+    assert campaign.start == start.replace(microsecond=0)
+    assert campaign.user_id == admin
+
+    # check whether all addresses were attached
+    assert set(address_ids) == {addr.id for addr in campaign.addresses}
 
 
 @pytest.mark.gen_test

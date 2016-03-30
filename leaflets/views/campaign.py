@@ -11,26 +11,73 @@ from leaflets.models import Campaign, CampaignAddress
 from leaflets import database
 
 
+class CampaignHandler(BaseHandler):
+    """The base class for campaign handlers."""
+
+    @property
+    def campaign(self):
+        """Get the campaign to be shown."""
+        campaign = Campaign.query.filter(
+            Campaign.id == self.get_argument('campaign'),
+            Campaign.user_id == self.get_current_user()
+        ).scalar()
+
+        if not campaign:
+            raise HTTPError(403, reason=self.locale.translate('No such campaign found'))
+        return campaign
+
+
 class AddCampaignHandler(BaseHandler):
     """Create new campaigns."""
 
     url = '/campaign/add'
 
     def get(self):
-        self.render('campaign/add.html', form=CampaignForm())
+        self.render('campaign/add_edit.html', form=CampaignForm(), view='add_campaign')
 
     @authenticated
     @gen.coroutine
     def post(self):
         form = CampaignForm(self.request.arguments)
         if not form.validate():
-            return self.render('campaign/add.html', form=form)
+            return self.render('campaign/add_edit.html', form=form, view='add_campaign')
 
         try:
             form.save(self.get_current_user())
         except IntegrityError:
             form.name.errors += ['There already is a campaign with this name']
-            self.render('campaign/add.html', form=form)
+            self.render('campaign/add_edit.html', form=form, view='add_campaign')
+
+        self.redirect(ListCampaignsHandler.url)
+
+
+class EditCampaignHandler(CampaignHandler):
+    """Edit a campaign."""
+
+    url = '/campaign/edit'
+
+    def get(self):
+        campaign = self.campaign
+        form = CampaignForm(
+            name=campaign.name,
+            desc=campaign.desc,
+            start=campaign.start,
+            addresses=[address.id for address in campaign.addresses]
+        )
+        self.render('campaign/add_edit.html', form=form, campaign=campaign, view='edit_campaign')
+
+    @authenticated
+    @gen.coroutine
+    def post(self):
+        form = CampaignForm(self.request.arguments)
+        if not form.validate():
+            return self.render('campaign/add_edit.html', form=form)
+
+        try:
+            form.update(self.campaign)
+        except IntegrityError:
+            form.name.errors += ['There already is a campaign with this name']
+            self.render('campaign/add_edit.html', form=form)
 
         self.redirect(ListCampaignsHandler.url)
 
@@ -46,22 +93,6 @@ class ListCampaignsHandler(BaseHandler):
             'campaign/list.html',
             campaigns=Campaign.query.filter(Campaign.user_id == self.get_current_user()).all()
         )
-
-
-class CampaignHandler(BaseHandler):
-    """The base class for campaign handlers."""
-
-    @property
-    def campaign(self):
-        """Get the campaign to be shown."""
-        campaign = Campaign.query.filter(
-            Campaign.id == self.get_argument('campaign'),
-            Campaign.user_id == self.get_current_user()
-        ).scalar()
-
-        if not campaign:
-            raise HTTPError(403, reason=self.locale.translate('No such campaign found'))
-        return campaign
 
 
 class ShowCampaignsHandler(CampaignHandler):

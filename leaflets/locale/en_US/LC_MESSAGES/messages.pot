@@ -155,6 +155,10 @@ msgstr "Actions"
 msgid "show_campaign"
 msgstr "Show campaign"
 
+#: ./leaflets/templates/campaign/list.html:21
+msgid "edit_campaign"
+msgstr "Edit campaign"
+
 #: ./leaflets/templates/campaign/show.html:7
 msgid "start_date"
 msgstr "Campaign start"
