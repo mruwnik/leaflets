@@ -73,3 +73,11 @@ Open `localhost:5000` in your browser to see if the webpage is working.
 # i18n
 
 The basics are outlined in [the gettext documentation](https://docs.python.org/3/library/gettext.html). The general idea is for each language to have their own entry in `leaflets/locale` where each string in the program has its own entry. This has to be manually maintained, which is a hassle, but there you are. After updating a translations file (`messages.pot`), it has to be compiled to a machine readable form. This is done by executing `msgfmt messages.pot` in the folder with the translations. Once that is done, it should suffice to restart the application for the new translations to be used.
+
+# Users structure
+
+There are 2 kinds of users:
+* normal users can view campaigns that are assigned to them and mark addresses as done
+* administrators can add new users, create campaigns and do everything normal users can do
+
+Users are hierarchical. The highest level users are organisations. Organisations don't see each other. Each organisation can create users that belong to it. Admin users can create other users that are either equal or subjected to them. Subjected users create a sort of sub-organisation and can only see campaigns and users belonging to the parent user.

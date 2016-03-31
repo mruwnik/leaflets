@@ -22,6 +22,12 @@ msgstr "Powtórzone hasło"
 msgid "email"
 msgstr "Email"
 
+msgid "is_admin"
+msgstr "Admin"
+
+msgid "is_equal"
+msgstr "Równouprawniony"
+
 msgid "The passwords do not match"
 msgstr "Hasła nie są takie same"
 

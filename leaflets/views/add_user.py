@@ -1,3 +1,5 @@
+from tornado.web import authenticated
+
 from leaflets.views import LoginHandler
 from leaflets.forms.auth import AddUserForm
 from leaflets.models import User
@@ -16,7 +18,9 @@ class AddUserHandler(LoginHandler):
     def form(self):
         return AddUserForm(self.request.arguments)
 
+    @authenticated
     def post(self):
+        """Add a new user."""
         form = self.form
         if not form.validate():
             return self.get(form)
@@ -33,10 +37,11 @@ class AddUserHandler(LoginHandler):
         user = User(
             username=form.name.data,
             email=form.email.data,
-            password_hash=self.hash(form.password.data)
+            password_hash=self.hash(form.password.data),
+            admin=form.is_admin.data,
+            parent_id=User.query.get(self.current_user).parent_id if form.is_equal.data else self.current_user,
         )
 
         database.session.add(user)
         database.session.commit()
-        self.set_secure_cookie("user_id", str(user.id))
         self.redirect("/")

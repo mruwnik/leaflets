@@ -150,15 +150,16 @@ def xsrf_client(http_client, app, base_url):
 
 @pytest.yield_fixture
 def admin(db_session):
-    db_session.add(User(id=1, username='test', email='test@sdf.df', password_hash='test', admin=True))
+    user = User(username='test', email='test@sdf.df', password_hash='test', admin=True)
+    db_session.add(user)
     db_session.commit()
 
     async def is_admin(self):
-        return 1
+        return user.id
 
-    with patch('leaflets.views.BaseHandler.get_current_user', return_value=1), \
+    with patch('leaflets.views.BaseHandler.get_current_user', return_value=user.id), \
          patch('leaflets.views.BaseHandler.is_admin', property(is_admin)):
-        yield 1
+        yield user.id
 
 
 ADDRESSES = [

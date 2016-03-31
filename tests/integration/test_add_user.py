@@ -2,6 +2,7 @@ import pytest
 
 from mock import Mock, patch
 
+from leaflets.models import User
 from leaflets.views import AddUserHandler
 from leaflets.views import BaseHandler
 
@@ -66,3 +67,50 @@ def test_admin_user(app, database):
     for is_admin in True, False:
         add_user(is_admin)
         check_if_admin(is_admin)
+
+
+@pytest.mark.gen_test
+def test_add_user_equal(xsrf_client, base_url, app, db_session, admin):
+    """Check whether users get correctly added."""
+    url = app.reverse_url('add_user')
+
+    async def add_user(name, is_equal, user=admin):
+        """Attempt to add a new user and validate the result."""
+        post_data = {
+            'name': name,
+            'password': 'test',
+            'password_repeat': 'test',
+            'email': 'test@test.vl',
+        }
+        if is_equal:
+            post_data['is_equal'] = is_equal
+
+        request = await xsrf_client.xsrf_request(base_url + url, post_data)
+        with patch('leaflets.views.BaseHandler.get_current_user', return_value=user):
+            response = await xsrf_client.fetch(request)
+
+        assert response.code == 200
+
+    async def check_children(user_id):
+        # add 10 children users
+        for i in range(10):
+            await add_user('child %d of %d' % (i, user_id), False, user_id)
+
+        # check if they were all added to the user
+        db_session.commit()
+        user = db_session.query(User).get(user_id)
+        assert len(user.children) == 10
+
+        # add an equal user
+        await add_user('equal to %d' % user_id, True, user_id)
+
+        # check if the new user's parent is the same as this one's
+        db_session.commit()
+        user = db_session.query(User).get(user_id)
+        eqaul_user, = db_session.query(User).filter(User.username == 'equal to %d' % user_id)
+        assert eqaul_user.parent is user.parent
+        assert eqaul_user not in user.children
+
+    yield check_children(admin)
+
+    yield check_children(db_session.query(User).get(admin).children[0].id)

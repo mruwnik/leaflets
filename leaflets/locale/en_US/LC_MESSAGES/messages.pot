@@ -18,6 +18,12 @@ msgstr "Repeat password"
 msgid "email"
 msgstr "Email"
 
+msgid "is_admin"
+msgstr "Is admin"
+
+msgid "is_equal"
+msgstr "Is equal"
+
 msgid "The passwords do not match"
 msgstr ""
 

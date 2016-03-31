@@ -18,10 +18,14 @@ class CampaignAddress(Base):
 
     campaign_id = Column(Integer, ForeignKey('campaigns.id'), primary_key=True)
     address_id = Column(Integer, ForeignKey('addresses.id'), primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    """The user to whom this address has been assigned."""
+
     modified = Column(DateTime, nullable=False, default=datetime.utcnow)
     state = Column(AddressStates(name='address_states'), default=AddressStates.selected)
     campaign = relationship('Campaign', backref='campaign_addresses')
     address = relationship('Address', backref='campaign_addresses')
+    user = relationship('User', backref='campaign_addresses')
 
     def serialised_address(self):
         """Return the linked address as a dict."""

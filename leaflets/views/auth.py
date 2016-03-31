@@ -45,13 +45,10 @@ class LoginHandler(BaseHandler):
     @gen.coroutine
     def post(self):
         """Log in a user."""
-        print(1)
         form = self.form
         if not form.validate():
             return self.get(form)
-        print(2)
         user = self.get_user(form)
-        print(3)
         if user:
             self.set_secure_cookie("user_id", str(user.id))
             self.redirect("/")
