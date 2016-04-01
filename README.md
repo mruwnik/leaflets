@@ -69,10 +69,21 @@ Open `localhost:5000` in your browser to see if the webpage is working.
 
 `pip install -e  '.[tests]'` to initially set everything up, after which `py.test` will run all tests
 
+# Fake data
+
+To make it easier to get up and running, it is possible to recreate the database with a single command:
+`python leaflets/dev.py recreate`
+This command will drop the existing database and recreate it, filling it with fake data. The default credentials are:
+
+* username: user
+* password: password
+
+To make it easier to view the database, there is a preconfigured IPython instance that can be started via `python leaflets/dev.py shell`
 
 # i18n
 
 The basics are outlined in [the gettext documentation](https://docs.python.org/3/library/gettext.html). The general idea is for each language to have their own entry in `leaflets/locale` where each string in the program has its own entry. This has to be manually maintained, which is a hassle, but there you are. After updating a translations file (`messages.pot`), it has to be compiled to a machine readable form. This is done by executing `msgfmt messages.pot` in the folder with the translations. Once that is done, it should suffice to restart the application for the new translations to be used.
+To compile all locales at once, call `python leaflets/dev.py translate`
 
 # Users structure
 

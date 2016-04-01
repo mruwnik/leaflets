@@ -1,4 +1,5 @@
 import sys
+from subprocess import check_output
 from datetime import datetime, timedelta
 from random import randint, choice, sample
 from itertools import count
@@ -167,12 +168,23 @@ def db_shell():
     embed(user_ns=user_ns, banner2=banner)
 
 
+def compile_locales():
+    """Compile all messages.pot files."""
+    base_path = Path(__file__).parent / 'locale'
+    for locale in base_path.dirs():
+        with (locale / 'LC_MESSAGES'):
+            print('* translating', locale)
+            check_output(['msgfmt', 'messages.pot'])
+
+
 if __name__ == "__main__":
     if not sys.argv[1:]:
-        print('either select "shell" or "recreate"')
+        print('either select "translate", "shell" or "recreate"')
     else:
         if sys.argv[1] == 'shell':
             db_shell()
+        elif sys.argv[1] == 'translate':
+            compile_locales()
         elif sys.argv[1] == 'recreate':
             db_drop()
             db_init()
