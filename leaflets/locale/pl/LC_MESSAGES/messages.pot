@@ -168,6 +168,15 @@ msgstr "Czynności"
 msgid "show_campaign"
 msgstr "Pokaż kampanię"
 
+msgid "user_campaigns"
+msgstr "Kampanie"
+
+msgid "parent_campaigns"
+msgstr "Kampanie nadrzędne"
+
+msgid "children_campaigns"
+msgstr "Kampanie podrzędne"
+
 #: ./leaflets/templates/campaign/list.html:21
 msgid "edit_campaign"
 msgstr "Edytuj kampanię"

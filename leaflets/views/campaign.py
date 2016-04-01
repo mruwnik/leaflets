@@ -89,9 +89,14 @@ class ListCampaignsHandler(BaseHandler):
 
     @authenticated
     def get(self):
+        user = self.current_user_obj
         self.render(
             'campaign/list.html',
-            campaigns=Campaign.query.filter(Campaign.user_id == self.get_current_user()).all()
+            campaigns=[
+                ('user_campaigns', user.campaigns),
+                ('parent_campaigns', user.parent_campaigns),
+                ('children_campaigns', user.children_campaigns),
+            ],
         )
 
 

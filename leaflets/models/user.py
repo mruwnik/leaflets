@@ -27,3 +27,19 @@ class User(Base):
         :param str passwd: the password to be hashed
         """
         return sha512(passwd.encode('utf-8')).hexdigest()
+
+    @property
+    def parent_campaigns(self):
+        """Get all direct campaigns from all parents."""
+        if not self.parent:
+            return []
+        return self.parent.parent_campaigns + self.parent.campaigns
+
+    @property
+    def children_campaigns(self):
+        """Get all children campaigns."""
+        campaigns = []
+        for child in self.children:
+            campaigns += child.campaigns
+            campaigns += child.children_campaigns
+        return campaigns

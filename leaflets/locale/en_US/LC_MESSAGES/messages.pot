@@ -168,6 +168,15 @@ msgstr "Show campaign"
 msgid "edit_campaign"
 msgstr "Edit campaign"
 
+msgid "user_campaigns"
+msgstr "Campaigns"
+
+msgid "parent_campaigns"
+msgstr "Parent campaigns"
+
+msgid "children_campaigns"
+msgstr "Children campaigns"
+
 #: ./leaflets/templates/campaign/show.html:7
 msgid "start_date"
 msgstr "Campaign start"

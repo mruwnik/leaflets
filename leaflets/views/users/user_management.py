@@ -1,3 +1,5 @@
+from tornado.web import authenticated
+
 from leaflets.views.base import BaseHandler
 from leaflets.models import User
 
@@ -8,6 +10,7 @@ class UsersListHandler(BaseHandler):
 
     url = '/users/list'
 
+    @authenticated
     def get(self):
         """Show all users that this user can see."""
         current_user = User.query.get(self.current_user)
