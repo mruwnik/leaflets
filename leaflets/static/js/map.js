@@ -5,7 +5,7 @@ var markersLayer = L.markerClusterGroup({
     removeOutsideVisibleBounds: true,
     disableClusteringAtZoom: 20,
     iconCreateFunction: function(cluster) {
-       var childCount = cluster.getChildCount();
+        var childCount = cluster.getChildCount();
 
         var selected = cluster.getAllChildMarkers().reduce(function(prev, curr) {
             return prev + (curr.state == 'marked' ? 1 : 0);
@@ -20,8 +20,14 @@ var markersLayer = L.markerClusterGroup({
             c += 'none-selected';
         }
 
+        // If there are some addresses selected, and it will fit in the cluster circle, show how many are selected
+        var contents = childCount;
+        if (selected > 0 && selected < childCount && (selected + ' / ' + childCount).length < 7) {
+            contents = selected + ' / ' + childCount;
+        }
+
         return new L.DivIcon({
-            html: '<div><span>' + childCount + '</span></div>',
+            html: '<div><span>' + contents + '</span></div>',
             className: 'marker-cluster' + c,
             iconSize: new L.Point(40, 40)
         });
@@ -99,17 +105,17 @@ CampaignMarker.prototype.colours = {
     selected: {
         color: 'red',
         fillOpacity: 0.5,
-        radius: 25
+        radius: 15
     },
     pending: {
         color: 'gray',
         fillOpacity: 0.5,
-        radius: 25
+        radius: 15
     },
     marked: {
         color: 'blue',
         fillOpacity: 0.5,
-        radius: 25
+        radius: 15
     }
 };
 /**
