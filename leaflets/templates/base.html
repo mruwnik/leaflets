@@ -12,7 +12,7 @@
     <body>
         {% block header %}
             {% if is_admin() %}
-                <a href="{{ reverse_url('add_user') }}">{{ _('add user') }}</a>
+                <a href="{{ reverse_url('list_users') }}">{{ _('manage_users') }}</a>
                 <a href="{{ reverse_url('import_addresses') }}">{{ _('import_addresses') }}</a>
             {% end %}
             <span style="margin-right: 20px;"></span>
@@ -25,12 +25,8 @@
         {% end %}
         {% block body %}{% end %}
         {% block map %}{% end %}
-        <script src="//code.jquery.com/jquery-1.7.1.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet-providers/1.1.7/leaflet-providers.min.js"></script>
-        <script src="{{ static_url('js/locationfilter.js') }}"></script>
-        <script src="{{ static_url('js/leaflet.markercluster-src.js') }}"></script>
 
-        <script src="{{ static_url('js/map.js') }}"></script>
+        <script src="//code.jquery.com/jquery-1.7.1.min.js"></script>
+        {% block scripts %}{% end %}
     </body>
 </html>

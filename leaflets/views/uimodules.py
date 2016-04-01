@@ -63,3 +63,70 @@ def current_user_name(handler):
 
     user = User.query.get(user_id)
     return user and user.username
+
+
+def render_user_row(handler, user):
+    return """
+        <tr>
+            <td>{username}</td>
+            <td>{email}</td>
+            <td>{is_admin}</td>
+            <td>{children}</td>
+        </tr>
+    """.format(
+        username=user.username,
+        email=user.email,
+        is_admin=user.admin,
+        children=render_users(handler, user.children),
+    )
+
+
+def render_users_table(handler, users):
+    if not users:
+        return ''
+
+    print(render_user_row(handler, users[0]))
+    print('asd')
+    return """<table>
+        <tr>
+            <th>{name_label}</th>
+            <th>{email_label}</th>
+            <th>{is_admin_label}</th>
+            <th>{children_label}</th>
+        </tr>
+        {rows}
+    </table>
+    """.format(
+        name_label=handler.locale.translate('name'),
+        email_label=handler.locale.translate('email'),
+        is_admin_label=handler.locale.translate('is_admin'),
+        children_label=handler.locale.translate('children'),
+        rows='\n'.join([render_user_row(handler, user) for user in users])
+    )
+
+
+def render_user(handler, user):
+    children = ''
+    if user.children:
+        children = """
+            <input type="checkbox"/><div class="children" style="margin-left: 20px;">%s</div>
+        """ % render_users(handler, user.children)
+
+    return """
+        <div class="user">
+            <span class="user-info">{username} &lt;{email}&gt; {is_admin}</span>
+            {children}
+        </div>
+    """.format(
+        username=user.username,
+        email=user.email,
+        is_admin='(admin)' if user.admin else '',
+        children=children,
+    )
+
+
+def render_users(handler, users):
+    if not users:
+        return ''
+
+    return '\n'.join([render_user(handler, user) for user in users])

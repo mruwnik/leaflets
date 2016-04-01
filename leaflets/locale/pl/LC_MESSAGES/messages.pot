@@ -125,6 +125,9 @@ msgstr "Wycztaj poprzez wybieranie z mapy"
 msgid "You can only select a limited area at once, so if you choose too large an area, an error will appear"
 msgstr "Na raz można tylko wczytać ograniczony obszar, więc jeżeli zbyt duży obszar zostanie wybrany, wyświetli się komunikat błędu"
 
+msgid "manage_users"
+msgstr "Zarządzaj użytkownikami"
+
 #: ./leaflets/templates/base.html:14
 msgid "add user"
 msgstr "Dodaj użytkownika"

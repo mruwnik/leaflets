@@ -125,6 +125,9 @@ msgstr ""
 msgid "add user"
 msgstr "Add a user"
 
+msgid "manage_users"
+msgstr "Manage users"
+
 #: ./leaflets/templates/base.html:15
 msgid "import_addresses"
 msgstr "Import addresses"

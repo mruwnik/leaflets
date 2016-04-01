@@ -1,6 +1,6 @@
 from tornado.web import authenticated
 
-from leaflets.views import LoginHandler
+from leaflets.views.users.auth import LoginHandler
 from leaflets.forms.auth import AddUserForm
 from leaflets.models import User
 from leaflets import database
@@ -8,7 +8,7 @@ from leaflets import database
 
 class AddUserHandler(LoginHandler):
 
-    url = '/add_user'
+    url = '/users/add'
     name = 'add_user'
 
     PASSWORD_MISMATCH = 'The passwords do not match'

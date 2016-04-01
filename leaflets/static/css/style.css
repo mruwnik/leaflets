@@ -22,3 +22,20 @@ table, th, td {
 #map-container {
     height: 800px;
 }
+
+.user {
+    margin: 10px;
+}
+
+.user input[type="checkbox"]{
+      float: left;
+      margin-right: 20px;
+}
+
+.user input[type="checkbox"]:checked + div{
+    display: block;
+}
+
+.user input[type="checkbox"] + div{
+    display: none;
+}
