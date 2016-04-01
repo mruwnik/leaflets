@@ -2,7 +2,6 @@ import sys
 from subprocess import check_output
 from datetime import datetime, timedelta
 from random import randint, choice, sample
-from itertools import count
 
 from IPython import embed
 from path import Path
@@ -11,7 +10,7 @@ from alembic import command as alembic_command
 
 from leaflets import database
 from leaflets.models import Address, User
-from leaflets.views import LoginHandler, AddressImportHandler
+from leaflets.views import AddressImportHandler
 from leaflets.views.adresses.address_utils import find_addresses
 from leaflets.forms import CampaignForm
 
@@ -38,16 +37,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas accumsan imper
 """
 
 
-counter = count(1)
-
-
 def create_user(user_name, parent=None):
     """Create a new user."""
     return User(
-        id=next(counter),
         username=user_name,
         email=user_name.replace(' ', '_') + '@bla.bl',
-        password_hash=LoginHandler.hash(DEFAULT_USER_PASSWORD),
+        password_hash=User.hash(DEFAULT_USER_PASSWORD),
         admin=choice([True, False]),
         parent_id=parent,
     )
@@ -58,15 +53,15 @@ def add_users():
     print('* adding users')
     print('  -', DEFAULT_USER)
     default_user = User(
-        id=next(counter),
         username=DEFAULT_USER,
         email=DEFAULT_USER + '@bla.bl',
-        password_hash=LoginHandler.hash(DEFAULT_USER_PASSWORD),
+        password_hash=User.hash(DEFAULT_USER_PASSWORD),
         admin=True,
         parent_id=None,
     )
 
     database.session.add(default_user)
+    database.session.commit()
 
     # Create 10 top level users
     print('  - top level users')
@@ -77,6 +72,7 @@ def add_users():
         print('  -', username)
         user = create_user(username, default_user.id)
         database.session.add(user)
+        database.session.commit()
 
         if user.admin:
             database.session.add_all(

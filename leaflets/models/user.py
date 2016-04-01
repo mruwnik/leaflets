@@ -1,3 +1,5 @@
+from hashlib import sha512
+
 from sqlalchemy import Column, String, Boolean, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -17,3 +19,11 @@ class User(Base):
 
     parent_id = Column(Integer, ForeignKey('users.id'), nullable=True)
     parent = relationship('User', backref='children', remote_side=id)
+
+    @staticmethod
+    def hash(passwd):
+        """Get a hash for the given password.
+
+        :param str passwd: the password to be hashed
+        """
+        return sha512(passwd.encode('utf-8')).hexdigest()

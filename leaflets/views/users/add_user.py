@@ -1,9 +1,9 @@
 from tornado.web import authenticated
 
 from leaflets.views.users.auth import LoginHandler
-from leaflets.forms.auth import AddUserForm
+from leaflets.views.users.user_management import UsersListHandler
+from leaflets.forms.auth import AddUserForm, EditUserForm
 from leaflets.models import User
-from leaflets import database
 
 
 class AddUserHandler(LoginHandler):
@@ -11,7 +11,6 @@ class AddUserHandler(LoginHandler):
     url = '/users/add'
     name = 'add_user'
 
-    PASSWORD_MISMATCH = 'The passwords do not match'
     EXISTING_USER = 'There already is a user with that username'
 
     @property
@@ -25,8 +24,38 @@ class AddUserHandler(LoginHandler):
         if not form.validate():
             return self.get(form)
 
-        if form.password.data != form.password_repeat.data:
-            form.password.errors.append(self.PASSWORD_MISMATCH)
+        user = User.query.filter(User.username == form.name.data).scalar()
+        if user:
+            form.name.errors.append(self.EXISTING_USER)
+            return self.get(form)
+
+        form.save(self.current_user)
+        self.redirect(UsersListHandler.url)
+
+
+class EditUserHandler(LoginHandler):
+
+    url = '/users/edit'
+    name = 'edit_user'
+
+    EXISTING_USER = 'There already is a user with that username'
+
+    @property
+    def form(self):
+        user = User.query.get(self.get_argument('user'))
+        return EditUserForm(
+            name=user.username,
+            email=user.email,
+            is_admin=user.admin,
+            is_equal=user.parent_id == self.current_user_obj.parent_id,
+            user_id=user.id,
+        )
+
+    @authenticated
+    def post(self):
+        """Add a new user."""
+        form = EditUserForm(self.request.arguments)
+        if not form.validate():
             return self.get(form)
 
         user = User.query.filter(User.username == form.name.data).scalar()
@@ -34,14 +63,5 @@ class AddUserHandler(LoginHandler):
             form.name.errors.append(self.EXISTING_USER)
             return self.get(form)
 
-        user = User(
-            username=form.name.data,
-            email=form.email.data,
-            password_hash=self.hash(form.password.data),
-            admin=form.is_admin.data,
-            parent_id=User.query.get(self.current_user).parent_id if form.is_equal.data else self.current_user,
-        )
-
-        database.session.add(user)
-        database.session.commit()
-        self.redirect("/")
+        form.update()
+        self.redirect(UsersListHandler.url)

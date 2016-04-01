@@ -18,13 +18,18 @@ class BaseHandler(RequestHandler):
         return user_id and int(user_id)
 
     @property
-    def is_admin(self):
-        """Check whether the current user is an admin."""
+    def current_user_obj(self):
+        """Get an object representing the currently logged in user."""
         user_id = self.get_current_user()
         if not user_id:
             return None
 
-        user = User.query.get(user_id)
+        return User.query.get(user_id)
+
+    @property
+    def is_admin(self):
+        """Check whether the current user is an admin."""
+        user = self.current_user_obj
         return user and user.admin
 
     def prepare(self):

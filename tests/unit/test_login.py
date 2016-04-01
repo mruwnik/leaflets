@@ -1,7 +1,7 @@
 import pytest
 
 from leaflets.forms import LoginForm
-from leaflets.views import LoginHandler
+from leaflets.models import User
 
 
 REQUIRED_FIELD = 'This field is required.'
@@ -35,5 +35,5 @@ def test_full_form():
 ))
 def test_get_hash(value, hash):
     """Make sure that hashes are correctly calculated."""
-    assert LoginHandler.hash(value) == hash
+    assert User.hash(value) == hash
 

@@ -1,8 +1,7 @@
-
 import pytest
-from tornado.httpclient import HTTPRequest
 
 from leaflets.views import LoginHandler
+from leaflets.models import User
 
 
 REQUIRED_FIELD = 'This field is required.'
@@ -65,7 +64,7 @@ def test_login_password(xsrf_client, base_url, app, database):
 
     # update the user's password to be a valid hash - login should work
     with database.cursor() as c:
-        c.execute('UPDATE users set password_hash=%s', (LoginHandler.hash('test'),))
+        c.execute('UPDATE users set password_hash=%s', (User.hash('test'),))
         database.commit()
 
     attempt_login(will_fail=False)
