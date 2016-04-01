@@ -158,7 +158,7 @@ def admin(db_session):
         return user.id
 
     with patch('leaflets.views.BaseHandler.get_current_user', return_value=user.id), \
-         patch('leaflets.views.BaseHandler.is_admin', property(is_admin)):
+         patch('leaflets.views.BaseHandler.is_admin', property(is_admin)):  # noqa
         yield user.id
 
 

@@ -1,7 +1,6 @@
 import csv
 import re
 import logging
-from urllib.parse import urlencode
 
 from tornado import gen
 from tornado.web import authenticated, HTTPError
