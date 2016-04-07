@@ -4,7 +4,7 @@ import pytest
 from hypothesis import given
 import hypothesis.strategies as st
 
-from leaflets.views.adresses.address_utils import as_dict, avg, coords, geo_field, get_address, coords_center
+from leaflets.views.adresses.parse import as_dict, avg, coords, geo_field, get_address, coords_center
 from leaflets.models import Address
 
 

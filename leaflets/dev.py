@@ -11,7 +11,7 @@ from alembic import command as alembic_command
 from leaflets import database
 from leaflets.models import Address, User
 from leaflets.views import AddressImportHandler
-from leaflets.views.adresses.address_utils import find_addresses
+from leaflets.views.adresses.parse import find_addresses
 from leaflets.forms import CampaignForm
 
 

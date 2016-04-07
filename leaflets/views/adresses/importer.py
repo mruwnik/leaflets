@@ -6,7 +6,7 @@ from tornado import gen
 from tornado.web import authenticated, HTTPError
 
 from leaflets.views.base import BaseHandler
-from leaflets.views.adresses.address_utils import find_addresses
+from leaflets.views.adresses.parse import find_addresses
 from leaflets import database
 from leaflets.models import Address
 

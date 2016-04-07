@@ -4,7 +4,7 @@ from tornado import gen
 from momoko.exceptions import PartiallyConnectedError
 
 from leaflets.views.base import BaseHandler
-from leaflets.views.adresses.address_utils import as_dict
+from leaflets.views.adresses.parse import as_dict
 from leaflets.models import Address
 
 
