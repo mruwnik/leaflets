@@ -16,6 +16,7 @@ from leaflets.app import setup_app
 from leaflets.views import BaseHandler  # noqa
 from leaflets.models import User, Address, CampaignAddress, Campaign
 from leaflets.etc import options
+from leaflets.dev import add_users
 from leaflets import database as db
 
 options.DB_USER = 'postgres'
@@ -159,7 +160,7 @@ def admin(db_session):
 
     with patch('leaflets.views.BaseHandler.get_current_user', return_value=user.id), \
          patch('leaflets.views.BaseHandler.is_admin', property(is_admin)):  # noqa
-        yield user.id
+        yield user
 
 
 ADDRESSES = [
@@ -207,9 +208,17 @@ def campaign(db_session, addresses, admin):
         name='斑尾高原スキー場',
         desc='test campaign dęść→ß→þłπóęœ',
         start=datetime.utcnow(),
-        user_id=admin,
+        user=admin,
     )
     db_session.add(camp)
     db_session.add_all([CampaignAddress(campaign=camp, address_id=addr.id) for addr in addresses])
     db_session.commit()
     return camp
+
+
+@pytest.fixture
+def users(admin, db_session):
+    """Add a load of fake users."""
+    add_users(admin)
+    db_session.commit()
+    return db_session.query(User).all()

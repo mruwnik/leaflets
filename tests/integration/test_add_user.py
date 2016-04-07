@@ -111,6 +111,6 @@ def test_add_user_equal(xsrf_client, base_url, app, db_session, admin):
         assert eqaul_user.parent is user.parent
         assert eqaul_user not in user.children
 
-    yield check_children(admin)
+    yield check_children(admin.id)
 
-    yield check_children(db_session.query(User).get(admin).children[0].id)
+    yield check_children(db_session.query(User).get(admin.id).children[0].id)

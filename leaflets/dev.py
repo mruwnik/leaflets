@@ -48,10 +48,9 @@ def create_user(user_name, parent=None):
     )
 
 
-def add_users():
-    """Add a load of fake users."""
-    print('* adding users')
-    print('  -', DEFAULT_USER)
+def add_default_user():
+    """Add the default user."""
+    print('* adding default user')
     default_user = User(
         username=DEFAULT_USER,
         email=DEFAULT_USER + '@bla.bl',
@@ -62,6 +61,12 @@ def add_users():
 
     database.session.add(default_user)
     database.session.commit()
+    return default_user
+
+
+def add_users(default_user):
+    """Add a load of fake users."""
+    print('* adding users')
 
     # Create 10 top level users
     print('  - top level users')
@@ -142,7 +147,7 @@ def db_init():
 
 def db_generate():
     """Generate fake data and insert it into the database."""
-    add_users()
+    add_users(add_default_user())
     add_addressess()
     add_campaigns()
 

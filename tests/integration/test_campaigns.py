@@ -40,7 +40,7 @@ def test_add_campaign(xsrf_client, base_url, db_session, addresses, admin):
     assert campaign.desc == 'description'
     assert campaign.start == start
     assert now <= campaign.created <= datetime.utcnow()
-    assert campaign.user_id == admin
+    assert campaign.user.id == admin.id
 
     # check whether all addresses were attached
     for addr in campaign.addresses:
@@ -82,7 +82,7 @@ def test_edit_campaign(xsrf_client, base_url, db_session, addresses, campaign, a
     assert campaign.name == 'new test'
     assert campaign.desc == 'new description'
     assert campaign.start == start.replace(microsecond=0)
-    assert campaign.user_id == admin
+    assert campaign.user.id == admin.id
 
     # check whether all addresses were attached
     assert set(address_ids) == {addr.id for addr in campaign.addresses}
