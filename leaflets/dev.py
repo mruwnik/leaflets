@@ -81,7 +81,7 @@ def add_users(default_user):
 
         if user.admin:
             database.session.add_all(
-                [create_user('admin %d\'s child %d' % (user.id, j), user.id) for j in range(randint(0, 10))])
+                [create_user('admin %d\'s child %d' % (user.id, j), user.id) for j in range(randint(1, 10))])
 
 
 def add_addressess():

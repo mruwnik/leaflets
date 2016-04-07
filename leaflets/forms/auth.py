@@ -17,12 +17,14 @@ class EditUserForm(Form):
     is_equal = BooleanField('is_equal')
     user_id = HiddenField('user_id')
 
-    def update(self):
+    def update(self, user):
         """Update the given user."""
-        user = User.query.get(self.user_id.data)
-
         user.email = self.email.data
         user.admin = self.is_admin.data
+
+        # if selected, make the given user equal to this one
+        if self.is_equal.data and user.parent:
+            user.parent = user.parent.parent
 
         database.session.commit()
         return user

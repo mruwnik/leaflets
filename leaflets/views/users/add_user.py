@@ -42,9 +42,11 @@ class EditUserHandler(LoginHandler):
 
     @property
     def form(self):
-        user = User.query.get(self.get_argument('user'))
+        user = User.query.get(int(self.get_argument('user')))
+        if not user:
+            self.redirect(UsersListHandler.url)
+
         return EditUserForm(
-            name=user.username,
             email=user.email,
             is_admin=user.admin,
             is_equal=user.parent_id == self.current_user_obj.parent_id,
@@ -58,10 +60,8 @@ class EditUserHandler(LoginHandler):
         if not form.validate():
             return self.get(form)
 
-        user = User.query.filter(User.username == form.name.data).scalar()
+        user = User.query.get(int(form.user_id.data))
         if user:
-            form.name.errors.append(self.EXISTING_USER)
-            return self.get(form)
+            form.update(user)
 
-        form.update()
         self.redirect(UsersListHandler.url)

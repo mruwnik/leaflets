@@ -78,7 +78,7 @@ def render_user(handler, user):
     return """
         <div class="user">
             <span class="user-info">
-                <a href="{edit_user}">{username}</a> &lt;{email}&gt; {is_admin}
+                <a href="{edit_user}">{username}</a><span class="email"> &lt;{email}&gt; </span> {is_admin}
             </span>
             {children}
         </div>
