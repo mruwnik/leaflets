@@ -57,32 +57,34 @@ def is_admin(handler):
     return handler.is_admin
 
 
-def current_user_name(handler):
-    """Get the name of the current user."""
+def current_user_object(handler):
+    """Get the current user."""
     user_id = handler.get_current_user()
     if not user_id:
         return None
 
     user = User.query.get(user_id)
-    return user and user.username
+    return user
 
 
-def render_user(handler, user):
+def render_user(handler, user, selectable=False):
     """Generate HTML for the given user."""
     children = ''
     if user.children:
         children = """
             <input type="checkbox"/><div class="children" style="margin-left: 20px;">%s</div>
-        """ % render_users(handler, user.children)
+        """ % render_users(handler, user.children, selectable)
 
     return """
         <div class="user">
+            {radio}
             <span class="user-info">
                 <a href="{edit_user}">{username}</a><span class="email"> &lt;{email}&gt; </span> {is_admin}
             </span>
             {children}
         </div>
     """.format(
+        radio='<input type="radio" name="child"/>' if selectable else '',
         username=user.username,
         edit_user=handler.reverse_url('edit_user') + '?user=%d' % user.id,
         email=user.email,
@@ -91,9 +93,9 @@ def render_user(handler, user):
     )
 
 
-def render_users(handler, users):
+def render_users(handler, users, selectable=False):
     """Render the given users."""
     if not users:
         return ''
 
-    return '\n'.join([render_user(handler, user) for user in users])
+    return '\n'.join([render_user(handler, user, selectable) for user in users])
