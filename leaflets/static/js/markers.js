@@ -1,3 +1,21 @@
+/**
+    Marker definitions.
+
+    A marker is simply a point on the map. Various markers can add extra functionality.
+    The following markers are defined:
+
+     * Marker - the default marker that just shows the address when clicked on
+
+     * CampaignMarker - toggles whether the given address has been selected or not when
+            clicked on. This is done via websockets (when available), so any
+            change will immediately be automatically updated for to all users.
+            The following colours can be displayed by this marker:
+        - red   - the given address has not been visited
+        - blue  - the given address has been visited
+        - grey  - the given address is being updated
+**/
+
+
 
 /**
 

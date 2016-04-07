@@ -1,5 +1,5 @@
 /**
-    Work out what the current configuration is
+    Work out what the current configuration is and setup the map
  **/
 var markerClasses = {
     'Marker': Markers.Marker,

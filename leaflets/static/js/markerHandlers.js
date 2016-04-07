@@ -1,3 +1,25 @@
+/**
+    Get. display and handle markers.
+
+    Each handler is responsible for downloading all appropriate markers and adding
+    them to the map. They should also be able to handler the map buttons (if appropriate).
+
+    * DisplaySelector - Get all available addresses and display them. Clicking on an
+            address displays a text representation of the address.
+
+    * AddressAdder  - Used to import addresses from a selected area. The map selector
+            is used for doing so. If the selected area is too large, the selector will
+            turn red - otherwise it is grey. After an area is imported, all addresses
+            from that area will be displayed on the map. Clicking on a marker shows its
+            text representation.
+
+    * CampaignAddressSelector   - Used to add addresses to a campaign. The selector has no size
+            limits, any selected addresses are displayed. The addresses will not be assigned
+            to the campaign until it is saved. Clicking on a marker displays its address.
+
+**/
+
+
 
 /**
     The base handler for the map selector
