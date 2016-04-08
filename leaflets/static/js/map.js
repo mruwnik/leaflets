@@ -3,7 +3,7 @@ L.tileLayer.provider('OpenStreetMap.Mapnik').addTo(map);
 window.markersLayer = L.markerClusterGroup({
     showCoverageOnHover: true,
     removeOutsideVisibleBounds: true,
-    disableClusteringAtZoom: 20,
+    disableClusteringAtZoom: $('#map-container').data('clustering-zoom'),
     iconCreateFunction: function(cluster) {
         var childCount = cluster.getChildCount();
 
@@ -33,3 +33,4 @@ window.markersLayer = L.markerClusterGroup({
         });
     }
 }).addTo(map);
+console.log($('#map-container').data('clustering-zoom'));

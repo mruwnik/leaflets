@@ -1,23 +1,14 @@
 /**
     Work out what the current configuration is and setup the map
  **/
-var markerClasses = {
-    'Marker': Markers.Marker,
-    'CampaignMarker': Markers.CampaignMarker,
-}
-var handlerClasses = {
-    'DisplaySelector': MarkerHandler.DisplaySelector,
-    'AddressAdder': MarkerHandler.AddressAdder,
-    'CampaignAddressSelector': MarkerHandler.CampaignAddressSelector
-}
 var mapControls = {
     showSelector: $('.controls #show-selector'),
     selectAreaButton: $('.controls #select-area').hide(),
     deselectAreaButton: $('.controls #deselect-area').hide(),
     mapButtons: $('.selector-control'),
     errors: $('.map-errors'),
-    markerClass: markerClasses[$('#map-container').data('marker')] || Marker,
-    addressHandler: handlerClasses[$('#map-container').data('address-handler')]
+    markerClass: Markers[$('#map-container').data('marker')] || Marker,
+    addressHandler: MarkerHandler[$('#map-container').data('address-handler')]
 }
 
 /**

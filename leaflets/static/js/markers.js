@@ -13,6 +13,11 @@
         - red   - the given address has not been visited
         - blue  - the given address has been visited
         - grey  - the given address is being updated
+
+     * UserAssignMarker - Assigns an address to the currently selected user.
+        - red   - unassigned
+        - blue  - assigned to the current user
+        - light blue - assigned to a different user
 **/
 
 
@@ -62,7 +67,7 @@ CampaignMarker = function(address){
     self.campaignId = CampaignMarker.campaignId()
     self.position = [address.lat, address.lon],
     self.address = address;
-    self.marker = L.circleMarker(this.position, this.currentColour())
+    self.marker = L.circle(this.position, 7, this.currentColour())
                     .on('click', function(e) { self.selected(self.marker.state != 'marked'); });
     self.marker.state = address.state;
 };
@@ -86,18 +91,15 @@ CampaignMarker.url = '/campaign/addresses';
 CampaignMarker.prototype.colours = {
     selected: {
         color: 'red',
-        fillOpacity: 0.5,
-        radius: 15
+        fillOpacity: 0.5
     },
     pending: {
         color: 'gray',
-        fillOpacity: 0.5,
-        radius: 15
+        fillOpacity: 0.5
     },
     marked: {
         color: 'blue',
-        fillOpacity: 0.5,
-        radius: 15
+        fillOpacity: 0.5
     }
 };
 /**
@@ -161,7 +163,7 @@ CampaignMarker.prototype.sendMessage = function(message) {
  **/
 CampaignMarker.prototype.postMessage = function(params) {
     params['_xsrf'] = $('[name="_xsrf"]').val();
-    return $.post('/campaign/addresses', params, function(result) {
+    return $.post(CampaignMarker.url, params, function(result) {
         var point = MarkersGetter.markers[params.address],
             marker = point.marker;
         marker.state = params.state;
@@ -193,6 +195,80 @@ CampaignMarker.prototype.selected = function(isMarked) {
         campaign: this.campaignId,
         address: this.address.id,
         state: isMarked ? 'marked' : 'selected'
+    });
+}
+
+
+UserAssignMarker = function(address){
+    var self = this;
+    self.campaignId = CampaignMarker.campaignId()
+    self.position = [address.lat, address.lon],
+    self.address = address;
+    self.marker = L.circle(this.position, 7, this.currentColour())
+                        .on('click', function(e) { self.assign(); });
+    self.marker.userId = address.userId
+};
+UserAssignMarker.defaultBounds = {campaign: CampaignMarker.campaignId()};
+UserAssignMarker.selectedUser = function() {
+    return $('div.user input[name="child"]:checked').val();
+};
+UserAssignMarker.url = '/campaign/assign_user';
+UserAssignMarker.prototype = Object.create(CampaignMarker.prototype);
+
+UserAssignMarker.prototype.colours = {
+    unassigned: {
+        color: 'red',
+        fillOpacity: 0.5
+    },
+    pending: {
+        color: 'gray',
+        fillOpacity: 0.5
+    },
+    currentUser: {
+        color: 'blue',
+        fillOpacity: 0.5
+    },
+    assigned: {
+        color: '#5DADEC',
+        fillOpacity: 0.5
+    }
+};
+
+UserAssignMarker.prototype.currentColour = function() {
+    var marker = this.marker || this.address;
+    if (!marker.userId) {
+        return this.colours.unassigned;
+    } else if (marker.userId == UserAssignMarker.selectedUser()) {
+        return this.colours.currentUser;
+    } else {
+        return this.colours.assigned;
+    }
+};
+
+UserAssignMarker.prototype.assign = function(e) {
+    var userId = UserAssignMarker.selectedUser();
+
+    // The state is already being updated
+    if (this.marker.state == 'pending' || userId === undefined) {
+        return;
+    }
+
+    this.marker.setStyle(this.colours.pending);
+    this.marker.state = 'pending';
+
+    var params = {
+        campaign: this.campaignId,
+        address: this.address.id,
+        userId: userId,
+        '_xsrf': $('[name="_xsrf"]').val()
+    };
+
+    return $.post(UserAssignMarker.url, params, function(result) {
+        var point = MarkersGetter.markers[params.address],
+            marker = point.marker;
+            marker.userId = params.userId;
+        marker.setStyle(point.currentColour());
+        markersLayer.refreshClusters([marker]);
     });
 }
 
@@ -245,5 +321,6 @@ MarkersGetter.remove = function(addressId) {
 window.Markers = {
     Marker: Marker,
     CampaignMarker: CampaignMarker,
+    UserAssignMarker: UserAssignMarker,
     MarkersGetter: MarkersGetter
 }

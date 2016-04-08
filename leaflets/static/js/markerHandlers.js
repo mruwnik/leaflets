@@ -25,7 +25,7 @@
     The base handler for the map selector
  **/
 BaseAddressSelector = function(xsrf) {
-    this.xsrf= xsrf || $('[name="_xsrf"]').val();
+    this.xsrf = xsrf || $('[name="_xsrf"]').val();
 };
 BaseAddressSelector.prototype = {
     locationFilter: new L.LocationFilter().addTo(map)
@@ -55,7 +55,6 @@ BaseAddressSelector.prototype.showLocationFilter = function() {;
 
 /** A simple selector that only displays addresses **/
 DisplaySelector = new BaseAddressSelector();
-
 
 /**
     Handle adding new addresses to the system.
@@ -161,8 +160,40 @@ CampaignAddressSelector.init = function(address_ids) {
     return Markers.MarkersGetter(Markers.Marker, params, true, 'post');
 };
 
+
+UserAssignSelector = new BaseAddressSelector();
+UserAssignSelector.init = function() {
+    Markers.MarkersGetter(mapControls.markerClass);
+    $('.user input[type="radio"]').click(function (e) {
+        $.each(Markers.MarkersGetter.markers, function(id, marker) {
+            marker.marker.setStyle(marker.currentColour());
+        });
+    });
+};
+
+UserAssignSelector.selectArea = function(boundingBox) {
+    var params = {
+        'campaign': CampaignMarker.campaignId(),
+        'userId': mapControls.markerClass.selectedUser(),
+        '_xsrf': $('[name="_xsrf"]').val()
+    };
+    $.extend(params, boundingBox || UserAssignSelector.currentBounds())
+    return $.post(mapControls.markerClass.url, params, function(results) {
+        mapControls.errors.text('');
+        $.each(results, function(id, address) {
+            var marker = MarkersGetter.markers[id];
+            marker.marker.userId = address.userId;
+            marker.marker.setStyle(marker.currentColour());
+        });
+        //Markers.MarkersGetter(mapControls.markerClass, boundingBox, false);
+    }).error(function(error) {
+        mapControls.errors.text(error.statusText);
+    });
+};
+
 window.MarkerHandler = {
     DisplaySelector: DisplaySelector,
     AddressAdder: AddressAdder,
-    CampaignAddressSelector: CampaignAddressSelector
+    CampaignAddressSelector: CampaignAddressSelector,
+    UserAssignSelector: UserAssignSelector
 }

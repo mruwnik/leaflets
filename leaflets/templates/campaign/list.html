@@ -20,8 +20,9 @@
                     <td>{{ campaign.desc }}</td>
                     <td>{{ campaign.start }}</td>
                     <td>
-                        <a href="{{ reverse_url('show_campaign') }}?campaign={{campaign.id}}">{{ _('show_campaign') }}</a>
-                        <a href="{{ reverse_url('edit_campaign') }}?campaign={{campaign.id}}">{{ _('edit_campaign') }}</a>
+                        <a href="{{ reverse_url('show_campaign') }}?campaign={{campaign.id}}">{{ _('show_campaign') }}</a><br>
+                        <a href="{{ reverse_url('edit_campaign') }}?campaign={{campaign.id}}">{{ _('edit_campaign') }}</a><br>
+                        <a href="{{ reverse_url('assign_campaign') }}?campaign={{campaign.id}}">{{ _('assign_campaign') }}</a><br>
                     </td>
                 </tr>
                 {% end %}
