@@ -1,10 +1,15 @@
+import json
+
 from sqlalchemy.exc import IntegrityError
 from tornado import gen
-from tornado.web import authenticated
+from tornado.web import authenticated, HTTPError
 
 from leaflets.views.base import BaseHandler
-from leaflets.views.campaign.handle import CampaignHandler
+from leaflets.views.campaign.handle import CampaignHandler, CampaignAddressesHandler
+from leaflets.views.adresses.parse import BoundingBox
 from leaflets.forms.campaign import CampaignForm
+from leaflets.models import Campaign, CampaignAddress, Address
+from leaflets import database
 
 
 class ListCampaignsHandler(BaseHandler):
@@ -78,3 +83,73 @@ class EditCampaignHandler(CampaignHandler):
             self.render('campaign/add_edit.html', form=form)
 
         self.redirect(ListCampaignsHandler.url)
+
+
+class AssignCampaignHandler(CampaignHandler):
+    """Assign users to Addresses."""
+
+    url = '/campaign/assign'
+
+    def get(self):
+        self.render('campaign/assign.html', campaign=self.campaign)
+
+
+class UserAssignCampaignHandler(CampaignAddressesHandler, BoundingBox):
+
+    url = '/campaign/assign_user'
+
+    def mark_address(self, user_id, address_id):
+        """
+        Mark the given address as being assigned to the given user.
+
+        :param int user_id: the id of the user
+        :param int address_id: the id of the address
+        """
+        address = CampaignAddress.query.filter(
+            CampaignAddress.campaign == self.campaign,
+            CampaignAddress.address_id == int(self.get_argument('address'))
+        ).scalar()
+
+        if not address:
+            raise HTTPError(403, reason=self.locale.translate('No such address found'))
+
+        address.user_id = user_id
+        database.session.commit()
+
+        self.write({'result': 'ok'})
+
+    def bulk_mark_addresses(self, user_id, bounds):
+        """Mark all addresses within the provided bounds as assigned to the given user.
+
+        :param int user_id: the id of the user
+        :param tuple bounds: (south, west, north, east)
+        """
+        south, west, north, east = bounds
+
+        addresses = database.session.query(CampaignAddress).join(Address).filter(
+            CampaignAddress.campaign == self.campaign,
+            Address.lat >= south,
+            Address.lat <= north,
+            Address.lon >= west,
+            Address.lon <= east,
+        )
+
+        for address in addresses:
+            address.user_id = user_id
+        database.session.commit()
+
+        self.write({addr.address_id: addr.serialised_address() for addr in addresses})
+
+    @authenticated
+    @gen.coroutine
+    def post(self):
+        """Mark or unmark an address in the given campaign."""
+        user_id = self.get_argument('userId')
+        if user_id is None:
+            raise HTTPError(403, reason=self.locale.translate('No user id provided'))
+
+        address_id = self.get_argument('address', None)
+        if address_id:
+            self.mark_address(user_id, address_id)
+        elif self.get_argument('south', None) is not None:
+            self.bulk_mark_addresses(user_id, self.get_bounds())

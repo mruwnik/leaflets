@@ -29,7 +29,7 @@ class CampaignAddress(Base):
 
     def serialised_address(self):
         """Return the linked address as a dict."""
-        return dict((('state', self.state),), **self.address.serialise())
+        return dict((('state', self.state), ('userId', self.user_id)), **self.address.serialise())
 
 
 class Campaign(Base):

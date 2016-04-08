@@ -29,17 +29,26 @@ class User(Base):
         return sha512(passwd.encode('utf-8')).hexdigest()
 
     @property
-    def parent_campaigns(self):
-        """Get all direct campaigns from all parents."""
+    def ancestors(self):
+        """Get all ancestors of this user."""
         if not self.parent:
             return []
-        return self.parent.parent_campaigns + self.parent.campaigns
+        return [self.parent] + self.parent.ancestors
+
+    @property
+    def descendants(self):
+        """Get all descendants of this user."""
+        children = self.children[:]
+        for child in self.children:
+            children += child.children
+        return children
+
+    @property
+    def parent_campaigns(self):
+        """Get all direct campaigns from all parents."""
+        return [campaign for parent in self.ancestors for campaign in parent.campaigns]
 
     @property
     def children_campaigns(self):
         """Get all children campaigns."""
-        campaigns = []
-        for child in self.children:
-            campaigns += child.campaigns
-            campaigns += child.children_campaigns
-        return campaigns
+        return [campaign for child in self.descendants for campaign in child.campaigns]

@@ -1,0 +1,14 @@
+{% extends "../map.html" %}
+
+{% block body %}
+    <h1>{{ campaign.name }}</h1>
+    {% raw render_user(current_user_object(), True) %}
+    <input type="hidden" name="campaign_id" value="{{ campaign.id }}"/>
+    {% module xsrf_form_html() %}
+{% end %}
+
+{% block map-options %}
+    data-marker="UserAssignMarker"
+    data-address-handler="UserAssignSelector"
+    data-clustering-zoom="5"
+{% end %}}

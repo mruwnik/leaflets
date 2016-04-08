@@ -3,6 +3,7 @@ import json
 from tornado import gen
 from tornado.web import authenticated, HTTPError
 from tornado.websocket import WebSocketHandler, WebSocketClosedError
+from sqlalchemy import or_
 
 from leaflets.views.base import BaseHandler
 from leaflets.models import Campaign, CampaignAddress
@@ -15,12 +16,11 @@ class CampaignHandler(BaseHandler):
     @property
     def campaign(self):
         """Get the campaign to be shown."""
-        campaign = Campaign.query.filter(
-            Campaign.id == self.get_argument('campaign'),
-            Campaign.user_id == self.get_current_user()
-        ).scalar()
+        user = self.current_user_obj
+        campaign = Campaign.query.get(self.get_argument('campaign'))
 
-        if not campaign:
+        allowed = campaign in user.campaigns + user.parent_campaigns + user.children_campaigns
+        if not campaign or not allowed:
             raise HTTPError(403, reason=self.locale.translate('No such campaign found'))
         return campaign
 
@@ -43,8 +43,17 @@ class CampaignAddressesHandler(WebSocketHandler, CampaignHandler):
 
     @authenticated
     def get(self):
-        """Get all addresses for this campaign."""
-        self.write({addr.address_id: addr.serialised_address() for addr in self.campaign.campaign_addresses})
+        """Get all addresses for this campaign that the user can see."""
+        user = self.current_user_obj
+        addrs = CampaignAddress.query.filter(
+            CampaignAddress.campaign == self.campaign,
+            or_(
+                CampaignAddress.user_id.in_(
+                    [user.id] + [u.id for u in user.descendants + user.ancestors]),
+                CampaignAddress.user_id == None
+            )
+        )
+        self.write({addr.address_id: addr.serialised_address() for addr in addrs})
 
     @authenticated
     @gen.coroutine
@@ -58,7 +67,7 @@ class CampaignAddressesHandler(WebSocketHandler, CampaignHandler):
 
         address = CampaignAddress.query.filter(
             CampaignAddress.campaign == campaign,
-            CampaignAddress.address_id == self.get_argument('address')
+            CampaignAddress.address_id == int(self.get_argument('address'))
         ).scalar()
 
         if not address:
