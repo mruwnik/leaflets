@@ -2,6 +2,8 @@
 
 import overpass
 
+from tornado.web import HTTPError
+
 
 def avg(values):
     """Calculate the average of the given values.
@@ -94,3 +96,25 @@ def find_addresses(bbox):
 def as_dict(addresses):
     """Return the given addresses as a dict."""
     return {addr.id: addr.serialise() for addr in addresses}
+
+
+class BoundingBox(object):
+    """A mixin to get bounding boxes from request arguments."""
+
+    BAD_BOUNDING_BOX = u'bad bounding args'
+    BAD_COORDS = u'invalid coordinartes provided'
+
+    def get_bounds(self):
+        """Get south, west, north and east from the request arguments."""
+        try:
+            north = float(self.get_argument('north', 90))
+            south = float(self.get_argument('south', -90))
+            east = float(self.get_argument('east', 180))
+            west = float(self.get_argument('west', -180))
+        except ValueError:
+            raise HTTPError(400, reason=self.locale.translate(self.BAD_BOUNDING_BOX))
+
+        if not all([-90.0 <= north <= 90.0, -90.0 <= south <= 90.0, -180.0 <= east <= 180.0, -180.0 <= west <= 180.0]):
+            raise HTTPError(400, reason=self.locale.translate(self.BAD_COORDS))
+
+        return south, west, north, east

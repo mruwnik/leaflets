@@ -4,14 +4,14 @@ from tornado import gen
 from momoko.exceptions import PartiallyConnectedError
 
 from leaflets.views.base import BaseHandler
-from leaflets.views.adresses.parse import as_dict
+from leaflets.views.adresses.parse import as_dict, BoundingBox
 from leaflets.models import Address
 
 
 logger = logging.getLogger()
 
 
-class AddressListHandler(BaseHandler):
+class AddressListHandler(BaseHandler, BoundingBox):
 
     """Import address CSV files."""
 
@@ -26,13 +26,7 @@ class AddressListHandler(BaseHandler):
         be returned, where north, south, east and west are get parameters. The
         output is JSON by default, but it can be changed to HTML by setting 'output=html'
         """
-        try:
-            north = float(self.get_argument('north', 90))
-            south = float(self.get_argument('south', -90))
-            east = float(self.get_argument('east', 180))
-            west = float(self.get_argument('west', -180))
-        except ValueError:
-            return self.write({'error': self.locale.translate(u'bad bounding args')})
+        south, west, north, east = self.get_bounds()
 
         try:
             addresses = Address.query.filter(

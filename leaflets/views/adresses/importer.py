@@ -6,7 +6,7 @@ from tornado import gen
 from tornado.web import authenticated, HTTPError
 
 from leaflets.views.base import BaseHandler
-from leaflets.views.adresses.parse import find_addresses
+from leaflets.views.adresses.parse import find_addresses, BoundingBox
 from leaflets import database
 from leaflets.models import Address
 
@@ -80,15 +80,13 @@ class CSVImportHandler(AddressImportHandler):
         self.redirect("/")
 
 
-class AddressSearchHandler(AddressImportHandler):
+class AddressSearchHandler(AddressImportHandler, BoundingBox):
 
     """Search for addresses using the Overpass API."""
 
     url = '/addresses/search'
 
-    BAD_BOUNDING_BOX = u'bad bounding args'
     OVERSIZED_BOUNDING_BOX = u'the provided bounding box is too large'
-    NO_BOUNDING_BOX = u'no bounding box'
     BAD_COORDS = u'invalid coordinartes provided'
 
     @authenticated
@@ -99,16 +97,7 @@ class AddressSearchHandler(AddressImportHandler):
         if not is_admin:
             raise HTTPError(403)
 
-        try:
-            north = float(self.get_argument('north'))
-            south = float(self.get_argument('south'))
-            east = float(self.get_argument('east'))
-            west = float(self.get_argument('west'))
-        except ValueError:
-            raise HTTPError(400, reason=self.locale.translate(self.BAD_BOUNDING_BOX))
-
-        if not all([-90.0 < north < 90.0, -90.0 < south < 90.0, -180.0 < east < 180.0, -180.0 < west < 180.0]):
-            raise HTTPError(400, reason=self.locale.translate(self.BAD_COORDS))
+        south, west, north, east = self.get_bounds()
 
         if abs(north) - abs(south) + abs(east) - abs(west) > 0.05:
             raise HTTPError(400, reason=self.locale.translate(self.OVERSIZED_BOUNDING_BOX))

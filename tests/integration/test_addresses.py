@@ -6,6 +6,7 @@ import pytest
 from bs4 import BeautifulSoup
 
 from leaflets.views import AddressSearchHandler
+from leaflets.views.adresses.parse import BoundingBox
 from leaflets.models import Address
 
 
@@ -156,11 +157,11 @@ def check_error(client, url, post_data, error):
 
 @pytest.mark.gen_test
 @pytest.mark.parametrize('lat, error', (
-    (None, AddressSearchHandler.BAD_BOUNDING_BOX),
-    ('qwdq', AddressSearchHandler.BAD_BOUNDING_BOX),
-    (90.1, AddressSearchHandler.BAD_COORDS),
-    (-90.1, AddressSearchHandler.BAD_COORDS),
-    (91, AddressSearchHandler.BAD_COORDS),
+    (None, BoundingBox.BAD_BOUNDING_BOX),
+    ('qwdq', BoundingBox.BAD_BOUNDING_BOX),
+    (90.1, BoundingBox.BAD_COORDS),
+    (-90.1, BoundingBox.BAD_COORDS),
+    (91, BoundingBox.BAD_COORDS),
     (71, AddressSearchHandler.OVERSIZED_BOUNDING_BOX),
 ))
 def test_find_addresses_bad_lat(admin, xsrf_client, base_url, app, lat, error):
@@ -173,10 +174,10 @@ def test_find_addresses_bad_lat(admin, xsrf_client, base_url, app, lat, error):
 
 @pytest.mark.gen_test
 @pytest.mark.parametrize('lon, error', (
-    (None, AddressSearchHandler.BAD_BOUNDING_BOX),
-    ('qwdq', AddressSearchHandler.BAD_BOUNDING_BOX),
-    (180.1, AddressSearchHandler.BAD_COORDS),
-    (-181, AddressSearchHandler.BAD_COORDS),
+    (None, BoundingBox.BAD_BOUNDING_BOX),
+    ('qwdq', BoundingBox.BAD_BOUNDING_BOX),
+    (180.1, BoundingBox.BAD_COORDS),
+    (-181, BoundingBox.BAD_COORDS),
     (71, AddressSearchHandler.OVERSIZED_BOUNDING_BOX),
 ))
 def test_find_addresses_bad_lon(admin, xsrf_client, base_url, app, lon, error):
@@ -185,12 +186,3 @@ def test_find_addresses_bad_lon(admin, xsrf_client, base_url, app, lon, error):
 
     check_error(xsrf_client, url, {'north': 0.0, 'south': 0.0, 'east': 0.3, 'west': lon}, error)
     check_error(xsrf_client, url, {'north': 0.0, 'south': 0.0, 'east': lon, 'west': 0.2}, error)
-
-
-@pytest.mark.parametrize('dir', ('north', 'south', 'east', 'west'))
-def test_find_addresses_missing_direction(admin, xsrf_client, base_url, app, dir):
-    """Check whether missing paramaters cause an error."""
-    url = base_url + app.reverse_url('search_addresses')
-    params = {key: 1 for key in ('north', 'south', 'east', 'west') if key != dir}
-
-    check_error(xsrf_client, url, params, AddressSearchHandler.NO_BOUNDING_BOX)
