@@ -6,7 +6,7 @@ import pytest
 from tornado.websocket import websocket_connect
 
 from leaflets.views import (
-    AddCampaignHandler, CampaignAddressesHandler, MarkCampaignHandler, EditCampaignHandler
+    AddCampaignHandler, CampaignAddressesHandler, MarkCampaignHandler, EditCampaignHandler, AssignCampaignHandler
 )
 from leaflets.models import Campaign, AddressStates, Address
 
@@ -170,3 +170,60 @@ def test_websocket_campaign_addresses_broadcast(xsrf_client, base_url, db_sessio
     for conn in conns:
         msg = yield conn.read_message()
         assert json.loads(msg) == addr.serialised_address()
+
+
+@pytest.mark.gen_test
+def test_assign_campaign_address(xsrf_client, base_url, db_session, campaign, admin, users):
+    """Check whether setting an address' user works."""
+    url = base_url + AssignCampaignHandler.url
+
+    def check_address_assigned(address, user):
+        """Update the given address with the given state."""
+        post_data = {
+            'campaign': campaign.id,
+            'address': address.id,
+            'userId': user.id,
+        }
+        request = yield xsrf_client.xsrf_request(url, post_data)
+        response = yield xsrf_client.fetch(request)
+
+        assert response.code == 200
+        db_session.commit()
+
+        assert address.userId == user.id
+
+    address = campaign.campaign_addresses[0]
+
+    for user in users:
+        check_address_assigned(address, user)
+
+
+@pytest.mark.gen_test
+def test_assign_campaign_addresses(xsrf_client, base_url, db_session, campaign, admin, users):
+    """Check whether setting an address' user works."""
+    url = base_url + AssignCampaignHandler.url
+
+    def check_addresses_assigned(user_id):
+        """Update the given address with the given state."""
+        post_data = {
+            'campaign': campaign.id,
+            'userId': user_id,
+            'north': max([addr.lat for addr in campaign.addresses]),
+            'south': min([addr.lat for addr in campaign.addresses]),
+            'east': max([addr.lon for addr in campaign.addresses]),
+            'west': min([addr.lon for addr in campaign.addresses]),
+        }
+        request = yield xsrf_client.xsrf_request(url, post_data)
+        response = yield xsrf_client.fetch(request)
+
+        assert response.code == 200
+        db_session.commit()
+
+        assert {addr.user_id for addr in campaign.campaign_addresses} == {user_id}
+
+    # assign the same user to all addresses
+    for user in users:
+        check_addresses_assigned(user)
+
+    # remove the user from all addresses
+    check_addresses_assigned(None)

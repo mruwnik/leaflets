@@ -1,5 +1,3 @@
-import json
-
 from sqlalchemy.exc import IntegrityError
 from tornado import gen
 from tornado.web import authenticated, HTTPError
@@ -8,7 +6,7 @@ from leaflets.views.base import BaseHandler
 from leaflets.views.campaign.handle import CampaignHandler, CampaignAddressesHandler
 from leaflets.views.adresses.parse import BoundingBox
 from leaflets.forms.campaign import CampaignForm
-from leaflets.models import Campaign, CampaignAddress, Address
+from leaflets.models import CampaignAddress, Address
 from leaflets import database
 
 
@@ -121,7 +119,7 @@ class UserAssignCampaignHandler(CampaignAddressesHandler, BoundingBox):
     def bulk_mark_addresses(self, user_id, bounds):
         """Mark all addresses within the provided bounds as assigned to the given user.
 
-        :param int user_id: the id of the user
+        :param int user_id: the id of the user. If not an int, all addresses will be unassigned
         :param tuple bounds: (south, west, north, east)
         """
         south, west, north, east = bounds
@@ -134,6 +132,11 @@ class UserAssignCampaignHandler(CampaignAddressesHandler, BoundingBox):
             Address.lon <= east,
         )
 
+        try:
+            user_id = int(user_id)
+        except ValueError:
+            user_id = None
+
         for address in addresses:
             address.user_id = user_id
         database.session.commit()
@@ -144,8 +147,9 @@ class UserAssignCampaignHandler(CampaignAddressesHandler, BoundingBox):
     @gen.coroutine
     def post(self):
         """Mark or unmark an address in the given campaign."""
-        user_id = self.get_argument('userId')
-        if user_id is None:
+        try:
+            user_id = self.get_argument('userId')
+        except KeyError:
             raise HTTPError(403, reason=self.locale.translate('No user id provided'))
 
         address_id = self.get_argument('address', None)

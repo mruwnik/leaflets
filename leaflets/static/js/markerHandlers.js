@@ -17,6 +17,7 @@
             limits, any selected addresses are displayed. The addresses will not be assigned
             to the campaign until it is saved. Clicking on a marker displays its address.
 
+    * UserAssignSelector    - Assigns all addresses in the selectors area to the currently selected user
 **/
 
 
@@ -161,31 +162,44 @@ CampaignAddressSelector.init = function(address_ids) {
 };
 
 
+/**
+    Assign addresses to the currently selected user.
+**/
 UserAssignSelector = new BaseAddressSelector();
 UserAssignSelector.init = function() {
     Markers.MarkersGetter(mapControls.markerClass);
     $('.user input[type="radio"]').click(function (e) {
         $.each(Markers.MarkersGetter.markers, function(id, marker) {
-            marker.marker.setStyle(marker.currentColour());
+            marker.update();
         });
     });
 };
 
 UserAssignSelector.selectArea = function(boundingBox) {
+    this.setUser(mapControls.markerClass.selectedUser(), boundingBox || UserAssignSelector.currentBounds());
+};
+
+
+UserAssignSelector.deselectArea = function(boundingBox) {
+    this.setUser(null, boundingBox || UserAssignSelector.currentBounds());
+};
+
+/**
+    Assign all addresses in the provided box to the given user.
+**/
+UserAssignSelector.setUser = function(userId, boundingBox) {
     var params = {
         'campaign': CampaignMarker.campaignId(),
-        'userId': mapControls.markerClass.selectedUser(),
+        'userId': userId,
         '_xsrf': $('[name="_xsrf"]').val()
     };
-    $.extend(params, boundingBox || UserAssignSelector.currentBounds())
-    return $.post(mapControls.markerClass.url, params, function(results) {
+    return $.post(mapControls.markerClass.url, $.extend(params, boundingBox), function(results) {
         mapControls.errors.text('');
         $.each(results, function(id, address) {
             var marker = MarkersGetter.markers[id];
             marker.marker.userId = address.userId;
-            marker.marker.setStyle(marker.currentColour());
+            marker.update();
         });
-        //Markers.MarkersGetter(mapControls.markerClass, boundingBox, false);
     }).error(function(error) {
         mapControls.errors.text(error.statusText);
     });

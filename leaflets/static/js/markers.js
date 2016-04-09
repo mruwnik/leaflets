@@ -67,7 +67,7 @@ CampaignMarker = function(address){
     self.campaignId = CampaignMarker.campaignId()
     self.position = [address.lat, address.lon],
     self.address = address;
-    self.marker = L.circle(this.position, 7, this.currentColour())
+    self.marker = L.circle(this.position, 7, {color: this.currentColour(), fillOpacity: 0.5})
                     .on('click', function(e) { self.selected(self.marker.state != 'marked'); });
     self.marker.state = address.state;
 };
@@ -89,18 +89,9 @@ CampaignMarker.url = '/campaign/addresses';
     All possible marker set ups.
  **/
 CampaignMarker.prototype.colours = {
-    selected: {
-        color: 'red',
-        fillOpacity: 0.5
-    },
-    pending: {
-        color: 'gray',
-        fillOpacity: 0.5
-    },
-    marked: {
-        color: 'blue',
-        fillOpacity: 0.5
-    }
+    selected: 'red',
+    pending: 'gray',
+    marked: 'blue'
 };
 /**
     Return the marker colour for the current state.
@@ -123,7 +114,7 @@ CampaignMarker.prototype.initSocket = function() {
             point = MarkersGetter.markers[address.id],
             marker = point.marker;
         marker.state = address.state;
-        marker.setStyle(point.currentColour());
+        marker.setStyle({color: point.currentColour(), fillOpacity: 0.5});
         markersLayer.refreshClusters([marker]);
     };
 
@@ -167,7 +158,7 @@ CampaignMarker.prototype.postMessage = function(params) {
         var point = MarkersGetter.markers[params.address],
             marker = point.marker;
         marker.state = params.state;
-        marker.setStyle(point.currentColour());
+        marker.setStyle({color: point.currentColour(), fillOpacity: 0.5});
         markersLayer.refreshClusters([marker]);
     });
 }
@@ -188,7 +179,7 @@ CampaignMarker.prototype.selected = function(isMarked) {
         return;
     }
 
-    this.marker.setStyle(this.colours.pending);
+    this.marker.setStyle({color: this.colours.pending, fillOpacity: 0.5});
     this.marker.state = 'pending';
 
     this.updater({
@@ -204,34 +195,37 @@ UserAssignMarker = function(address){
     self.campaignId = CampaignMarker.campaignId()
     self.position = [address.lat, address.lon],
     self.address = address;
-    self.marker = L.circle(this.position, 7, this.currentColour())
+    self.marker = L.circle(this.position, 7, {color: this.currentColour(), fillOpacity: 0.5})
                         .on('click', function(e) { self.assign(); });
     self.marker.userId = address.userId
 };
 UserAssignMarker.defaultBounds = {campaign: CampaignMarker.campaignId()};
+UserAssignMarker.selectedUserDiv = function() {
+    return $('div.user input[name="child"]:checked');
+};
 UserAssignMarker.selectedUser = function() {
-    return $('div.user input[name="child"]:checked').val();
+    return UserAssignMarker.selectedUserDiv().val();
+};
+UserAssignMarker.selectedUserParents = function() {
+    return $.map(UserAssignMarker.selectedUserDiv().parents('div.user'), function(elem){
+        return $(elem).data('user-id');
+    });
+};
+UserAssignMarker.selectedUserChildren = function() {
+    return $.map(UserAssignMarker.selectedUserDiv().parent().find('div.user'), function(elem){
+        return $(elem).data('user-id');
+    });
 };
 UserAssignMarker.url = '/campaign/assign_user';
 UserAssignMarker.prototype = Object.create(CampaignMarker.prototype);
 
 UserAssignMarker.prototype.colours = {
-    unassigned: {
-        color: 'red',
-        fillOpacity: 0.5
-    },
-    pending: {
-        color: 'gray',
-        fillOpacity: 0.5
-    },
-    currentUser: {
-        color: 'blue',
-        fillOpacity: 0.5
-    },
-    assigned: {
-        color: '#5DADEC',
-        fillOpacity: 0.5
-    }
+    unassigned: 'red',
+    pending: 'gray',
+    currentUser: 'blue',
+    assigned: 'green',
+    parent: '#5DADEC',
+    children: '#9C51B6'
 };
 
 UserAssignMarker.prototype.currentColour = function() {
@@ -240,7 +234,11 @@ UserAssignMarker.prototype.currentColour = function() {
         return this.colours.unassigned;
     } else if (marker.userId == UserAssignMarker.selectedUser()) {
         return this.colours.currentUser;
-    } else {
+    } else if (UserAssignMarker.selectedUserParents().indexOf(marker.userId) != -1) {
+        return this.colours.parent;
+    } else if (UserAssignMarker.selectedUserChildren().indexOf(marker.userId) != -1) {
+        return this.colours.children;
+    }   else {
         return this.colours.assigned;
     }
 };
@@ -253,7 +251,7 @@ UserAssignMarker.prototype.assign = function(e) {
         return;
     }
 
-    this.marker.setStyle(this.colours.pending);
+    this.marker.setStyle({color: this.colours.pending, fillOpacity: 0.5});
     this.marker.state = 'pending';
 
     var params = {
@@ -267,10 +265,14 @@ UserAssignMarker.prototype.assign = function(e) {
         var point = MarkersGetter.markers[params.address],
             marker = point.marker;
             marker.userId = params.userId;
-        marker.setStyle(point.currentColour());
+        marker.setStyle({color: point.currentColour(), fillOpacity: 0.5});
         markersLayer.refreshClusters([marker]);
     });
-}
+};
+
+UserAssignMarker.prototype.update = function() {
+    this.marker.setStyle({color: this.currentColour(), fillOpacity: 0.5});
+};
 
 
 /**

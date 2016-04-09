@@ -76,7 +76,7 @@ def render_user(handler, user, selectable=False):
         """ % render_users(handler, user.children, selectable)
 
     return """
-        <div class="user">
+        <div class="user" data-user-id="{user_id}">
             {radio}
             <span class="user-info">
                 <a href="{edit_user}">{username}</a><span class="email"> &lt;{email}&gt; </span> {is_admin}
@@ -85,6 +85,7 @@ def render_user(handler, user, selectable=False):
         </div>
     """.format(
         radio='<input type="radio" name="child" value="%d"/>' % user.id if selectable else '',
+        user_id=user.id,
         username=user.username,
         edit_user=handler.reverse_url('edit_user') + '?user=%d' % user.id,
         email=user.email,
