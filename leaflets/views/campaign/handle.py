@@ -19,8 +19,7 @@ class CampaignHandler(BaseHandler):
         user = self.current_user_obj
         campaign = Campaign.query.get(self.get_argument('campaign'))
 
-        allowed = campaign in user.campaigns + user.parent_campaigns + user.children_campaigns
-        if not campaign or not allowed:
+        if not campaign or campaign not in user.campaigns + user.parent_campaigns + user.children_campaigns:
             raise HTTPError(403, reason=self.locale.translate('No such campaign found'))
         return campaign
 

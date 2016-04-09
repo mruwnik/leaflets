@@ -43,7 +43,18 @@ class EditUserHandler(LoginHandler):
     @property
     def form(self):
         user = User.query.get(int(self.get_argument('user')))
+
         if not user:
+            self.redirect(UsersListHandler.url)
+
+        # make sure that the current user can edit the provided user
+        current_user = self.current_user_obj
+        if current_user.parent:
+            allowed_users = current_user.parent.children
+        else:
+            allowed_users = [current_user]
+
+        if user not in allowed_users:
             self.redirect(UsersListHandler.url)
 
         return EditUserForm(
