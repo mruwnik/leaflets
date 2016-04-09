@@ -152,6 +152,36 @@ msgstr "Add a new campaign"
 msgid "campaign_name"
 msgstr "Campaign name"
 
+msgid "assign_campaign"
+msgstr "Assign users to addresses"
+
+msgid "No user id provided"
+msgstr "No user id provided"
+
+msgid "unvisited_address"
+msgstr "Unvisited"
+
+msgid "visited_address"
+msgstr "Visited"
+
+msgid "pending"
+msgstr "Updating"
+
+msgid "unassigned_address"
+msgstr "Unassigned"
+
+msgid "assigned_selected_user"
+msgstr "Assigned to the selected user"
+
+msgid "assigned_other_user"
+msgstr "Assigned to a different user"
+
+msgid "assigned_child_user"
+msgstr "Assigned to a child of the selected user"
+
+msgid "assigned_parent_user"
+msgstr "Assigned to a parent of the selected user"
+
 #: ./leaflets/templates/campaign/list.html:10
 msgid "description"
 msgstr "Campaign description"

@@ -152,6 +152,36 @@ msgstr "Zaloguj"
 msgid "add_campaign"
 msgstr "Dodaj nową kampanię"
 
+msgid "assign_campaign"
+msgstr "Przypisz użytkowników do adresów"
+
+msgid "No user id provided"
+msgstr "Nie podano identyfikator użytkownika"
+
+msgid "unvisited_address"
+msgstr "Nieodwiedzone"
+
+msgid "visited_address"
+msgstr "Odwiedzone"
+
+msgid "pending"
+msgstr "W trakcie aktualizacji"
+
+msgid "unassigned_address"
+msgstr "Nie przypisane"
+
+msgid "assigned_selected_user"
+msgstr "Wybranego użytkownika"
+
+msgid "assigned_other_user"
+msgstr "Innego użytkownika"
+
+msgid "assigned_child_user"
+msgstr "Podrzędnego użytkownika wybranego użytkownika"
+
+msgid "assigned_parent_user"
+msgstr "Nadrzędnego użytkownika wybranego użytkownika"
+
 #: ./leaflets/templates/campaign/list.html:9
 msgid "campaign_name"
 msgstr "Nazwa kampani"
