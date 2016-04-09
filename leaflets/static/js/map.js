@@ -33,4 +33,3 @@ window.markersLayer = L.markerClusterGroup({
         });
     }
 }).addTo(map);
-console.log($('#map-container').data('clustering-zoom'));

@@ -7,6 +7,17 @@
     {% module xsrf_form_html() %}
 {% end %}
 
+{% block legend %}
+    <div class="legend">
+        <div class="legend-item"><span class="legend-colour unmarked"></span>{{ _('unassigned_address') }}</div>
+        <div class="legend-item"><span class="legend-colour marked"></span>{{ _('assigned_selected_user') }}</div>
+        <div class="legend-item"><span class="legend-colour other-user"></span>{{ _('assigned_other_user') }}</div>
+        <div class="legend-item"><span class="legend-colour child"></span>{{ _('assigned_child_user') }}</div>
+        <div class="legend-item"><span class="legend-colour parent"></span>{{ _('assigned_parent_user') }}</div>
+        <div class="legend-item"><span class="legend-colour pending"></span>{{ _('pending') }}</div>
+    </div>
+{% end %}
+
 {% block map-options %}
     data-marker="UserAssignMarker"
     data-address-handler="UserAssignSelector"

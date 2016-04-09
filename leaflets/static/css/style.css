@@ -23,6 +23,38 @@ table, th, td {
     height: 800px;
 }
 
+
+div.legend {
+    min-height: 1em;
+}
+div.legend div.legend-item {
+    float: left;
+    padding-right: 20px;
+}
+span.legend-colour {
+    margin-right: 10px;
+    padding: 0px 10px;
+}
+span.legend-colour.marked {
+    background-color: blue;
+}
+span.legend-colour.unmarked {
+    background-color: red;
+}
+span.legend-colour.pending {
+    background-color: gray;
+}
+span.legend-colour.other-user {
+    background-color: green;
+}
+span.legend-colour.child {
+    background-color: #9C51B6;
+}
+span.legend-colour.parent {
+    background-color: #5DADEC;
+}
+
+
 .user {
     margin: 10px;
 }

@@ -10,6 +10,15 @@
 {% end %}
 
 {% block map-controls %}{% end %}
+
+{% block legend %}
+    <div class="legend">
+        <div class="legend-item"><span class="legend-colour unmarked"></span>{{ _('unvisited_address') }}</div>
+        <div class="legend-item"><span class="legend-colour marked"></span>{{ _('visited_address') }}</div>
+        <div class="legend-item"><span class="legend-colour pending"></span>{{ _('pending') }}</div>
+    </div>
+{% end %}
+
 {% block map-options %}
     data-marker="CampaignMarker"
     data-address-handler="DisplaySelector"

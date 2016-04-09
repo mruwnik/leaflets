@@ -8,7 +8,9 @@
         <button class="selector-control" id="deselect-area">{{ _('deselect_area') }}</button>
     </div>
     {% end %}
+    {% block legend %}{% end %}
     <div class="map-errors"></div>
+    <br>
     <div id="map-container"
          {% block map-options %}
             data-marker="Marker"
