@@ -227,3 +227,5 @@ msgstr "Zaznacz obszar"
 msgid "deselect_area"
 msgstr "Odznacz obszar"
 
+msgid "track_position"
+msgstr "Śledź pozycję"

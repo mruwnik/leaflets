@@ -223,3 +223,5 @@ msgstr "Select area"
 msgid "deselect_area"
 msgstr "Deselect area"
 
+msgid "track_position"
+msgstr "Track position"

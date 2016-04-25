@@ -9,7 +9,11 @@
     {% module xsrf_form_html() %}
 {% end %}
 
-{% block map-controls %}{% end %}
+{% block map-controls %}
+<div class="controls">
+     <input type="checkbox" class="selector-control" name="track-position">{{ _('track_position') }}</input>
+</div>
+{% end %}
 
 {% block legend %}
     <div class="legend">
@@ -22,5 +26,5 @@
 {% block map-options %}
     data-marker="CampaignMarker"
     data-address-handler="DisplaySelector"
-    data-clustering-zoom="20"
+    data-clustering-zoom="5"
 {% end %}}
