@@ -17,18 +17,5 @@
 
 
 {% block scripts %}
-    <script type="text/javascript">
-      $('.checklist-item input[type="checkbox"]').click(function(a, b, c){
-          var params = {
-              '_xsrf': $('[name="_xsrf"]').val(),
-              'address': this.value,
-              'state': (this.checked ? 'marked' : 'selected')
-          };
-          $.post('', params).done(function(result){
-              console.log(result);
-          }).error(function(result){
-              console.log(result);
-          });
-      });
-    </script>
+    <script src="{{ static_url('js/address_list.js') }}"></script>
 {% end %}

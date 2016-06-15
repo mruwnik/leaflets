@@ -6,9 +6,9 @@ from leaflets.database import Base
 
 
 class AddressStates(Enum):
-    selected = 'selected'
-    marked = 'marked'
-    removed = 'removed'
+    selected = 'selected' # the address is in a campaign, but unvisited
+    marked = 'marked' # the address has been visited
+    removed = 'removed' # the address was once in the campaign but has been removed
 
 
 class CampaignAddress(Base):

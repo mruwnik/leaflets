@@ -114,7 +114,7 @@ def house_comparator(house):
     """
     try:
         number_parts = list(map(int, re.findall('\d+', house))) or [float('inf')] 
-    except ValueError:
+    except (ValueError, TypeError):
         number_parts = [float('inf')]
 
     return tuple(number_parts + [house])

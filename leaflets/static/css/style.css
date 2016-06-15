@@ -82,3 +82,8 @@ span.legend-colour.parent {
     text-decoration: line-through;
     color: gray;
 }
+
+.checklist-item.pending input[type="checkbox"] + label{
+    text-decoration: none;
+    color: red;
+}
