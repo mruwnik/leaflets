@@ -1,4 +1,5 @@
 import json
+from collections import defaultdict
 
 from tornado import gen
 from tornado.web import authenticated, HTTPError
@@ -6,7 +7,7 @@ from tornado.websocket import WebSocketHandler, WebSocketClosedError
 from sqlalchemy import or_
 
 from leaflets.views.base import BaseHandler
-from leaflets.models import Campaign, CampaignAddress
+from leaflets.models import Campaign, CampaignAddress, Address
 from leaflets import database
 
 
@@ -23,28 +24,11 @@ class CampaignHandler(BaseHandler):
             raise HTTPError(403, reason=self.locale.translate('No such campaign found'))
         return campaign
 
-
-class ShowCampaignsHandler(CampaignHandler):
-    """Show a given campaign."""
-
-    url = '/campaign'
-    name = 'show_campaign'
-
-    @authenticated
-    def get(self):
-        self.render('campaign/show.html', campaign=self.campaign)
-
-
-class CampaignAddressesHandler(WebSocketHandler, CampaignHandler):
-    """Get a campaign's addresses."""
-
-    url = '/campaign/addresses'
-
-    @authenticated
-    def get(self):
-        """Get all addresses for this campaign that the user can see."""
+    @property
+    def addrs(self):
+        """Get all addresses for the given campaign."""
         user = self.current_user_obj
-        addrs = CampaignAddress.query.filter(
+        return CampaignAddress.query.filter(
             CampaignAddress.campaign == self.campaign,
             or_(
                 CampaignAddress.user_id.in_(
@@ -52,7 +36,6 @@ class CampaignAddressesHandler(WebSocketHandler, CampaignHandler):
                 CampaignAddress.user_id == None
             )
         )
-        self.write({addr.address_id: addr.serialised_address() for addr in addrs})
 
     @authenticated
     @gen.coroutine
@@ -78,6 +61,48 @@ class CampaignAddressesHandler(WebSocketHandler, CampaignHandler):
         MarkCampaignHandler.broadcast(json.dumps(address.serialised_address()))
 
         self.write({'result': 'ok'})
+
+
+class ShowCampaignHandler(CampaignHandler):
+    """Show a given campaign."""
+
+    url = '/campaign'
+    name = 'show_campaign'
+
+    @authenticated
+    def get(self):
+        addrs_tree = defaultdict(lambda: defaultdict(lambda: defaultdict(CampaignAddress)))
+        for address in self.addrs:
+            addr = address.address
+            addrs_tree[addr.town][addr.street][addr.house] = address
+
+        self.render(
+            'campaign/show-list.html',
+            campaign=self.campaign,
+            addrs_tree=addrs_tree,
+        )
+
+
+class ShowCampaignMapHandler(CampaignHandler):
+    """Show a given campaign."""
+
+    url = '/campaign_map'
+    name = 'show_campaign_map'
+
+    @authenticated
+    def get(self):
+        self.render('campaign/show-map.html', campaign=self.campaign)
+
+
+class CampaignAddressesHandler(WebSocketHandler, CampaignHandler):
+    """Get a campaign's addresses."""
+
+    url = '/campaign/addresses'
+
+    @authenticated
+    def get(self):
+        """Get all addresses for this campaign that the user can see."""
+        self.write({addr.address_id: addr.serialised_address() for addr in self.addrs})
 
 
 class MarkCampaignHandler(WebSocketHandler, CampaignHandler):

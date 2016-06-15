@@ -64,10 +64,21 @@ span.legend-colour.parent {
       margin-right: 20px;
 }
 
+.checklist-level input[type="radio"]:checked ~ div,
 .user input[type="checkbox"]:checked + div{
     display: block;
 }
 
+.checklist-level input[type="radio"] ~ div,
 .user input[type="checkbox"] + div{
     display: none;
+}
+
+.indented{
+    margin-left: 40px;
+}
+
+.checklist-item input[type="checkbox"]:checked + label{
+    text-decoration: line-through;
+    color: gray;
 }

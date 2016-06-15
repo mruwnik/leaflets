@@ -1,0 +1,34 @@
+{% extends "../base.html" %}
+
+{% block body %}
+    <h1>{{ campaign.name }}</h1>
+    {{ campaign.desc }}
+    <br><br>
+    {{ _('start_date') }}: {{ campaign.start }}
+    <input type="hidden" name="campaign_id" value="{{ campaign.id }}"/>
+    {% module xsrf_form_html() %}
+
+    <a href="{{ reverse_url('show_campaign_map') }}?campaign={{campaign.id}}">{{ _('show_map') }}</a><br>
+{% end %}
+
+{% block map %}
+    {% raw nested_checklist(addrs_tree) %}
+{% end %}
+
+
+{% block scripts %}
+    <script type="text/javascript">
+      $('.checklist-item input[type="checkbox"]').click(function(a, b, c){
+          var params = {
+              '_xsrf': $('[name="_xsrf"]').val(),
+              'address': this.value,
+              'state': (this.checked ? 'marked' : 'selected')
+          };
+          $.post('', params).done(function(result){
+              console.log(result);
+          }).error(function(result){
+              console.log(result);
+          });
+      });
+    </script>
+{% end %}

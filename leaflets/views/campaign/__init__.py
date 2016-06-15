@@ -3,11 +3,12 @@ from leaflets.views.campaign.edit import (
     AssignCampaignHandler
 )
 from leaflets.views.campaign.handle import (
-    ShowCampaignsHandler, CampaignAddressesHandler, MarkCampaignHandler
+    ShowCampaignHandler, CampaignAddressesHandler, MarkCampaignHandler, ShowCampaignMapHandler,
 )
 
 
 __all__ = (
-    AddCampaignHandler, ListCampaignsHandler, ShowCampaignsHandler, CampaignAddressesHandler,
-    MarkCampaignHandler, EditCampaignHandler, UserAssignCampaignHandler, AssignCampaignHandler
+    AddCampaignHandler, ListCampaignsHandler, ShowCampaignHandler, CampaignAddressesHandler,
+    MarkCampaignHandler, EditCampaignHandler, UserAssignCampaignHandler, AssignCampaignHandler,
+    ShowCampaignMapHandler,
 )

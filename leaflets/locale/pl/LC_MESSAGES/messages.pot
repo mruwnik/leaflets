@@ -207,6 +207,12 @@ msgstr "Kampanie nadrzędne"
 msgid "children_campaigns"
 msgstr "Kampanie podrzędne"
 
+msgid "show_list"
+msgstr "Wyświetl jako lista"
+
+msgid "show_map"
+msgstr "Wyświetl na mapie"
+
 #: ./leaflets/templates/campaign/list.html:21
 msgid "edit_campaign"
 msgstr "Edytuj kampanię"

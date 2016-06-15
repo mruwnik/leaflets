@@ -23,6 +23,9 @@ setup(
         'wtforms-tornado==0.0.2',
         'alembic==0.8.4',
         'overpass==0.3.1',
+        'Momoko==2.2.3',
+        'ipython==4.2.0',
+        'path.py==8.2.1',
     ],
     tests_require=[
         'pytest==2.7.3',

@@ -59,7 +59,7 @@ If you want to specify any personal settings, create a file called `leaflets/etc
 * Run the project
 
 Execute the following from the project directory:
-`python leaflets/views.py`
+`python -m leaflets.app`
 
 * Check whether it works
 

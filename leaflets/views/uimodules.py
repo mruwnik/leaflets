@@ -1,4 +1,8 @@
-from leaflets.models import User
+import re
+from types import LambdaType
+from operator import itemgetter
+
+from leaflets.models import User, AddressStates
 
 
 def render_form(handler, form, action):
@@ -100,3 +104,53 @@ def render_users(handler, users, selectable=False):
         return ''
 
     return '\n'.join([render_user(handler, user, selectable) for user in users])
+
+
+def house_comparator(house):
+    """Compare house numbers so that they are sorted correctly.
+
+    This is still incorrect, as "asdsad2" is treated the same as "2asdasd", but for
+    most cases should suffice.
+    """
+    try:
+        number_parts = list(map(int, re.findall('\d+', house))) or [float('inf')] 
+    except ValueError:
+        number_parts = [float('inf')]
+
+    return tuple(number_parts + [house])
+
+
+def checklist_level(item, contents, level=0):
+    """Render a checklist level along with its children."""
+    if contents.default_factory == LambdaType:
+        children = [checklist_level(key, contents[key], level + 1) for key in sorted(contents)]
+    else:
+        children = [checklist_item(contents[key]) for key in sorted(contents, key=house_comparator)]
+
+    return """
+        <div id="checklist-{level}-{id}" class="checklist-level indented">
+            <input type="radio" name="level-{level}" id="level-{level}-{id}"/>
+            <label for="level-{level}-{id}">{label}</label>
+            {html}
+        </div>""".format(level=level, id=item, label=item, html=''.join(children))
+
+
+def checklist_item(item):
+    """Render a single checklist item."""
+    selected = 'checked' if item.state == AddressStates.marked else ''
+    return """
+        <div class="indented checklist-item">
+            <input type="checkbox" name="checklist-item-{id}" id="checklist-item-{id}" value="{id}" {selected}/>
+            <label for="checklist-item-{id}">{contents}</label>
+        </div>
+    """.format(id=item.address.id, selected=selected, contents=item.address.house)
+
+
+def nested_checklist(handler, items, action_url=None):
+    try:
+        while items and len(items) == 1:
+            items, = items.values()
+    except TypeError:
+        return checklist_item(items)
+
+    return ''.join([checklist_level(key, items[key]) for key in sorted(items)])

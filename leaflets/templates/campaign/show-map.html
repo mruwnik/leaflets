@@ -7,6 +7,8 @@
     {{ _('start_date') }}: {{ campaign.start }}
     <input type="hidden" name="campaign_id" value="{{ campaign.id }}"/>
     {% module xsrf_form_html() %}
+
+    <a href="{{ reverse_url('show_campaign') }}?campaign={{campaign.id}}">{{ _('show_list') }}</a><br>
 {% end %}
 
 {% block map-controls %}

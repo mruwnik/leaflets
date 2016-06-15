@@ -207,6 +207,12 @@ msgstr "Parent campaigns"
 msgid "children_campaigns"
 msgstr "Children campaigns"
 
+msgid "show_list"
+msgstr "Show as a list"
+
+msgid "show_map"
+msgstr "Show on a map"
+
 #: ./leaflets/templates/campaign/show.html:7
 msgid "start_date"
 msgstr "Campaign start"
