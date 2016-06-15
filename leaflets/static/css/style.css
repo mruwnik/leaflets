@@ -78,7 +78,8 @@ span.legend-colour.parent {
     margin-left: 40px;
 }
 
-.checklist-item input[type="checkbox"]:checked + label{
+.checklist-item input[type="checkbox"]:checked + label,
+.checklist-level.checked {
     text-decoration: line-through;
     color: gray;
 }

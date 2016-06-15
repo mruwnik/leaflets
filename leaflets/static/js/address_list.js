@@ -1,9 +1,23 @@
+function markAddress(id, state) {
+    var checkbox = $('.checklist-item input[value="' + id + '"]'),
+        street = checkbox.parent().parent();
+
+    checkbox.parent().removeClass('pending');
+    checkbox.prop('checked', state == 'marked');
+    if($('input:checkbox:not(:checked)', street).length == 0) {
+        street.addClass('checked');
+    } else {
+        street.removeClass('checked');
+    }
+};
+
+
 function initSocket() {
     var socket = new WebSocket(window.location.origin.replace('http', 'ws') + '/campaign/mark');
 
     socket.onmessage = function (event) {
         var address = JSON.parse(event.data);
-        $('.checklist-item input[value="' + address.id + '"]').prop('checked', address.state == 'marked');
+        markAddress(address.id, address.state);
     };
 
     return socket;
@@ -44,7 +58,7 @@ function postMessage(message) {
 
     self.parent().addClass('pending');
     $.post('', message).done(function(result){
-        self.parent().removeClass('pending');
+        markAddress(message.address, message.state);
     });
 }
 

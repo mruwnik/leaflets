@@ -124,15 +124,18 @@ def checklist_level(item, contents, level=0):
     """Render a checklist level along with its children."""
     if contents.default_factory == LambdaType:
         children = [checklist_level(key, contents[key], level + 1) for key in sorted(contents)]
+        all_checked = False
     else:
         children = [checklist_item(contents[key]) for key in sorted(contents, key=house_comparator)]
+        all_checked = all(map(lambda addr: addr.state == AddressStates.marked, contents.values()))
 
     return """
-        <div id="checklist-{level}-{id}" class="checklist-level indented">
+        <div id="checklist-{level}-{id}" class="checklist-level indented {level_class}">
             <input type="radio" name="level-{level}" id="level-{level}-{id}"/>
             <label for="level-{level}-{id}">{label}</label>
             {html}
-        </div>""".format(level=level, id=item, label=item, html=''.join(children))
+        </div>""".format(
+            level=level, id=item, label=item, html=''.join(children), level_class='checked' if all_checked else '')
 
 
 def checklist_item(item):
