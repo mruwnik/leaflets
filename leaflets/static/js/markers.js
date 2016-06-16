@@ -102,16 +102,16 @@ CampaignMarker.prototype.currentColour = function() {
 };
 CampaignMarker.prototype.initSocket = function() {
     // set up a timer to check the connection every second
-    setTimeout(Campaign.prototype.initSocket, 1000);
+    setTimeout(CampaignMarker.prototype.initSocket, 1000);
 
-    // If the socket is already initialised and working, just return
-    if (CampaignMarker.prototype.socket && CampaignMarker.prototype.socket.readyState <= 1) {
+    // If the socket is already initialised and working, just return it
+    if (CampaignMarker.prototype.socket && CampaignMarker.prototype.socket.readyState == 1) {
         return CampaignMarker.prototype.socket;
     }
 
     var socket = new WebSocket(window.location.origin.replace('http', 'ws') + '/campaign/mark');
 
-    socket.onmessage = function (event) {
+    socket.onmessage = function(event) {
         var address = JSON.parse(event.data),
             point = MarkersGetter.markers[address.id],
             marker = point.marker;
@@ -120,6 +120,15 @@ CampaignMarker.prototype.initSocket = function() {
         markersLayer.refreshClusters([marker]);
     };
 
+    socket.onopen = function() {
+        // Update (resend) all pending markers when a connection is established
+        $.each(MarkersGetter.markers, function(id, marker){
+            if(marker.marker.state == 'pending') {
+                marker.marker.state = 'undefined';
+                marker.selected(marker.address.state);
+            }
+        });
+    }
     CampaignMarker.prototype.socket = socket;
     return socket;
 };
@@ -180,6 +189,7 @@ CampaignMarker.prototype.selected = function(isMarked) {
 
     this.marker.setStyle({color: this.colours.pending, fillOpacity: 0.5});
     this.marker.state = 'pending';
+    this.address.state = isMarked;
 
     this.updater({
         campaign: this.campaignId,
@@ -237,7 +247,7 @@ UserAssignMarker.prototype.currentColour = function() {
         return this.colours.parent;
     } else if (UserAssignMarker.selectedUserChildren().indexOf(marker.userId) != -1) {
         return this.colours.children;
-    }   else {
+    } else {
         return this.colours.assigned;
     }
 };

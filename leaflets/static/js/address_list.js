@@ -23,9 +23,16 @@ function initSocket() {
     }
     socket = new WebSocket(window.location.origin.replace('http', 'ws') + '/campaign/mark');
 
-    socket.onmessage = function (event) {
+    socket.onmessage = function(event) {
         var address = JSON.parse(event.data);
         markAddress(address.id, address.state);
+    };
+
+    socket.onopen = function() {
+        // Sent all pending updates
+        var pending = $('.pending input[type="checkbox"]').each(function(i, elem){
+            updateItem(elem);
+        });
     };
 
     return socket;
