@@ -109,15 +109,29 @@ def render_users(handler, users, selectable=False):
 def house_comparator(house):
     """Compare house numbers so that they are sorted correctly.
 
-    This is still incorrect, as "asdsad2" is treated the same as "2asdasd", but for
-    most cases should suffice.
+    This is still incorrect, as numbers larger that 10**20 will not be sorted correctly, but that
+    is so unlikely, that for most cases this should suffice.
     """
     try:
-        number_parts = list(map(int, re.findall('\d+', house))) or [float('inf')] 
+        number_parts = list(map(int, re.findall('\d+', house)))
+        return re.sub('\d+', '%.20d', house) % tuple(number_parts)
     except (ValueError, TypeError):
-        number_parts = [float('inf')]
+        return house
 
-    return tuple(number_parts + [house])
+
+CHECKLIST_LEVEL_TEMPLATE = """
+      <div id="checklist-{level}-{id}" class="checklist-level indented {level_class}">
+            <input type="radio" name="level-{level}" id="level-{level}-{id}"/>
+            <label for="level-{level}-{id}">{label}</label>
+            {html}
+        </div>
+"""
+CHECKLIST_ITEM_TEMPLATE = """
+<div class="indented checklist-item">
+    <input type="checkbox" name="checklist-item-{id}" id="checklist-item-{id}" value="{id}" {selected}/>
+    <label for="checklist-item-{id}">{contents}</label>
+</div>
+"""
 
 
 def checklist_level(item, contents, level=0):
@@ -129,24 +143,14 @@ def checklist_level(item, contents, level=0):
         children = [checklist_item(contents[key]) for key in sorted(contents, key=house_comparator)]
         all_checked = all(map(lambda addr: addr.state == AddressStates.marked, contents.values()))
 
-    return """
-        <div id="checklist-{level}-{id}" class="checklist-level indented {level_class}">
-            <input type="radio" name="level-{level}" id="level-{level}-{id}"/>
-            <label for="level-{level}-{id}">{label}</label>
-            {html}
-        </div>""".format(
+    return CHECKLIST_LEVEL_TEMPLATE.format(
             level=level, id=item, label=item, html=''.join(children), level_class='checked' if all_checked else '')
 
 
 def checklist_item(item):
     """Render a single checklist item."""
     selected = 'checked' if item.state == AddressStates.marked else ''
-    return """
-        <div class="indented checklist-item">
-            <input type="checkbox" name="checklist-item-{id}" id="checklist-item-{id}" value="{id}" {selected}/>
-            <label for="checklist-item-{id}">{contents}</label>
-        </div>
-    """.format(id=item.address.id, selected=selected, contents=item.address.house)
+    return CHECKLIST_ITEM_TEMPLATE.format(id=item.address.id, selected=selected, contents=item.address.house)
 
 
 def nested_checklist(handler, items, action_url=None):
