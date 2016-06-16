@@ -101,6 +101,8 @@ CampaignMarker.prototype.currentColour = function() {
     return this.colours[marker.state || 'pending'];
 };
 CampaignMarker.prototype.initSocket = function() {
+    // set up a timer to check the connection every second
+    setTimeout(Campaign.prototype.initSocket, 1000);
 
     // If the socket is already initialised and working, just return
     if (CampaignMarker.prototype.socket && CampaignMarker.prototype.socket.readyState <= 1) {
@@ -129,9 +131,6 @@ CampaignMarker.prototype.initSocket = function() {
  **/
 CampaignMarker.prototype.sendMessage = function(message) {
     message = JSON.stringify(message);
-    if (this.socket.readyState > 1) {
-        this.initSocket();
-    }
 
     try {
         this.socket.send(message);

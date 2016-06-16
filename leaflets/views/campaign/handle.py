@@ -150,7 +150,7 @@ class MarkCampaignHandler(WebSocketHandler, CampaignHandler):
             return self.write_error('invalid_json')
 
         if state is None:
-            self.write_error('No selection provided')
+            return self.write_error('No selection provided')
 
         address = CampaignAddress.query.filter(
             CampaignAddress.campaign_id == campaign_id,
@@ -158,7 +158,7 @@ class MarkCampaignHandler(WebSocketHandler, CampaignHandler):
         ).scalar()
 
         if not address:
-            self.write_error('No such address found')
+            return self.write_error('No such address found')
 
         address.state = state
         database.session.commit()
