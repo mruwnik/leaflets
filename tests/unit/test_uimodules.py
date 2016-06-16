@@ -18,7 +18,7 @@ def test_house_comparator_basic_nums(house):
 @pytest.mark.parametrize('house', ('gwge', None, '', 'asd', 2424))
 def test_house_comparator_non_numeric(house):
     """Check whetner non numeric values are simply returned."""
-    assert house_comparator(house) == house
+    assert house_comparator(house) == (house or '')
 
 
 @pytest.mark.parametrize('house, expected', (
@@ -34,8 +34,8 @@ def test_house_comparator_compound_nums(house, expected):
 
 @pytest.mark.parametrize('vals, expected', (
     (
-        ['4', '1', 'asd', '00003', '1asd', '11', 'asd1', '2', '1asd1', '1/2'],
-        ['1', '1/2', '1asd', '1asd1', '2', '00003', '4', '11', 'asd', 'asd1']
+        ['4', '1', '', None, 'asd', '00003', '1asd', '11', 'asd1', '2', '1asd1', '1/2'],
+        ['', None, '1', '1/2', '1asd', '1asd1', '2', '00003', '4', '11', 'asd', 'asd1']
     ),
 ))
 def test_house_sorting(vals, expected):

@@ -116,7 +116,7 @@ def house_comparator(house):
         number_parts = list(map(int, re.findall('\d+', house)))
         return re.sub('\d+', '%.20d', house) % tuple(number_parts)
     except (ValueError, TypeError):
-        return house
+        return house or ''
 
 
 CHECKLIST_LEVEL_TEMPLATE = """
