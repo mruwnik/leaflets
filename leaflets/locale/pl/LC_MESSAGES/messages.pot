@@ -244,3 +244,43 @@ msgstr "Odznacz obszar"
 
 msgid "track_position"
 msgstr "Śledź pozycję"
+
+# invite users
+msgid "mr smith"
+msgstr "Anna Kowalska"
+
+msgid "example_email"
+msgstr "z.ciebie@jest.com"
+
+msgid "preview:"
+msgstr "Podgląd:"
+
+msgid "submit"
+msgstr "Wyślij"
+
+msgid "subject"
+msgstr "Podaj temat dla maila który zostanie wysłany"
+
+msgid "invite_emails_explaination"
+msgstr "Podaj listę adresów mailowych do zaproszenia. Jeżeli już istnieje użytkownik z podanym adresem, zostanie on pominięty. Adresy powinny być w formacie \"{nazwa użytkownika} &lt;{address mailowy}&gt;\" albo sam adres. Podając wiele adresów, należy je rozdzielać średnikami, przecinkami lub w osobnych wieszach. Poniżej jest przykładowa lista adresów;<br><br><textarea rows=4 cols=90 readonly>a <a@b.com>, b <b@b.com>, Pan Tarei &lt;woda@rzeka.org&gt; ; jozef@gmail.com; Lucia &lt;afryka@gleba.com&gt;\njanek@gdzies.com\n\nkarol@fe.org</textarea><br><br>"
+
+msgid "invite_invite_explaination"
+msgstr "Tutaj należy wpisać treść zaproszenia który zostanie przesłany do wszystkich podanych adresów. Są dostępne szablony, które zostaną podmienione właściwymi wartości w wysłanej wiadomości:<br> - {name} - nazwa podane przy adresie mailowy<br> - {email} - adres mailowy na który zostanie wiadomość wysłana<br> - {url} - strona na którą należy wejść by aktywować nowe konto (ta wartość jest wymagane w wiadomości)"
+
+msgid "emails"
+msgstr "Adresy mailowe"
+
+msgid "invitation"
+msgstr "Treść zaproszenia"
+
+msgid "sample_invitation"
+msgstr "Witaj {name}\n  proszę potwierzić swoje konto wchodząc na {url}\n  Dzięki"
+
+msgid "url_macro_missing"
+msgstr "Wyamagane jest {url} w wiadomości."
+
+msgid "emails_missing"
+msgstr "Nie podano poprawnych adresów."
+
+msgid "stale_activation_link"
+msgstr "Ten odnośnik się przeterminował. Poproś o nowy."

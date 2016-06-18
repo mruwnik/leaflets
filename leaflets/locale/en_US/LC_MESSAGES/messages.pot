@@ -161,6 +161,9 @@ msgstr "Assign users to addresses"
 msgid "No user id provided"
 msgstr "No user id provided"
 
+msgid "bad_parent_provided"
+msgstr "Invalid parent provided"
+
 msgid "bad_user_ids"
 msgstr "Invalid user ids provided"
 
@@ -237,3 +240,43 @@ msgstr "Deselect area"
 
 msgid "track_position"
 msgstr "Track position"
+
+# invite users
+msgid "mr smith"
+msgstr "John Smith"
+
+msgid "example_email"
+msgstr "example@dummy.com"
+
+msgid "preview:"
+msgstr "Email preview:"
+
+msgid "submit"
+msgstr "Send"
+
+msgid "subject"
+msgstr "Provide a subject header for the emails to be sent"
+
+msgid "invite_emails_explaination"
+msgstr "Provide a list of email addresses to be invited. If there already is a user for a given address, it will be skipped. The addresses should be like \"{name} &lt;{email address}&gt;\" or just the email address. Addresses should be sepearated with semicolons, commas or newlines. Below is an example list of addresses:<br><br><textarea rows=4 cols=90 readonly>a <a@b.com>, b <b@b.com>, Mr Blobby &lt;blobby@someplace.org&gt; ; jeremy@gmail.com; Lucy &lt;africa@digs.com&gt;\njohn@someplace.com\n\nme@home.org</textarea><br><br>"
+
+msgid "invite_invite_explaination"
+msgstr "Also provide the contents of an email with an invitation that is send to each of the addresses. There are macros available, which will be replaced with the appropriate values in the actual email:<br> - {name} - the name provided for the email address<br> - {email} - the address to which the email will be sent<br> - {url} - the activation link. This macro is required."
+
+msgid "emails"
+msgstr "Email Addresses"
+
+msgid "invitation"
+msgstr "Invitation contents"
+
+msgid "sample_invitation"
+msgstr "Hi {name}\n  please activate your leaflets account by clicking on {url}\n  Thanks"
+
+msgid "url_macro_missing"
+msgstr "An {url} macro must be provided."
+
+msgid "emails_missing"
+msgstr "No valid emails were provided."
+
+msgid "stale_activation_link"
+msgstr "This activation link is stale. Request a new one."
