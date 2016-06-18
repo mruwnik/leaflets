@@ -56,26 +56,50 @@ span.legend-colour.parent {
 
 
 .user {
-    margin: 10px;
+    padding: 10px;
+    border-style: groove;
+}
+
+.user .children{
+    display: inline-block;
 }
 
 .user input[type="checkbox"]{
-      float: left;
-      margin-right: 20px;
+    display: none;
+}
+.user input[type="checkbox"]:checked ~ .children{
+    display: inline-block;
 }
 
-.checklist-level input[type="radio"]:checked ~ div,
-.user input[type="checkbox"]:checked + div{
-    display: block;
+.user input[type="checkbox"] ~ label::before{
+    vertical-align: top;
+    background-color: cyan; 
+    padding: 0px 3px;
+    content: "+";
+}
+.user input[type="checkbox"]:checked ~ label::before{
+    content: "-";
+}
+
+.user-info *{
+    vertical-align: top;
 }
 
 .checklist-level input[type="radio"] ~ div,
-.user input[type="checkbox"] + div{
+.user input[type="checkbox"] ~ .children{
     display: none;
 }
 
 .indented{
     margin-left: 40px;
+}
+
+.checklist-level input[type="radio"]{
+    display: none;
+}
+
+.checklist-level input[type="radio"]:checked ~ div{
+    display: block;
 }
 
 .checklist-item input[type="checkbox"]:checked + label,
@@ -87,4 +111,17 @@ span.legend-colour.parent {
 .checklist-item.pending input[type="checkbox"] + label{
     text-decoration: none;
     color: red;
+}
+
+div.blaa{
+    position: relative;
+    color: red;
+    background-color: green;
+}
+div.blaa .blaa{
+    color: white;
+    background-color: blue;
+}
+.active-drag {
+  opacity: 0.7;
 }

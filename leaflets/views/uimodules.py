@@ -5,7 +5,7 @@ from operator import itemgetter
 from leaflets.models import User, AddressStates
 
 
-def render_form(handler, form, action):
+def render_form(handler, form, action, button):
     """Render the provided form to HTML.
 
     :param RequestHandler handler: the handler that is rendering the form
@@ -16,14 +16,14 @@ def render_form(handler, form, action):
     <form action="{action}" method="post">
         {xsrf}
         {fields}
-        <input type="submit" value="{sign_in}">
+        <input type="submit" value="{button}">
     </form>"""
     return form_template.format(
         action=action,
         xsrf=handler.xsrf_form_html(),
         fields='\n'.join(
             [render_field(handler, field) for field in form._fields.values()]),
-        sign_in=handler.locale.translate('sign in')
+        button=handler.locale.translate(button)
     )
 
 
@@ -71,24 +71,27 @@ def current_user_object(handler):
     return user
 
 
-def render_user(handler, user, selectable=False):
+def render_user(handler, user):
     """Generate HTML for the given user."""
-    children = ''
+    toggle, children = '', ''
     if user.children:
-        children = """
-            <input type="checkbox"/><div class="children" style="margin-left: 20px;">%s</div>
-        """ % render_users(handler, user.children, selectable)
+        checked = 'checked' if user.id == handler.current_user else ''
+        toggle = '<input type="checkbox" %s id="%d-show-children"/>' % (checked, user.id)
+        children = '<div class="children">%s</div>' % render_users(handler, user.children)
 
     return """
         <div class="user" data-user-id="{user_id}">
-            {radio}
-            <span class="user-info">
-                <a href="{edit_user}">{username}</a><span class="email"> &lt;{email}&gt; </span> {is_admin}
-            </span>
+            {toggle}
+            <label for="{user_id}-show-children" class="user-info">
+                <span>
+                    <a href="{edit_user}">{username}</a> {is_admin}<br/>
+                    <span class="email"> &lt;{email}&gt; </span>
+                </span>
+            </label>
             {children}
         </div>
     """.format(
-        radio='<input type="radio" name="child" value="%d"/>' % user.id if selectable else '',
+        toggle=toggle,
         user_id=user.id,
         username=user.username,
         edit_user=handler.reverse_url('edit_user') + '?user=%d' % user.id,
@@ -98,12 +101,12 @@ def render_user(handler, user, selectable=False):
     )
 
 
-def render_users(handler, users, selectable=False):
+def render_users(handler, users):
     """Render the given users."""
     if not users:
         return ''
 
-    return '\n'.join([render_user(handler, user, selectable) for user in users])
+    return '\n'.join([render_user(handler, user) for user in users])
 
 
 def house_comparator(house):

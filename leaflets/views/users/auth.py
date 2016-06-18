@@ -12,6 +12,7 @@ class LoginHandler(BaseHandler):
     BAD_PASSWORD = 'The provided password and user do not match'
 
     url = '/login'
+    submit_label = 'sign in'
 
     @property
     def form(self):
@@ -19,7 +20,9 @@ class LoginHandler(BaseHandler):
 
     def get(self, form=None):
         """Show the login form."""
-        self.render('simple_form.html', form=form or self.form, url=self.url)
+        form = form or self.form
+        if form:
+            self.render('simple_form.html', form=form, url=self.url, button=self.submit_label)
 
     def get_user(self, form):
         """Get the user from the provided form.

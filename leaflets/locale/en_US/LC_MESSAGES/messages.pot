@@ -6,6 +6,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 
 #: ./leaflets/forms/auth
+msgid "save"
+msgstr "Save"
+
 msgid "user_name"
 msgstr "User name"
 

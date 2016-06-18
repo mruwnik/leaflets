@@ -9,9 +9,10 @@ from leaflets.views import UsersListHandler, EditUserHandler
 @pytest.mark.gen_test
 def test_edit_user(xsrf_client, base_url, app, db_session, admin, users):
     """Check whether users get correctly added."""
-    async def edit_user(user, email, is_admin, is_equal=False, parent_id=admin.id):
+    async def edit_user(user, name, email, is_admin, is_equal=False, parent_id=admin.id):
         """Change the given user's parameters."""
         post_data = {
+            'name': name,
             'email': email,
             'is_admin': is_admin,
             'is_equal': is_equal,
@@ -24,6 +25,7 @@ def test_edit_user(xsrf_client, base_url, app, db_session, admin, users):
         db_session.commit()
         user = User.query.get(user.id)
 
+        assert user.username == name
         assert user.email == email
         assert user.admin == is_admin
         assert user.parent_id == parent_id
@@ -33,17 +35,17 @@ def test_edit_user(xsrf_client, base_url, app, db_session, admin, users):
     child = sample_user.children[0]
 
     # update the child
-    yield edit_user(child, 'bla4@ble.dfl', True, False, sample_user.id)
-    yield edit_user(child, 'bla6@ble.dfl', True, True, sample_user.parent_id)
+    yield edit_user(child, 'wrar', 'bla4@ble.dfl', True, False, sample_user.id)
+    yield edit_user(child, 'wrar', 'bla6@ble.dfl', True, True, sample_user.parent_id)
 
     # update the selected user
-    yield edit_user(sample_user, 'bla@ble.dfl', False)
-    yield edit_user(sample_user, 'bla1@ble.dfl', True)
-    yield edit_user(sample_user, 'bla2@ble.dfl', True, True, None)
+    yield edit_user(sample_user, 'wrar2', 'bla@ble.dfl', False)
+    yield edit_user(sample_user, 'wrar2', 'bla1@ble.dfl', True)
+    yield edit_user(sample_user, 'wrar2', 'bla2@ble.dfl', True, True, None)
 
 
 @pytest.mark.gen_test
-def asd_test_users_list(http_client, base_url, app, db_session, users, admin):
+def test_users_list(http_client, base_url, app, db_session, users, admin):
     """Check whether users get correctly added."""
 
     response = yield http_client.fetch(base_url + UsersListHandler.url)

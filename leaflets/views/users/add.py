@@ -10,6 +10,7 @@ class AddUserHandler(LoginHandler):
 
     url = '/users/add'
     name = 'add_user'
+    submit_label = 'save'
 
     EXISTING_USER = 'There already is a user with that username'
 
@@ -37,6 +38,7 @@ class EditUserHandler(LoginHandler):
 
     url = '/users/edit'
     name = 'edit_user'
+    submit_label = 'save'
 
     EXISTING_USER = 'There already is a user with that username'
 
@@ -47,17 +49,18 @@ class EditUserHandler(LoginHandler):
         if not user:
             self.redirect(UsersListHandler.url)
 
-        # make sure that the current user can edit the provided user
         current_user = self.current_user_obj
+        # make sure that the current user can edit the provided user - all
+        # of the current user's siblings and children can be edited
+        allowed_users = [current_user] + current_user.children
         if current_user.parent:
             allowed_users = current_user.parent.children
-        else:
-            allowed_users = [current_user]
 
         if user not in allowed_users:
-            self.redirect(UsersListHandler.url)
+            return self.redirect(UsersListHandler.url)
 
         return EditUserForm(
+            name=user.username,
             email=user.email,
             is_admin=user.admin,
             is_equal=user.parent_id == self.current_user_obj.parent_id,

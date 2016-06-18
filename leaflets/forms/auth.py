@@ -12,6 +12,7 @@ class LoginForm(Form):
 
 
 class EditUserForm(Form):
+    name = StringField('user_name', validators=[DataRequired()])
     email = StringField('email', validators=[DataRequired(), Email()])
     is_admin = BooleanField('is_admin')
     is_equal = BooleanField('is_equal')
@@ -19,6 +20,7 @@ class EditUserForm(Form):
 
     def update(self, user):
         """Update the given user."""
+        user.username = self.name.data
         user.email = self.email.data
         user.admin = self.is_admin.data
 
