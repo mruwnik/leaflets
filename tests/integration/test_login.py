@@ -17,7 +17,7 @@ def test_login_page(http_client, base_url, app):
 
 
 @pytest.mark.gen_test
-@pytest.mark.parametrize('good_field', ('name', 'password'))
+@pytest.mark.parametrize('good_field', ('email', 'password'))
 def test_login_bad_values(xsrf_client, base_url, app, good_field):
     """Check whether the login page validation works for empty fields."""
     url = base_url + app.reverse_url('login')
@@ -39,7 +39,7 @@ def test_login_password(xsrf_client, base_url, app, database):
     async def attempt_login(will_fail):
         """Attempt to log in and validate the result."""
         post_data = {
-            'name': 'test',
+            'email': 'test',
             'password': 'test'
         }
         request = await xsrf_client.xsrf_request(base_url + url, post_data)

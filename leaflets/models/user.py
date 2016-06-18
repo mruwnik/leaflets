@@ -1,3 +1,5 @@
+import time
+from uuid import uuid4
 from hashlib import sha512
 
 from sqlalchemy import Column, String, Boolean, Integer, ForeignKey
@@ -12,8 +14,8 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, nullable=False, primary_key=True)
-    username = Column(String(length=255), nullable=False, unique=True, index=True)
-    email = Column(String(length=255), nullable=False)
+    username = Column(String(length=255), nullable=False)
+    email = Column(String(length=255), nullable=False, unique=True, index=True)
     password_hash = Column(String, nullable=False)
     admin = Column(Boolean, nullable=False, default=False)
 
@@ -27,6 +29,27 @@ class User(Base):
         :param str passwd: the password to be hashed
         """
         return sha512(passwd.encode('utf-8')).hexdigest()
+
+    @property
+    def activation_hash(self):
+        """Get an activation hash for this user."""
+        return '%d-%s' % (time.time() / (60 * 60 * 24), uuid4().hex)
+
+    def reset_passwd(self, passwd=None):
+        """Reset the password.
+
+        Set the password to the provided value if not None. In that case
+        set the password hash to an activation link hash to mark that it
+        needs to be set. This should be quite safe, as the activation hash
+        will contain characters that will never appear in a normal hash.
+        """
+        if passwd is not None:
+            self.password_hash = self.hash(passwd)
+            return self.password_hash
+        else:
+            hash = self.activation_hash
+            self.password_hash = 'reset-' + hash
+            return hash
 
     @property
     def ancestors(self):

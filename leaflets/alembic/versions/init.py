@@ -24,7 +24,7 @@ def upgrade():
         sa.Column('admin', sa.Boolean(), nullable=False),
         sa.PrimaryKeyConstraint('id')
     )
-    op.create_index(op.f('ix_users_username'), 'users', ['username'], unique=True)
+    op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
 
 
 def downgrade():
