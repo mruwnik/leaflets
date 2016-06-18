@@ -80,7 +80,9 @@ def render_user(handler, user):
         children = '<div class="children">%s</div>' % render_users(handler, user.children)
 
     return """
-        <div class="user" data-user-id="{user_id}">
+        <div id="user-{user_id}" class="user" data-user-id="{user_id}"
+             draggable="true" ondragstart="drag(event)"
+             ondrop="drop(event)" ondragover="allowDrop(event)">
             {toggle}
             <label for="{user_id}-show-children" class="user-info">
                 <span>

@@ -1,3 +1,5 @@
+import random
+
 import pytest
 
 from bs4 import BeautifulSoup
@@ -65,7 +67,7 @@ def test_users_list(http_client, base_url, app, db_session, users, admin):
 
         return int(user_id), {
             'name': info.find('a').text.strip(),
-            'email': info.find('span').text.strip()[1:-1],
+            'email': info.find('span', attrs={'class', 'email'}).text.strip()[1:-1],
             'children': children
         }
 
@@ -86,3 +88,37 @@ def test_users_list(http_client, base_url, app, db_session, users, admin):
 
     assert user_id == admin.id
     check_children(admin, attrs)
+
+
+@pytest.mark.gen_test
+def test_move_user(xsrf_client, base_url, app, db_session, admin, users):
+    """Check whether moving users around works."""
+    async def move_user(user, target):
+        post_data = {
+            'user': user.id,
+            'target': target.id,
+        }
+        request = await xsrf_client.xsrf_request(base_url + UsersListHandler.url, post_data)
+        response = await xsrf_client.fetch(request)
+
+        assert response.code == 200
+        db_session.commit()
+        user = User.query.get(user.id)
+
+        assert user.parent_id == target.id
+        assert response.effective_url == base_url + UsersListHandler.url
+        return admin
+
+    initial_children_amount = len(admin.children)
+    last_child = admin.children[-1]
+    for child in admin.children[:3]:
+        yield move_user(child, last_child)
+
+    admin = User.query.get(admin.id)
+    assert len(admin.children) == initial_children_amount - 3
+
+    for child in admin.children[-1].children[:3]:
+        yield move_user(child, admin)
+
+    admin = User.query.get(admin.id)
+    assert len(admin.children) == initial_children_amount

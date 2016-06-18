@@ -2,7 +2,12 @@
 
 {% block body %}
     <br><br>
+    {% module xsrf_form_html() %}
     <a href="{{ reverse_url('add_user') }}">{{ _('add user') }}</a>
     <br><br>
     {% raw render_users(users) %}
+{% end %}
+
+{% block scripts %}
+    <script src="{{ static_url('js/user.js') }}"></script>
 {% end %}

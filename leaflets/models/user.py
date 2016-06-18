@@ -40,7 +40,7 @@ class User(Base):
         """Get all descendants of this user."""
         children = self.children[:]
         for child in self.children:
-            children += child.children
+            children += child.descendants
         return children
 
     @property

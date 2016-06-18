@@ -161,6 +161,9 @@ msgstr "Assign users to addresses"
 msgid "No user id provided"
 msgstr "No user id provided"
 
+msgid "bad_user_ids"
+msgstr "Invalid user ids provided"
+
 msgid "unvisited_address"
 msgstr "Unvisited"
 
