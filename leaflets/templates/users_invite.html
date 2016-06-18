@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <br><br>
+    <div class="pure-g">
+      <div class="pure-u-1-24"></div>
+      <div class="pure-u-22-24">
+        <form id="invite-form" method="post" class="pure-form pure-form-aligned">
+          {% module xsrf_form_html() %}
+          {% raw render_field(form.parent) %}
+
+          {% raw render_field(form.subject, class_="pure-input-1") %}
+          <div class="pure-u-1"></div>
+
+          {% raw _('invite_emails_explaination') %}
+          {% raw render_field(form.emails, class_="pure-input-1") %}
+
+
+          <div class="pure-u-1"></div>
+          {% raw _('invite_invite_explaination') %}
+          <div class="pure-u-1"></div>
+          <div class="pure-g">
+            <div class="pure-u-1-2">
+              {% raw render_field(form.invitation, class_="pure-input-1", rows=10, placeholder=_('sample_invitation')) %}
+            </div>
+            <div class="pure-u-1-2">
+              {{ _('preview:') }}
+              <textarea id="preview" class="pure-input-1" rows=10 readonly></textarea>
+            </div>
+          </div>
+          <div class="pure-u-1"></div>
+          <button type="submit" class="pure-button pure-button-primary">{{ _('submit') }} </button>
+        </form>
+      </div>
+      <div class="pure-u-1-24"></div>
+    </div>
+{% end %}
+
+{% block scripts %}
+    <script type="text/javascript">
+      var preview = $('#preview');
+      $('#invitation').keyup(function(e){
+          preview.text(
+             this.value.replace('{name}', "{{ _('mr smith') }}")
+                 .replace('{email}', "{{ _('example_email') }}")
+                 .replace('{url}', "{{ request.protocol }}://{{ request.host }}/invitation/LKFLJKWEXCVWPVEWEVLVSD")
+          );
+      });
+    </script>
+{% end %}

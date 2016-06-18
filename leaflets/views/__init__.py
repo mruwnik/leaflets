@@ -5,7 +5,10 @@ from leaflets.views.campaign import (
     MarkCampaignHandler, EditCampaignHandler, UserAssignCampaignHandler, AssignCampaignHandler,
     ShowCampaignMapHandler,
 )
-from leaflets.views.users import LoginHandler, LogOutHandler, AddUserHandler, UsersListHandler, EditUserHandler
+from leaflets.views.users import (
+    LoginHandler, LogOutHandler, AddUserHandler, UsersListHandler, EditUserHandler,
+    InviteHandler, UpdateUserHandler,
+)
 
 
 handlers = (
@@ -13,7 +16,7 @@ handlers = (
     AddressSearchHandler, AddressImportHandler, AddressListHandler, CSVImportHandler,
     AddCampaignHandler, ListCampaignsHandler, ShowCampaignHandler, CampaignAddressesHandler,
     EditCampaignHandler, UsersListHandler, EditUserHandler, UserAssignCampaignHandler,
-    AssignCampaignHandler, ShowCampaignMapHandler,
+    AssignCampaignHandler, ShowCampaignMapHandler, InviteHandler, UpdateUserHandler,
 )
 
 
@@ -22,6 +25,6 @@ __all__ = (
     AddressSearchHandler, AddressImportHandler, AddressListHandler, CSVImportHandler,
     AddCampaignHandler, ListCampaignsHandler, ShowCampaignHandler, CampaignAddressesHandler,
     EditCampaignHandler, UsersListHandler, EditUserHandler, UserAssignCampaignHandler,
-    AssignCampaignHandler, ShowCampaignMapHandler,
+    AssignCampaignHandler, ShowCampaignMapHandler, InviteHandler, UpdateUserHandler,
     handlers
 )

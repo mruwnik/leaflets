@@ -161,6 +161,9 @@ msgstr "Przypisz użytkowników do adresów"
 msgid "No user id provided"
 msgstr "Nie podano identyfikator użytkownika"
 
+msgid "bad_parent_provided"
+msgstr "Podano złego rodzica"
+
 msgid "bad_user_ids"
 msgstr "Podano złe identyfikatory użytkowników"
 

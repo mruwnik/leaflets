@@ -41,17 +41,17 @@ def render_errors(handler, field):
     return '<ul class=errors>%s</ul>' % error_msgs
 
 
-def render_field(handler, field):
+def render_field(handler, field, **kwargs):
     """Render a single wtform field.
 
     :param RequestHandler handler: the handler that is rendering the form
     :param wtforms.Field field: the field to be rendered
     """
     if field.type == 'HiddenField':
-        return str(field)
+        return field(**kwargs)
     return '<label>{label}</label>: {field}{errors}<br>'.format(
         label=handler.locale.translate(field.label.text),
-        field=field,
+        field=field(**kwargs),
         errors=render_errors(handler, field),
     )
 

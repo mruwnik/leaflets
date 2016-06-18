@@ -21,6 +21,9 @@ define('STATIC_FILES', os.path.join(BASE_DIR, 'static'), help='The location of a
 define('SECRET_KEY', '123456', help='A secret key used e.g. for secure cookies')
 define('LOCALE_DIR', os.path.join(BASE_DIR, 'locale'), help='Where locale files are kept')
 
+define('EMAIL_ADDR', None, help='The address from which to send emails')
+define('EMAIL_PASSWD', None, help='The password for the email address')
+define('ACTIVATION_TIMEOUT', 30, help='The amount of days after which activation links are deemed stale')
 
 # test params
 

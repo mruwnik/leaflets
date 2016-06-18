@@ -1,8 +1,11 @@
+import time
 from tornado import gen
+from tornado.web import HTTPError
 
 from leaflets.views.base import BaseHandler
 from leaflets.forms import LoginForm
 from leaflets.models import User
+from leaflets.etc import options
 
 
 class LoginHandler(BaseHandler):
@@ -31,7 +34,7 @@ class LoginHandler(BaseHandler):
         :returns: the use, or None if could not be found
         """
         return User.query.filter(
-            User.username == form.name.data,
+            User.email == form.email.data,
             User.password_hash == User.hash(form.password.data)
         ).scalar()
 
@@ -60,4 +63,19 @@ class LogOutHandler(BaseHandler):
         """Log out."""
         self.clear_cookie('user_id')
         self.redirect("/")
+
+
+class UpdateUserHandler(BaseHandler):
+
+    url = '/users/update/(\d+)-(\w+)'
+    name = 'update_user'
+
+    def validate_timestamp(self, timestamp):
+        if int(timestamp) > options.ACTIVATION_TIMEOUT + time.time() / (60 * 60 * 24):
+            raise HTTPError(400, reason=self.locale.translate('stale_activation_link'))
+
+    def get(self, timestamp, user_hash):
+        self.validate_timestamp(timestamp)
+        user = User.query.filter(User.password_hash == 'reset-%s-%s' % (timestamp, user_hash)).first()
+        self.write(str(user))
 

@@ -2,7 +2,7 @@ from tornado.web import authenticated
 
 from leaflets.views.users.auth import LoginHandler
 from leaflets.views.users.management import UsersListHandler
-from leaflets.forms.auth import AddUserForm, EditUserForm
+from leaflets.forms.auth import AddUserForm, EditUserForm, InviteUsersForm
 from leaflets.models import User
 
 
