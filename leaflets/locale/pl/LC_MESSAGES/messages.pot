@@ -246,6 +246,9 @@ msgid "track_position"
 msgstr "Śledź pozycję"
 
 # invite users
+msgid "invite users"
+msgstr "zaprosz użytkowników"
+
 msgid "mr smith"
 msgstr "Anna Kowalska"
 

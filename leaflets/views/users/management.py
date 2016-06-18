@@ -14,24 +14,10 @@ class UsersListHandler(BaseHandler):
 
     url = '/users/list'
 
-    @property
-    def top_level_users(self):
-        """Get all users that will be displayed as top level ones."""
-        current_user = self.current_user_obj
-        if current_user.parent:
-            return current_user.parent.children
-        else:
-            return User.query.filter(User.parent_id == None).all()
-
-    @property
-    def visible_user_ids(self):
-        users = [child for user in self.top_level_users for child in user.descendants] + self.top_level_users
-        return {user.id for user in users}
-
     @authenticated
     def get(self):
         """Show all users that this user can see."""
-        self.render('users.html', users=self.top_level_users)
+        self.render('users.html', users=self.current_user_obj.top_level_users)
 
     @authenticated
     @gen.coroutine
@@ -43,7 +29,7 @@ class UsersListHandler(BaseHandler):
         except ValueError:
             raise HTTPError(400, reason=self.locale.translate('bad_user_ids'))
 
-        children_ids = self.visible_user_ids
+        children_ids = self.current_user_obj.visible_user_ids
         if to_move not in children_ids or target not in children_ids:
             raise HTTPError(400, reason=self.locale.translate('bad_user_ids'))
 
@@ -67,7 +53,7 @@ class InviteHandler(UsersListHandler):
         except (TypeError, TypeError):
             raise HTTPError(400, reason='bad_parent_provided')
 
-        if parent not in self.visible_user_ids:
+        if parent not in self.current_user_obj.visible_user_ids:
             raise HTTPError(400, reason='bad_parent_provided')
 
         return parent
@@ -92,3 +78,4 @@ class InviteHandler(UsersListHandler):
             self.request.host,
             self.reverse_url(UpdateUserHandler.name, '', '')[:-1]
         ))
+        self.redirect(UsersListHandler.url)

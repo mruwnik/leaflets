@@ -17,13 +17,13 @@ depends_on = None
 
 def upgrade():
     op.add_column('campaign_address', sa.Column('user_id', sa.Integer(), nullable=True))
-    op.create_foreign_key(None, 'campaign_address', 'users', ['user_id'], ['id'])
+    op.create_foreign_key('campaign_address_fk', 'campaign_address', 'users', ['user_id'], ['id'])
     op.add_column('users', sa.Column('parent_id', sa.Integer(), nullable=True))
-    op.create_foreign_key(None, 'users', 'users', ['parent_id'], ['id'])
+    op.create_foreign_key('users_fk', 'users', 'users', ['parent_id'], ['id'])
 
 
 def downgrade():
-    op.drop_constraint(None, 'users', type_='foreignkey')
+    op.drop_constraint('users_fk', 'users', type_='foreignkey')
     op.drop_column('users', 'parent_id')
-    op.drop_constraint(None, 'campaign_address', type_='foreignkey')
+    op.drop_constraint('campaign_address_fk', 'campaign_address', type_='foreignkey')
     op.drop_column('campaign_address', 'user_id')

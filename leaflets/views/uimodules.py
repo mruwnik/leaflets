@@ -78,6 +78,13 @@ def current_user_object(handler):
     return user
 
 
+def user_actions(handler, user):
+    return '<a href="{edit}">{edit_text}</a>&nbsp;<a href="{add}">{add_text}</a>&nbsp;<a href="{invite}">{invite_text}</a>'.format(
+        add=handler.reverse_url('add_user') + '?parent=%d' % user.id, add_text=handler.locale.translate('add user'),
+        invite=handler.reverse_url('invite_users', user.id), invite_text=handler.locale.translate('invite users'),
+        edit=handler.reverse_url('edit_user') + '?user=%d' % user.id, edit_text=handler.locale.translate('edit'),
+    )
+
 def render_user(handler, user):
     """Generate HTML for the given user."""
     toggle, children = '', ''
@@ -92,10 +99,10 @@ def render_user(handler, user):
              ondrop="drop(event)" ondragover="allowDrop(event)">
             {toggle}
             <label for="{user_id}-show-children" class="user-info">
-                <span>
-                    <a href="{edit_user}">{username}</a> {is_admin}<br/>
-                    <span class="email"> &lt;{email}&gt; </span>
-                </span>
+                <div style="display: inline-block;">
+                    <span class="name">{username}</span> {is_admin} <span class="email"> &lt;{email}&gt; </span>
+                </div><br>
+                <span>{actions}</span>
             </label>
             {children}
         </div>
@@ -103,8 +110,8 @@ def render_user(handler, user):
         toggle=toggle,
         user_id=user.id,
         username=user.username,
-        edit_user=handler.reverse_url('edit_user') + '?user=%d' % user.id,
         email=user.email,
+        actions=user_actions(handler, user),
         is_admin='(admin)' if user.admin else '',
         children=children,
     )

@@ -16,7 +16,11 @@ class AddUserHandler(LoginHandler):
 
     @property
     def form(self):
-        return AddUserForm(self.request.arguments)
+        form = AddUserForm(self.request.arguments)
+        if int(form.parent.data) not in self.current_user_obj.visible_user_ids:
+            self.redirect(UsersListHandler.url)
+
+        return form
 
     @authenticated
     def post(self):
@@ -52,19 +56,13 @@ class EditUserHandler(LoginHandler):
         current_user = self.current_user_obj
         # make sure that the current user can edit the provided user - all
         # of the current user's siblings and children can be edited
-        if current_user.parent:
-            allowed_users = current_user.parent.children
-        else:
-            allowed_users = User.query.all()
-
-        if user not in allowed_users:
+        if user.id not in current_user.visible_user_ids:
             return self.redirect(UsersListHandler.url)
 
         return EditUserForm(
             name=user.username,
             email=user.email,
             is_admin=user.admin,
-            is_equal=user.parent_id == self.current_user_obj.parent_id,
             user_id=user.id,
         )
 

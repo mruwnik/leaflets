@@ -81,9 +81,8 @@ def test_add_user_equal(xsrf_client, base_url, app, db_session, admin):
             'password': 'test',
             'password_repeat': 'test',
             'email': name.replace(' ', '_') + '@test.vl',
+            'parent': User.query.get(user).parent_id if is_equal else user,
         }
-        if is_equal:
-            post_data['is_equal'] = is_equal
 
         request = await xsrf_client.xsrf_request(base_url + url, post_data)
         with patch('leaflets.views.BaseHandler.get_current_user', return_value=user):

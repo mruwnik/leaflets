@@ -242,6 +242,9 @@ msgid "track_position"
 msgstr "Track position"
 
 # invite users
+msgid "invite users"
+msgstr "invite users"
+
 msgid "mr smith"
 msgstr "John Smith"
 

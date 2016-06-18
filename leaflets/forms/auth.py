@@ -26,7 +26,6 @@ class EditUserForm(Form):
     name = StringField('user_name', validators=[DataRequired()])
     email = StringField('email', validators=[DataRequired(), Email()])
     is_admin = BooleanField('is_admin')
-    is_equal = BooleanField('is_equal')
     user_id = HiddenField('user_id')
 
     def update(self, user):
@@ -34,10 +33,6 @@ class EditUserForm(Form):
         user.username = self.name.data
         user.email = self.email.data
         user.admin = self.is_admin.data
-
-        # if selected, make the given user equal to this one
-        if self.is_equal.data:
-            user.parent = user.parent and user.parent.parent
 
         database.session.commit()
         return user
@@ -66,7 +61,7 @@ class UpdateUserForm(Form):
 class AddUserForm(UpdateUserForm):
 
     is_admin = BooleanField('is_admin')
-    is_equal = BooleanField('is_equal')
+    parent = HiddenField('parent')
 
     def save(self, current_user_id):
         """Create a new user."""
@@ -75,7 +70,7 @@ class AddUserForm(UpdateUserForm):
             email=self.email.data,
             password_hash=User.hash(self.password.data),
             admin=self.is_admin.data,
-            parent_id=User.query.get(current_user_id).parent_id if self.is_equal.data else current_user_id,
+            parent_id=self.parent.data or User.query.get(current_user_id).parent_id
         )
 
         database.session.add(user)

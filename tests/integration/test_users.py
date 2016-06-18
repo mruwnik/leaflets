@@ -11,13 +11,12 @@ from leaflets.views import UsersListHandler, EditUserHandler
 @pytest.mark.gen_test
 def test_edit_user(xsrf_client, base_url, app, db_session, admin, users):
     """Check whether users get correctly added."""
-    async def edit_user(user, name, email, is_admin, is_equal=False, parent_id=admin.id):
+    async def edit_user(user, name, email, is_admin):
         """Change the given user's parameters."""
         post_data = {
             'name': name,
             'email': email,
             'is_admin': is_admin,
-            'is_equal': is_equal,
             'user_id': user.id
         }
         request = await xsrf_client.xsrf_request(base_url + EditUserHandler.url, post_data)
@@ -30,20 +29,18 @@ def test_edit_user(xsrf_client, base_url, app, db_session, admin, users):
         assert user.username == name
         assert user.email == email
         assert user.admin == is_admin
-        assert user.parent_id == parent_id
         assert response.effective_url == base_url + UsersListHandler.url
 
     sample_user = User.query.filter(User.parent == admin, User.admin).first()
     child = sample_user.children[0]
 
     # update the child
-    yield edit_user(child, 'wrar', 'bla4@ble.dfl', True, False, sample_user.id)
-    yield edit_user(child, 'wrar', 'bla6@ble.dfl', True, True, sample_user.parent_id)
+    yield edit_user(child, 'wrar', 'bla4@ble.dfl', True)
 
     # update the selected user
     yield edit_user(sample_user, 'wrar2', 'bla@ble.dfl', False)
     yield edit_user(sample_user, 'wrar2', 'bla1@ble.dfl', True)
-    yield edit_user(sample_user, 'wrar2', 'bla2@ble.dfl', True, True, None)
+    yield edit_user(sample_user, 'wrar2', 'bla2@ble.dfl', True)
 
 
 @pytest.mark.gen_test
@@ -66,7 +63,7 @@ def test_users_list(http_client, base_url, app, db_session, users, admin):
             ))
 
         return int(user_id), {
-            'name': info.find('a').text.strip(),
+            'name': info.find('span', attrs={'class', 'name'}).text.strip(),
             'email': info.find('span', attrs={'class', 'email'}).text.strip()[1:-1],
             'children': children
         }

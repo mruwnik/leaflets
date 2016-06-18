@@ -75,3 +75,18 @@ class User(Base):
     def children_campaigns(self):
         """Get all children campaigns."""
         return [campaign for child in self.descendants for campaign in child.campaigns]
+
+    @property
+    def top_level_users(self):
+        """Get all users that will be displayed as top level ones for this user."""
+        if self.parent:
+            return self.parent.children
+        else:
+            return User.query.filter(User.parent_id == None).all()
+
+    @property
+    def visible_user_ids(self):
+        """Get all users that this one can see."""
+        users = [child for user in self.top_level_users for child in user.descendants] + self.top_level_users
+        return {user.id for user in users}
+
