@@ -19,7 +19,7 @@ class UsersListHandler(BaseHandler):
         if current_user.parent:
             return current_user.parent.children
         else:
-            return [current_user]
+            return User.query.filter(User.parent_id == None).all()
 
     @authenticated
     def get(self):

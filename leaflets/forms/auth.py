@@ -25,8 +25,8 @@ class EditUserForm(Form):
         user.admin = self.is_admin.data
 
         # if selected, make the given user equal to this one
-        if self.is_equal.data and user.parent:
-            user.parent = user.parent.parent
+        if self.is_equal.data:
+            user.parent = user.parent and user.parent.parent
 
         database.session.commit()
         return user

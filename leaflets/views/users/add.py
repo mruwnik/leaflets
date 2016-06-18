@@ -52,9 +52,10 @@ class EditUserHandler(LoginHandler):
         current_user = self.current_user_obj
         # make sure that the current user can edit the provided user - all
         # of the current user's siblings and children can be edited
-        allowed_users = [current_user] + current_user.children
         if current_user.parent:
             allowed_users = current_user.parent.children
+        else:
+            allowed_users = User.query.all()
 
         if user not in allowed_users:
             return self.redirect(UsersListHandler.url)
