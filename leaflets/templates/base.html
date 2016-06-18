@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}leaflets{% end %}</title>
+        <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.6.0/pure-min.css">
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
         <link rel="stylesheet" href="{{ static_url('css/locationfilter.css') }}"/>
         <link rel="stylesheet" href="{{ static_url('css/MarkerCluster.Default.css') }}"/>
@@ -10,25 +11,36 @@
         <link rel="stylesheet" href="{{ static_url('css/style.css') }}"/>
     </head>
     <body>
-        {% block header %}
-            {% if is_admin() %}
-                <a href="{{ reverse_url('list_users') }}">{{ _('manage_users') }}</a>
-                <a href="{{ reverse_url('import_addresses') }}">{{ _('import_addresses') }}</a>
-            {% end %}
-            <span style="margin-right: 20px;"></span>
-            {% if current_user %}
-                <a href="{{ reverse_url('list_campaign') }}">{{ _('campaigns') }}</a>
-                <a href="{{ reverse_url('logout') }}" class="right">
-                    {{ _('logout') }} {{ current_user_object().username }}
-                </a>
-            {% else %}
-                <a href="{{ reverse_url('login') }}" class="right">{{ _('login') }}</a>
-            {% end %}
-        {% end %}
-        {% block body %}{% end %}
-        {% block map %}{% end %}
-
-        <script src="//code.jquery.com/jquery-1.7.1.min.js"></script>
-        {% block scripts %}{% end %}
+      {% block header %}
+      
+      <div class="pure-menu pure-menu-horizontal">
+        <ul class="pure-menu-list pure-menu-horizontal">
+          {% if is_admin() %}
+              <li class="pure-menu-item {{ 'pure-menu-selected' if request.uri == reverse_url('list_users') else '' }}">
+                <a href="{{ reverse_url('list_users') }}" class="pure-menu-link">{{ _('manage_users') }}</a>
+              </li>
+              <li class="pure-menu-item {{ 'pure-menu-selected' if request.uri == reverse_url('import_addresses') else '' }}">
+                <a href="{{ reverse_url('import_addresses') }}" class="pure-menu-link">{{ _('import_addresses') }}</a>
+              </li>
+          {% end %}
+          <span style="margin-right: 20px;"></span>
+          {% if current_user %}
+              <li class="pure-menu-item {{ 'pure-menu-selected' if request.uri == reverse_url('list_campaign') else '' }}">
+                <a href="{{ reverse_url('list_campaign') }}" class="pure-menu-link">{{ _('campaigns') }}</a>
+              </li>
+              <li class="right pure-menu-item"><a href="{{ reverse_url('logout') }}" class="pure-menu-link">
+                  {{ _('logout') }} {{ current_user_object().username }}
+              </a></li>
+          {% else %}
+              <li class="pure-menu-item"><a href="{{ reverse_url('login') }}" class="right pure-menu-link">{{ _('login') }}</a></li>
+          {% end %}
+        </ul>
+      </div>
+      {% end %}
+      {% block body %}{% end %}
+      {% block map %}{% end %}
+      
+      <script src="//code.jquery.com/jquery-1.7.1.min.js"></script>
+      {% block scripts %}{% end %}
     </body>
 </html>
