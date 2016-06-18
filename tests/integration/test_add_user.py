@@ -80,7 +80,7 @@ def test_add_user_equal(xsrf_client, base_url, app, db_session, admin):
             'name': name,
             'password': 'test',
             'password_repeat': 'test',
-            'email': 'test@test.vl',
+            'email': name.replace(' ', '_') + '@test.vl',
         }
         if is_equal:
             post_data['is_equal'] = is_equal

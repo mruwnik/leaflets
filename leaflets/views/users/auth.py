@@ -3,7 +3,7 @@ from tornado import gen
 from tornado.web import HTTPError
 
 from leaflets.views.base import BaseHandler
-from leaflets.forms import LoginForm
+from leaflets.forms import LoginForm, UpdateUserForm
 from leaflets.models import User
 from leaflets.etc import options
 
@@ -66,16 +66,40 @@ class LogOutHandler(BaseHandler):
 
 
 class UpdateUserHandler(BaseHandler):
+    """Handle activation and password reset urls."""
 
     url = '/users/update/(\d+)-(\w+)'
     name = 'update_user'
 
-    def validate_timestamp(self, timestamp):
+    def validate_user(self, timestamp, user_hash):
+        """Check whether there is a user for the given activation hash.
+
+        :param str timestamp: the timestamp (day precision) when the hash was created
+        :param str user_hash: the activation hash
+        :return: the user, if found
+        :raises HTTPError: if the user was not found or the link was stale
+        """
         if int(timestamp) > options.ACTIVATION_TIMEOUT + time.time() / (60 * 60 * 24):
             raise HTTPError(400, reason=self.locale.translate('stale_activation_link'))
+        return User.query.filter(User.password_hash == 'reset-%s-%s' % (timestamp, user_hash)).first()
 
-    def get(self, timestamp, user_hash):
-        self.validate_timestamp(timestamp)
-        user = User.query.filter(User.password_hash == 'reset-%s-%s' % (timestamp, user_hash)).first()
-        self.write(str(user))
+    def get(self, timestamp, user_hash, form=None):
+        """Show an update user form."""
+        user = self.validate_user(timestamp, user_hash)
 
+        form = form or UpdateUserForm(name=user.username, email=user.email)
+        self.render(
+            'simple_form.html', form=form,
+            url=self.request.uri, button='submit'
+        )
+
+    @gen.coroutine
+    def post(self, timestamp, user_hash):
+        user = self.validate_user(timestamp, user_hash)
+        form = UpdateUserForm(self.request.arguments)
+        if not form.validate():
+            return self.get(timestamp, user_hash, form)
+
+        form.update(user)
+        self.set_secure_cookie("user_id", str(user.id))
+        self.redirect("/")

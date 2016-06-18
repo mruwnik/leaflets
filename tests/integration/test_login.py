@@ -13,7 +13,7 @@ def test_login_page(http_client, base_url, app):
     url = app.reverse_url('login')
     response = yield http_client.fetch(base_url + url)
     assert response.code == 200
-    assert ('form action="%s" method="post">' % url) in str(response.body)
+    assert ('form action="%s" method="post" class="pure-form pure-form-aligned">' % url) in str(response.body)
 
 
 @pytest.mark.gen_test

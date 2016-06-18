@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
 {% block body %}
-    {% raw render_form(form, url, button) %}
+    <div style="">
+      <div class="splash">
+        {% raw render_form(form, url, button) %}
+      </div>
+    </div>
 {% end %}

@@ -43,21 +43,33 @@ class EditUserForm(Form):
         return user
 
 
-class AddUserForm(Form):
+class UpdateUserForm(Form):
     PASSWORD_MISMATCH = 'The passwords do not match'
 
     name = StringField('user_name', validators=[DataRequired()])
     email = StringField('email', validators=[DataRequired(), Email()])
     password = PasswordField('password', validators=[DataRequired()])
     password_repeat = PasswordField('repeat_password', validators=[DataRequired()])
-    is_admin = BooleanField('is_admin')
-    is_equal = BooleanField('is_equal')
 
     def validate_password(self, field):
         if field.data and field.data != self.password_repeat.data:
             raise ValidationError(self.PASSWORD_MISMATCH)
 
+    def update(self, user):
+        user.username=self.name.data,
+        user.email=self.email.data,
+        user.password_hash=User.hash(self.password.data),
+
+        database.session.commit()
+
+
+class AddUserForm(UpdateUserForm):
+
+    is_admin = BooleanField('is_admin')
+    is_equal = BooleanField('is_equal')
+
     def save(self, current_user_id):
+        """Create a new user."""
         user = User(
             username=self.name.data,
             email=self.email.data,

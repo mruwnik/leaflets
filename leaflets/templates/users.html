@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <br><br>
     {% module xsrf_form_html() %}
     <a href="{{ reverse_url('add_user') }}">{{ _('add user') }}</a>
     <br><br>

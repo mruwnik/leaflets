@@ -7,22 +7,22 @@ from leaflets.models import User
 REQUIRED_FIELD = 'This field is required.'
 
 
-def test_no_name_given():
-    """Check that the name is required."""
+def test_no_email_given():
+    """Check that the email is required."""
     form = LoginForm(password='asd')
     assert not form.validate()
-    assert form.errors == {'name': [REQUIRED_FIELD]}
+    assert form.errors == {'email': [REQUIRED_FIELD]}
 
 
 def test_no_password_given():
     """Check that the password is required."""
-    form = LoginForm(name='asd')
+    form = LoginForm(email='asd@bla.cl')
     assert not form.validate()
     assert form.errors == {'password': [REQUIRED_FIELD]}
 
 
 def test_full_form():
-    form = LoginForm(name='asd', password='asd')
+    form = LoginForm(email='asd@asd.dd', password='asd')
     assert form.validate()
     assert not form.errors
 

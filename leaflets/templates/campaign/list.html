@@ -1,7 +1,6 @@
 {% extends "../base.html" %}
 
 {% block body %}
-    <br><br>
     <a href="{{ reverse_url('add_campaign') }}">{{ _('add_campaign') }}</a>
 
     {% for campaign_type, campaign_objs in campaigns %}

@@ -13,10 +13,14 @@ def render_form(handler, form, action, button):
     :param str action: the action to be undertaken upon submission of the form
     """
     form_template = """
-    <form action="{action}" method="post">
+    <form action="{action}" method="post" class="pure-form pure-form-aligned">
         {xsrf}
-        {fields}
-        <input type="submit" value="{button}">
+        <fieldset class="centered">
+            {fields}
+            <div class="pure-controls">
+                <button type="submit" class="pure-button pure-button-primary">{button}</button>
+            </div>
+        </fieldset>
     </form>"""
     return form_template.format(
         action=action,
@@ -49,7 +53,10 @@ def render_field(handler, field, **kwargs):
     """
     if field.type == 'HiddenField':
         return field(**kwargs)
-    return '<label>{label}</label>: {field}{errors}<br>'.format(
+    return """
+        <div class="pure-control-group">
+            <label>{label}</label> {field}{errors}
+        </div>""".format(
         label=handler.locale.translate(field.label.text),
         field=field(**kwargs),
         errors=render_errors(handler, field),
