@@ -7,7 +7,7 @@ from tornado.websocket import WebSocketHandler, WebSocketClosedError
 from sqlalchemy import or_
 
 from leaflets.views.base import BaseHandler
-from leaflets.models import Campaign, CampaignAddress, Address
+from leaflets.models import Campaign, CampaignAddress
 from leaflets import database
 
 

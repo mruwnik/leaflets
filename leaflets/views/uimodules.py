@@ -1,7 +1,7 @@
 import re
 from types import LambdaType
-from operator import itemgetter
 
+from operator import itemgetter
 from leaflets.models import User, AddressStates
 
 

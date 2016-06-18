@@ -159,7 +159,6 @@ def db_shell():
     # By default embed uses the calling function's scope as global scope, which prevents interactively defining and
     # using a global and a function accessing it: https://github.com/ipython/ipython/issues/62. Using a separate
     # namespace for interactive commands fixes this.
-    from leaflets import database
     from leaflets import models
     user_ns = {name: getattr(database, name) for name in dir(database)}
     user_ns.update({name: getattr(models, name) for name in dir(models)})
