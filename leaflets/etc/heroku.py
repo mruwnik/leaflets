@@ -5,6 +5,9 @@ import re
 PORT = int(os.environ.get('PORT'))
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
+EMAIL_ADDR = os.environ.get('EMAIL_ADDR')
+EMAIL_PASSWD = os.environ.get('EMAIL_PASSWD')
+
 database_url = os.environ.get('DATABASE_URL')
 
 database_parts = re.search(

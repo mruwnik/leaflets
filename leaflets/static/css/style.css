@@ -74,26 +74,29 @@ span.legend-colour.parent {
 .user {
     padding: 10px;
     border-style: groove;
+    overflow: auto;
+    display: inline-block;
 }
 
 .user .children{
     display: inline-block;
 }
 
-.user input[type="checkbox"]{
-    display: none;
-}
 .user input[type="checkbox"]:checked ~ .children{
     display: inline-block;
 }
 
-.user input[type="checkbox"] ~ label::before{
+input[type="radio"]:checked + .user{
+    background-color: #F08080;
+}
+
+.user.group > label::before{
     vertical-align: top;
     background-color: cyan; 
     padding: 0px 3px;
     content: "+";
 }
-.user input[type="checkbox"]:checked ~ label::before{
+.user.group > input[type="checkbox"]:checked + label::before{
     content: "-";
 }
 

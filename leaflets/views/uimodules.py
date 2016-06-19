@@ -74,8 +74,13 @@ def current_user_object(handler):
     if not user_id:
         return None
 
-    user = User.query.get(user_id)
-    return user
+    return User.query.get(user_id)
+
+
+def current_login(handler):
+    """Get the login of the current user."""
+    user = handler.current_user_obj
+    return user and user.email
 
 
 def user_actions(handler, user):
@@ -85,44 +90,50 @@ def user_actions(handler, user):
         edit=handler.reverse_url('edit_user') + '?user=%d' % user.id, edit_text=handler.locale.translate('edit'),
     )
 
-def render_user(handler, user):
-    """Generate HTML for the given user."""
-    toggle, children = '', ''
-    if user.children:
-        checked = 'checked' if user.id == handler.current_user else ''
-        toggle = '<input type="checkbox" %s id="%d-show-children"/>' % (checked, user.id)
-        children = '<div class="children">%s</div>' % render_users(handler, user.children)
 
-    return """
-        <div id="user-{user_id}" class="user" data-user-id="{user_id}"
-             draggable="true" ondragstart="drag(event)"
-             ondrop="drop(event)" ondragover="allowDrop(event)">
+DRAG_N_DROP = ' draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)" '
+
+
+def render_user(handler, user, editable=False, radio=False):
+    """Generate HTML for the given user."""
+    checked = 'checked' if user.id == handler.current_user else ''
+    toggle = '<input type="checkbox" hidden %s id="%s-show-children"/>' % (checked, user.id)
+    children = render_users(handler, user.children, editable, radio) if user.children else ''
+    if radio:
+        radio = '<input type="radio" hidden id="radio-{0}" value="{0}" name="child"/>'.format(user.id)
+
+    return """{radio}
+        <div id="user-{user_id}" class="user {classes}" data-user-id="{user_id}" {draggable}>
             {toggle}
-            <label for="{user_id}-show-children" class="user-info">
+            <label class="user-info">
                 <div style="display: inline-block;">
-                    <span class="name">{username}</span> {is_admin} <span class="email"> &lt;{email}&gt; </span>
+                    <span class="name">{username}</span> {is_admin} <br>
+                    <span class="email"> &lt;{email}&gt; </span>
                 </div><br>
                 <span>{actions}</span>
             </label>
-            {children}
+            <div class="children">{children}</div>
         </div>
     """.format(
+        radio=radio or '',
+        classes='group' if children else '',
+        draggable=DRAG_N_DROP if editable else '',
         toggle=toggle,
         user_id=user.id,
         username=user.username,
         email=user.email,
-        actions=user_actions(handler, user),
+        actions=user_actions(handler, user) if editable else '',
         is_admin='(admin)' if user.admin else '',
         children=children,
     )
 
 
-def render_users(handler, users):
+def render_users(handler, users, editable=False, radio=False):
     """Render the given users."""
     if not users:
         return ''
 
-    return '\n'.join([render_user(handler, user) for user in users])
+    return '\n'.join([render_user(handler, user, editable, radio) for user in users])
 
 
 def house_comparator(house):

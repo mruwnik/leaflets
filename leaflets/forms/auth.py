@@ -156,6 +156,7 @@ class InviteUsersForm(Form):
                 database.session.add(user)
                 database.session.commit()
             except IntegrityError as e:
+                database.session.rollback()
                 logger.info("INVITE: skipping %s, as it already exists", address)
                 continue
 

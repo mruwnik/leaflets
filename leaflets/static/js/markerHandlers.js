@@ -168,7 +168,7 @@ CampaignAddressSelector.init = function(address_ids) {
 UserAssignSelector = new BaseAddressSelector();
 UserAssignSelector.init = function() {
     Markers.MarkersGetter(mapControls.markerClass);
-    $('.user input[type="radio"]').click(function (e) {
+    $('input[type="radio"][name="child"]').change(function (e) {
         $.each(Markers.MarkersGetter.markers, function(id, marker) {
             marker.update();
         });

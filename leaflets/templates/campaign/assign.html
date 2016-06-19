@@ -2,7 +2,7 @@
 
 {% block body %}
     <h1>{{ campaign.name }}</h1>
-    {% raw render_user(current_user_object(), True) %}
+    {% raw render_user(current_user_object(), radio=True) %}
     <input type="hidden" name="campaign_id" value="{{ campaign.id }}"/>
     {% module xsrf_form_html() %}
 {% end %}
@@ -23,3 +23,16 @@
     data-address-handler="UserAssignSelector"
     data-clustering-zoom="5"
 {% end %}}
+
+{% block scripts %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/leaflet-providers/1.1.7/leaflet-providers.min.js"></script>
+<script src="{{ static_url('js/locationfilter.js') }}"></script>
+<script src="{{ static_url('js/leaflet.markercluster-src.js') }}"></script>
+
+<script src="{{ static_url('js/map.js') }}"></script>
+<script src="{{ static_url('js/markers.js') }}"></script>
+<script src="{{ static_url('js/markerHandlers.js') }}"></script>
+<script src="{{ static_url('js/setup.js') }}"></script>
+<script src="{{ static_url('js/user.js') }}"></script>
+{% end %}

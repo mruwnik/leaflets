@@ -9,48 +9,47 @@ function drag(ev) {
 function drop(ev) {
     ev.preventDefault();
     var data = ev.dataTransfer.getData("text"),
-        user = $(ev.target).closest('.user')[0],
-        child = document.getElementById(data);
+        user = $(ev.target).closest('.user'),
+        child = $('#' + data);
 
     // Don't copy into oneself, as that is pointless
     if(user == child || $('#' + user.id, child).length){
         return;
     }
     var children = $('> .children', user);
-    if(children.length > 0){
-       children = children[0];
-    } else {
-        // If there is no children div, add it
-        var checkbox = document.createElement('input');
-        checkbox.id = ev.target.dataset.userId + '-show-children';
-        checkbox.setAttribute("type", "checkbox");
-        checkbox.setAttribute("checked", true);
-
-        // if the label is before the checkbox, the css won't work correctly. This
-        // is a hack to change the order
-        var label = user.children[0];
-        user.appendChild(checkbox);
-        user.appendChild(label);
-
-        children = document.createElement('div')
-        children.classList.add('children');
-        user.appendChild(children);
+    if(!children.length){
+        return;
     }
-    children.appendChild(child);
-    $('input[type="checkbox"]', user).prop('checked', true);
+
+    oldParent = child.parent().closest('.user');
+    child.appendTo(children);
+    $('> input[type="checkbox"]', user).prop('checked', true);
+
+    user.addClass('group');
+    if(!oldParent.find('.user').length) {
+        oldParent.removeClass('group');
+    }
 
     // Update the database
     $.post('', {
-        'user': child.dataset.userId,
-        'target': user.dataset.userId,
+        'user': child.data('userId'),
+        'target': user.data('userId'),
         '_xsrf': $('input[name="_xsrf"]').val()
     });
 }
 
-$('.user').click(function(e){
+$('div.user input').click(function(e){
     e.stopPropagation();
-    if(e.target == this){
-        $('input[type="checkbox"]', this).click()
+});
+
+$('div.user, .user :not(input)').click(function(e){
+    var user = $(this).closest('.user'),
+        radio = $('input[name="child"][value="' + user.data('userId') + '"]'),
+        checkbox = user.find('> input[type="checkbox"]');
+    e.stopPropagation();
+    if(!radio.length || radio.prop('checked')){
+        checkbox.click();
     }
+    radio.click();
 });
 

@@ -210,10 +210,10 @@ UserAssignMarker = function(address){
 };
 UserAssignMarker.defaultBounds = {campaign: CampaignMarker.campaignId()};
 UserAssignMarker.selectedUserDiv = function() {
-    return $('div.user input[name="child"]:checked');
+    return $('input[type="radio"][name="child"]:checked + .user');
 };
 UserAssignMarker.selectedUser = function() {
-    return UserAssignMarker.selectedUserDiv().val();
+    return UserAssignMarker.selectedUserDiv().data('user-id');
 };
 UserAssignMarker.selectedUserParents = function() {
     return $.map(UserAssignMarker.selectedUserDiv().parents('div.user'), function(elem){
@@ -221,7 +221,7 @@ UserAssignMarker.selectedUserParents = function() {
     });
 };
 UserAssignMarker.selectedUserChildren = function() {
-    return $.map(UserAssignMarker.selectedUserDiv().parent().find('div.user'), function(elem){
+    return $.map(UserAssignMarker.selectedUserDiv().find('.children div.user'), function(elem){
         return $(elem).data('user-id');
     });
 };

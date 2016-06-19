@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}leaflets{% end %}</title>
-        <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.6.0/pure-min.css">
+        <link rel="stylesheet" href="{{ static_url('css/pure-min.css') }}">
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
         <link rel="stylesheet" href="{{ static_url('css/locationfilter.css') }}"/>
         <link rel="stylesheet" href="{{ static_url('css/MarkerCluster.Default.css') }}"/>
@@ -28,7 +28,7 @@
                 <a href="{{ reverse_url('list_campaign') }}" class="pure-menu-link">{{ _('campaigns') }}</a>
               </li>
               <li class="right pure-menu-item"><a href="{{ reverse_url('logout') }}" class="pure-menu-link">
-                  {{ _('logout') }} {{ current_user_object().username }}
+                  {{ _('logout') }} {{ current_login()}}
               </a></li>
           {% else %}
               <li class="pure-menu-item"><a href="{{ reverse_url('login') }}" class="right pure-menu-link">{{ _('login') }}</a></li>

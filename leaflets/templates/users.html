@@ -4,7 +4,7 @@
     {% module xsrf_form_html() %}
     <a href="{{ reverse_url('add_user') }}">{{ _('add user') }}</a>
     <br><br>
-    {% raw render_users(users) %}
+    {% raw render_users(users, editable=True) %}
 {% end %}
 
 {% block scripts %}

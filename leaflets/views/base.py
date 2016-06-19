@@ -24,7 +24,10 @@ class BaseHandler(RequestHandler):
         if not user_id:
             return None
 
-        return User.query.get(user_id)
+        user = User.query.get(user_id)
+        if not user:
+            self.clear_cookie('user_id')
+        return user
 
     @property
     def is_admin(self):
