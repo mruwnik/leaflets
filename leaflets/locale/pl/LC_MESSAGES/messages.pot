@@ -287,3 +287,6 @@ msgstr "Nie podano poprawnych adresów."
 
 msgid "stale_activation_link"
 msgstr "Ten odnośnik się przeterminował. Poproś o nowy."
+
+msgid "pending_user"
+msgstr "nie aktywny"

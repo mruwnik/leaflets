@@ -283,3 +283,6 @@ msgstr "No valid emails were provided."
 
 msgid "stale_activation_link"
 msgstr "This activation link is stale. Request a new one."
+
+msgid "pending_user"
+msgstr "not activated"

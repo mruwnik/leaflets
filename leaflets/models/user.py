@@ -82,7 +82,7 @@ class User(Base):
         if self.parent:
             return self.parent.children
         else:
-            return User.query.filter(User.parent_id == None).all()
+            return User.query.filter(User.parent_id == None).order_by(User.username).all()
 
     @property
     def visible_user_ids(self):

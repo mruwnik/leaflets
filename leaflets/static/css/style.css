@@ -104,6 +104,11 @@ input[type="radio"]:checked + .user{
     vertical-align: top;
 }
 
+.user-info .pending{
+    background-color: #F08080	;
+    padding: 3px 5px;
+}
+
 .checklist-level input[type="radio"] ~ div,
 .user input[type="checkbox"] ~ .children{
     display: none;

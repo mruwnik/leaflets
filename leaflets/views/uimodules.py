@@ -99,6 +99,11 @@ def render_user(handler, user, editable=False, radio=False):
     checked = 'checked' if user.id == handler.current_user else ''
     toggle = '<input type="checkbox" hidden %s id="%s-show-children"/>' % (checked, user.id)
     children = render_users(handler, user.children, editable, radio) if user.children else ''
+
+    pending = ''
+    if user.password_hash.startswith('reset-'):
+        pending = '<span class="pending">(%s)</span>' % handler.locale.translate('pending_user')
+
     if radio:
         radio = '<input type="radio" hidden id="radio-{0}" value="{0}" name="child"/>'.format(user.id)
 
@@ -107,7 +112,7 @@ def render_user(handler, user, editable=False, radio=False):
             {toggle}
             <label class="user-info">
                 <div style="display: inline-block;">
-                    <span class="name">{username}</span> {is_admin} <br>
+                    <span class="name">{username}</span> {is_admin} {pending}<br>
                     <span class="email"> &lt;{email}&gt; </span>
                 </div><br>
                 <span>{actions}</span>
@@ -124,6 +129,7 @@ def render_user(handler, user, editable=False, radio=False):
         email=user.email,
         actions=user_actions(handler, user) if editable else '',
         is_admin='(admin)' if user.admin else '',
+        pending=pending,
         children=children,
     )
 

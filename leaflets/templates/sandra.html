@@ -19,4 +19,48 @@
     do kampanii to drugi wpis. Więc póki co ilość adresów jest ograniczona, co oznacza że nie można np. cały śląsk zaznaczyć.<br>
     Administratorzy mogą dodać nowych użytkowników i dodać nowe adresy (co odpowiada na przynajmniej 1 z powyższych pytań).
     <br><br>
+    <script src="//code.jquery.com/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+function random_choice(items){
+    return items[Math.round(Math.random() * 100000) % items.length];
+}
+
+var addresses = null;
+
+function random_state() {
+  var item = JSON.stringify({
+        "state": random_choice(['marked', 'selected']),
+        "address": random_choice(addresses),
+        "campaign": $('input[name="campaign_id"]').val()
+   });
+   console.log(item);
+   CampaignMarker.prototype.socket.send(item);
+   return item;
+}
+
+function random_clicks(){
+    $.get("/campaign/addresses?campaign=" + $('input[name="campaign_id"]').val()).done(function(addrs){
+        addresses = $.map(addrs, function(addr, i){ return i;})
+        for(var i = 0; i < $('input[name="amount"]').val(); i++){
+           random_state()
+       };
+       console.log('sent all requests');
+    });
+}
+    </script>
+    <form class="pure-form">
+      <fieldset>
+        <legend>Jak chcesz by losowo klikać po jakieś kampani, to możesz tutaj:</legend>
+        
+        <input type="text" name="campaign_id" placeholder="id kampanii (np. 1)">
+        <input type="text" name="amount" placeholder="ilość kliknięć (np 1000)">
+        
+        <button type="button" class="pure-button pure-button-primary" onclick="random_clicks()">Odpal</button>
+      </fieldset>
+</form> 
 {% end %}
+{% block map-options %}
+    data-marker="CampaignMarker"
+    data-address-handler="DisplaySelector"
+    data-clustering-zoom="5"
+{% end %}}
