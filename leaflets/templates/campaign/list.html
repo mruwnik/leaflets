@@ -1,28 +1,33 @@
 {% extends "../base.html" %}
 
 {% block body %}
-    <a href="{{ reverse_url('add_campaign') }}">{{ _('add_campaign') }}</a>
-
+    <a href="{{ reverse_url('add_campaign') }}" class="pure-button pure-button-primary">
+      {{ _('add_campaign') }}
+    </a>
     {% for campaign_type, campaign_objs in campaigns %}
-        {% if campaign_objs %}
-            <h1>{{ _(campaign_type) }}</h1>
-            <table>
+       {% if campaign_objs %}
+          <h1>{{ _(campaign_type) }}</h1>
+            <table class="pure-table pure-table-bordered pure-table-striped">
+              <thead>
                 <tr>
                     <th>{{ _('campaign_name') }}</th>
                     <th>{{ _('description') }}</th>
                     <th>{{ _('start_date') }}</th>
                     <th>{{ _('actions') }}</th>
                 </tr>
+              </thead>
                 {% for campaign in campaign_objs %}
                 <tr>
-                    <td>{{ campaign.name }}</td>
-                    <td>{{ campaign.desc }}</td>
-                    <td>{{ campaign.start }}</td>
-                    <td>
-                        <a href="{{ reverse_url('show_campaign') }}?campaign={{campaign.id}}">{{ _('show_campaign') }}</a><br>
-                        <a href="{{ reverse_url('edit_campaign') }}?campaign={{campaign.id}}">{{ _('edit_campaign') }}</a><br>
-                        <a href="{{ reverse_url('assign_campaign') }}?campaign={{campaign.id}}">{{ _('assign_campaign') }}</a><br>
-                    </td>
+                  <td><a href="{{ reverse_url('show_campaign', campaign.id) }}">
+                      {{ campaign.name }}
+                  </a></td>
+                  <td>{{ campaign.desc }}</td>
+                  <td>{{ campaign.start.strftime('%d/%m/%Y %H:%M') }}</td>
+                  <td>
+                    <a href="{{ reverse_url('show_campaign', campaign.id) }}">{{ _('show_campaign') }}</a><br>
+                    <a href="{{ reverse_url('edit_campaign', campaign.id) }}">{{ _('edit_campaign') }}</a><br>
+                    <a href="{{ reverse_url('assign_campaign') }}?campaign_id={{ campaign.id }}">{{ _('assign_campaign') }}</a><br>
+                  </td>
                 </tr>
                 {% end %}
             </table>

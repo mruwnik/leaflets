@@ -2,9 +2,11 @@
 
 {% block body %}
     {% module xsrf_form_html() %}
-    <a href="{{ reverse_url('add_user') }}">{{ _('add user') }}</a>
+    <a href="{{ reverse_url('add_user') }}" class="pure-button pure-button-primary">{{ _('add user') }}</a>
     <br><br>
-    {% raw render_users(users, editable=True) %}
+    <div id="users-list">
+      {% raw render_users(users, editable=True) %}
+    </div>
 {% end %}
 
 {% block scripts %}

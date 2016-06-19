@@ -42,6 +42,7 @@ table, th, td {
 
 div.legend {
     min-height: 1em;
+    overflow: hidden;
 }
 div.legend div.legend-item {
     float: left;

@@ -4,17 +4,25 @@
     <h1>{{ campaign.name }}</h1>
     {{ campaign.desc }}
     <br><br>
-    {{ _('start_date') }}: {{ campaign.start }}
+    <div class="pure-g">
+      <div class="pure-u-3-4">
+        {{ _('start_date') }}: {{ campaign.start.strftime('%d/%m/%Y %H:%M') }}
+      </div>
+      <div class="pure-u-1-4">
+        <a href="{{ reverse_url('show_campaign', campaign.id) }}" class="pure-button pure-button-primary">{{ _('show_list') }}</a>
+        <div class="pure-u-1-24"></div>
+      </div>
+    </div>
     <input type="hidden" name="campaign_id" value="{{ campaign.id }}"/>
     {% module xsrf_form_html() %}
-
-    <a href="{{ reverse_url('show_campaign') }}?campaign={{campaign.id}}">{{ _('show_list') }}</a><br>
 {% end %}
 
 {% block map-controls %}
-<div class="controls">
-     <input type="checkbox" class="selector-control" name="track-position">{{ _('track_position') }}</input>
-</div>
+    <div class="controls pure-button pure-button-primary">
+      <input type="checkbox" id="track-position" class="selector-control" name="track-position">
+         <label for="track-position">{{ _('track_position') }}</label>
+      </input>
+    </div>
 {% end %}
 
 {% block legend %}

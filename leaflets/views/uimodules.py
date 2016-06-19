@@ -1,7 +1,6 @@
 import re
 from types import LambdaType
 
-from operator import itemgetter
 from leaflets.models import User, AddressStates
 
 
@@ -84,7 +83,9 @@ def current_login(handler):
 
 
 def user_actions(handler, user):
-    return '<a href="{edit}">{edit_text}</a>&nbsp;<a href="{add}">{add_text}</a>&nbsp;<a href="{invite}">{invite_text}</a>'.format(
+    return """
+        <a href="{edit}">{edit_text}</a>&nbsp;<a href="{add}">{add_text}</a>&nbsp;<a href="{invite}">{invite_text}</a>
+    """.format(
         add=handler.reverse_url('add_user') + '?parent=%d' % user.id, add_text=handler.locale.translate('add user'),
         invite=handler.reverse_url('invite_users', user.id), invite_text=handler.locale.translate('invite users'),
         edit=handler.reverse_url('edit_user') + '?user=%d' % user.id, edit_text=handler.locale.translate('edit'),

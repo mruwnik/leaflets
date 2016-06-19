@@ -17,7 +17,9 @@ class AddUserHandler(LoginHandler):
     @property
     def form(self):
         form = AddUserForm(self.request.arguments)
-        if int(form.parent.data) not in self.current_user_obj.visible_user_ids:
+        parent_id = form.parent.data and int(form.parent.data)
+
+        if parent_id not in self.current_user_obj.visible_user_ids:
             self.redirect(UsersListHandler.url)
 
         return form

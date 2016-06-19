@@ -50,6 +50,8 @@ def test_users_list(http_client, base_url, app, db_session, users, admin):
     response = yield http_client.fetch(base_url + UsersListHandler.url)
     soup = BeautifulSoup(response.body, 'html.parser')
 
+    all_users = {user.id: user for user in User.query}
+
     def parse_children(user_div):
         """Get all children from the given div."""
         info = user_div.find(attrs={'class': 'user-info'})
@@ -68,23 +70,27 @@ def test_users_list(http_client, base_url, app, db_session, users, admin):
             'children': children
         }
 
-    def check_children(user, attrs):
+    def check_children(user_id, attrs):
         """Check whether all children of the given user are on the page.
 
-        :param User user: the user to be checked
+        :param int user_id: the id of the user to be checked
         :param dict attrs: {name, email, children} of the user
         """
+        user = all_users[user_id]
         assert user.username == attrs['name']
         assert user.email == attrs['email']
 
         assert len(user.children) == len(attrs['children'])
         for child in user.children:
-            check_children(child, attrs['children'][child.id])
+            check_children(child.id, attrs['children'][child.id])
 
-    user_id, attrs = parse_children(soup.find(attrs={'class': 'user'}))
+    users = list(map(parse_children, soup.find_all(attrs={'class': 'user'})))
 
-    assert user_id == admin.id
-    check_children(admin, attrs)
+    # make sure that all the users were returned
+    assert {user_id for user_id, attrs in users} == set(all_users.keys())
+
+    for user_id, attrs in users:
+        check_children(user_id, attrs)
 
 
 @pytest.mark.gen_test

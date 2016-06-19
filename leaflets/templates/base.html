@@ -36,9 +36,14 @@
         </ul>
       </div>
       {% end %}
-      {% block body %}{% end %}
-      {% block map %}{% end %}
-      
+      <div class="pure-g">
+        <div class="pure-u-1-24"></div>
+        <div class="pure-u-22-24">
+          {% block body %}{% end %}
+          {% block map %}{% end %}
+        </div>
+        <div class="pure-u-1-24"></div>
+      </div> 
       <script src="//code.jquery.com/jquery-1.7.1.min.js"></script>
       {% block scripts %}{% end %}
     </body>

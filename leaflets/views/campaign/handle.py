@@ -16,9 +16,13 @@ class CampaignHandler(BaseHandler):
 
     @property
     def campaign(self):
+        """Get the campaign object associated with the current call of this handler."""
+        return self.get_campaign(self.get_argument('campaign'))
+
+    def get_campaign(self, campaign_id):
         """Get the campaign to be shown."""
         user = self.current_user_obj
-        campaign = Campaign.query.get(self.get_argument('campaign'))
+        campaign = Campaign.query.get(campaign_id)
 
         if not campaign or campaign not in user.campaigns + user.parent_campaigns + user.children_campaigns:
             raise HTTPError(403, reason=self.locale.translate('No such campaign found'))
@@ -26,10 +30,14 @@ class CampaignHandler(BaseHandler):
 
     @property
     def addrs(self):
+        """Get all addresses associated with the currently handled campaign."""
+        return self.get_addresses(self.get_argument('campaign'))
+
+    def get_addresses(self, campaign_id):
         """Get all addresses for the given campaign."""
         user = self.current_user_obj
         return CampaignAddress.query.filter(
-            CampaignAddress.campaign == self.campaign,
+            CampaignAddress.campaign_id == campaign_id,
             or_(
                 CampaignAddress.user_id.in_(
                     [user.id] + [u.id for u in user.descendants + user.ancestors]),
@@ -66,19 +74,19 @@ class CampaignHandler(BaseHandler):
 class ShowCampaignHandler(CampaignHandler):
     """Show a given campaign."""
 
-    url = '/campaign'
+    url = '/campaign/(\d+)'
     name = 'show_campaign'
 
     @authenticated
-    def get(self):
+    def get(self, campaign):
         addrs_tree = defaultdict(lambda: defaultdict(lambda: defaultdict(CampaignAddress)))
-        for address in self.addrs:
+        for address in self.get_addresses(campaign):
             addr = address.address
             addrs_tree[addr.town][addr.street][addr.house] = address
 
         self.render(
             'campaign/show-list.html',
-            campaign=self.campaign,
+            campaign=self.get_campaign(campaign),
             addrs_tree=addrs_tree,
         )
 
@@ -86,12 +94,12 @@ class ShowCampaignHandler(CampaignHandler):
 class ShowCampaignMapHandler(CampaignHandler):
     """Show a given campaign."""
 
-    url = '/campaign_map'
+    url = '/campaign_map/(\d+)'
     name = 'show_campaign_map'
 
     @authenticated
-    def get(self):
-        self.render('campaign/show-map.html', campaign=self.campaign)
+    def get(self, campaign_id):
+        self.render('campaign/show-map.html', campaign=self.get_campaign(campaign_id))
 
 
 class CampaignAddressesHandler(WebSocketHandler, CampaignHandler):

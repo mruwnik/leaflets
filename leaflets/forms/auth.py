@@ -51,9 +51,10 @@ class UpdateUserForm(Form):
             raise ValidationError(self.PASSWORD_MISMATCH)
 
     def update(self, user):
-        user.username=self.name.data,
-        user.email=self.email.data,
-        user.password_hash=User.hash(self.password.data),
+        """Update the given user with this form's values."""
+        user.username = self.name.data,
+        user.email = self.email.data,
+        user.password_hash = User.hash(self.password.data),
 
         database.session.commit()
 
@@ -137,7 +138,6 @@ class InviteUsersForm(Form):
             logger.info('INVITE: sent activation url to %s', address)
         except smtplib.SMTPException:
             logger.error("Error: unable to send email")
-
 
     def send(self, base_url):
         """Send activation links to all provided email addresses.

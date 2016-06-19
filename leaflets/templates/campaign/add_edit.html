@@ -3,7 +3,8 @@
 {% block body %}
     <h1>{{ _(view) }}</h1>
 
-    <form id="campaign-form" method="post" action="{{ reverse_url(view) }}">
+    <form id="campaign-form" method="post" class="pure-form pure-form-aligned">
+      <fieldset>
         {% module xsrf_form_html() %}
         {% raw render_field(form.name) %}
         {% raw render_field(form.desc) %}
@@ -12,14 +13,16 @@
         {% for id in form.addresses.data %}
             <input type="hidden" name="addresses[]" value="{{ id }}">
         {% end %}
-        <input type="submit" value="{{ _(view) }}">
+        <div class="pure-control-group">
+          <button type="submit" class="pure-button pure-button-primary">{{ _(view) }}</button>
+        </div>
         {% try %}
             <input type="hidden" name="campaign" value="{{ campaign.id }}"/>
         {% except %}
             {# if the previous line blows up coz there is no campaign, it leaves a hanging element #}
             "/>
         {% end %}
-
+      </fieldset>
     </form>
 {% end %}
 

@@ -55,10 +55,11 @@ class AddCampaignHandler(BaseHandler):
 class EditCampaignHandler(CampaignHandler):
     """Edit a campaign."""
 
-    url = '/campaign/edit'
+    url = '/campaign/edit/(\d+)'
+    name = 'edit_campaign'
 
-    def get(self):
-        campaign = self.campaign
+    def get(self, campaign_id):
+        campaign = self.get_campaign(campaign_id)
         form = CampaignForm(
             name=campaign.name,
             desc=campaign.desc,
@@ -69,7 +70,7 @@ class EditCampaignHandler(CampaignHandler):
 
     @authenticated
     @gen.coroutine
-    def post(self):
+    def post(self, campaign_id):
         form = CampaignForm(self.request.arguments)
         if not form.validate():
             return self.render('campaign/add_edit.html', form=form)

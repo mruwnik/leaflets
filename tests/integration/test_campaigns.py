@@ -48,9 +48,8 @@ def test_add_campaign(xsrf_client, base_url, db_session, addresses, admin):
 
 
 @pytest.mark.gen_test
-def test_edit_campaign(xsrf_client, base_url, db_session, addresses, campaign, admin):
+def test_edit_campaign(xsrf_client, base_url, db_session, addresses, campaign, admin, app):
     """Check whether campaigns are correctly edited."""
-    url = base_url + EditCampaignHandler.url
     start = campaign.start + timedelta(days=2)
 
     # add an extra address to see if it will be added to the campaign
@@ -70,6 +69,7 @@ def test_edit_campaign(xsrf_client, base_url, db_session, addresses, campaign, a
         'addresses[]': address_ids,
         'campaign': campaign.id,
     }
+    url = base_url + app.reverse_url(EditCampaignHandler.name, campaign.id)
     request = yield xsrf_client.xsrf_request(url, post_data)
     response = yield xsrf_client.fetch(request)
 
