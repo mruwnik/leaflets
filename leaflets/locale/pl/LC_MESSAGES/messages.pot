@@ -59,7 +59,7 @@ msgid "No such campaign found"
 msgstr "Nie odnależono takiej kampanii"
 
 msgid "There already is a campaign with this name"
-msgstr "Już istniej kampania z taką nazwą"
+msgstr "Już istnieje wydarzenie z taką nazwą"
 
 msgid "No addresses selected"
 msgstr "Nie wybrano żadnych adresów"
@@ -141,7 +141,7 @@ msgstr "Wczytaj adresy"
 
 #: ./leaflets/templates/base.html:19
 msgid "campaigns"
-msgstr "Kampanie"
+msgstr "Wydarzenia"
 
 #: ./leaflets/templates/base.html:20
 msgid "logout"
@@ -153,10 +153,10 @@ msgstr "Zaloguj"
 
 #: ./leaflets/templates/campaign/list.html:5
 msgid "add_campaign"
-msgstr "Dodaj nową kampanię"
+msgstr "Dodaj nowe wydarzenie"
 
 msgid "assign_campaign"
-msgstr "Przypisz użytkowników do adresów"
+msgstr "Przypisz adresy do użytkowników"
 
 msgid "No user id provided"
 msgstr "Nie podano identyfikator użytkownika"
@@ -177,7 +177,7 @@ msgid "pending"
 msgstr "W trakcie aktualizacji"
 
 msgid "unassigned_address"
-msgstr "Nie przypisane"
+msgstr "Nie przypisany"
 
 msgid "assigned_selected_user"
 msgstr "Wybranego użytkownika"
@@ -193,11 +193,11 @@ msgstr "Nadrzędnego użytkownika wybranego użytkownika"
 
 #: ./leaflets/templates/campaign/list.html:9
 msgid "campaign_name"
-msgstr "Nazwa kampani"
+msgstr "Nazwa wydarzenia"
 
 #: ./leaflets/templates/campaign/list.html:10
 msgid "description"
-msgstr "Opis kampani"
+msgstr "Opis wydarzenia"
 
 #: ./leaflets/templates/campaign/list.html:12
 msgid "actions"
@@ -205,16 +205,16 @@ msgstr "Czynności"
 
 #: ./leaflets/templates/campaign/list.html:20
 msgid "show_campaign"
-msgstr "Pokaż kampanię"
+msgstr "Pokaż wydarzenie"
 
 msgid "user_campaigns"
-msgstr "Kampanie"
+msgstr "Wydarzenia"
 
 msgid "parent_campaigns"
-msgstr "Kampanie nadrzędne"
+msgstr "Wydarzenia nadrzędne"
 
 msgid "children_campaigns"
-msgstr "Kampanie podrzędne"
+msgstr "Wydarzenia podrzędne"
 
 msgid "show_list"
 msgstr "Wyświetl jako lista"
@@ -224,11 +224,11 @@ msgstr "Wyświetl na mapie"
 
 #: ./leaflets/templates/campaign/list.html:21
 msgid "edit_campaign"
-msgstr "Edytuj kampanię"
+msgstr "Edytuj wydarzenie"
 
 #: ./leaflets/templates/campaign/show.html:7
 msgid "start_date"
-msgstr "Data rozpoczęcia kampani"
+msgstr "Data rozpoczęcia wydarzenia"
 
 #: ./leaflets/templates/map.html:5
 msgid "toggle_selector"
