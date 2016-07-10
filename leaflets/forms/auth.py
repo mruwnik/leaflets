@@ -4,7 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from sqlalchemy.exc import IntegrityError
-from wtforms import StringField, PasswordField, BooleanField, HiddenField
+from wtforms import StringField, PasswordField, BooleanField, HiddenField, SubmitField
 from wtforms.widgets import TextArea
 from wtforms.validators import DataRequired, Email, ValidationError
 from wtforms_tornado import Form
@@ -17,6 +17,26 @@ import logging
 logger = logging.getLogger()
 
 
+def send_email(subject, address, contents):
+        """Send an email to the given address."""
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = options.EMAIL_ADDR
+        msg['To'] = address
+        msg.attach(MIMEText(contents, 'html'))
+
+        try:
+            server = smtplib.SMTP('smtp.gmail.com:587')
+            server.ehlo()
+            server.starttls()
+            server.login(options.EMAIL_ADDR, options.EMAIL_PASSWD)
+            server.sendmail(options.EMAIL_ADDR, [address], msg.as_string())
+            server.quit()
+            logger.info('INVITE: sent activation url to %s', address)
+        except smtplib.SMTPException:
+            logger.error("Error: unable to send email")
+
+
 class LoginForm(Form):
     email = StringField('email', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])
@@ -26,6 +46,7 @@ class EditUserForm(Form):
     name = StringField('user_name', validators=[DataRequired()])
     email = StringField('email', validators=[DataRequired(), Email()])
     is_admin = BooleanField('is_admin')
+    reset_password = SubmitField('reset_password')
     user_id = HiddenField('user_id')
 
     def update(self, user):
@@ -120,25 +141,6 @@ class InviteUsersForm(Form):
     emails = StringField('emails', widget=TextArea(), validators=[DataRequired(), check_emails_provided])
     invitation = StringField('invitation', widget=TextArea(), validators=[DataRequired(), check_for_url])
 
-    def _send_email(self, subject, address, contents):
-        """Send an email to the given address."""
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = subject
-        msg['From'] = options.EMAIL_ADDR
-        msg['To'] = address
-        msg.attach(MIMEText(contents, 'html'))
-
-        try:
-            server = smtplib.SMTP('smtp.gmail.com:587')
-            server.ehlo()
-            server.starttls()
-            server.login(options.EMAIL_ADDR, options.EMAIL_PASSWD)
-            server.sendmail(options.EMAIL_ADDR, [address], msg.as_string())
-            server.quit()
-            logger.info('INVITE: sent activation url to %s', address)
-        except smtplib.SMTPException:
-            logger.error("Error: unable to send email")
-
     def send(self, base_url):
         """Send activation links to all provided email addresses.
 
@@ -160,7 +162,7 @@ class InviteUsersForm(Form):
                 logger.info("INVITE: skipping %s, as it already exists", address)
                 continue
 
-            self._send_email(
+            send_email(
                 self.subject.data, address,
                 self.invitation.data.format(
                     name=name,

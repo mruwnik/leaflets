@@ -1,7 +1,8 @@
 import re
+from collections import defaultdict
 from types import LambdaType
 
-from leaflets.models import User, AddressStates
+from leaflets.models import User, AddressStates, CampaignAddress
 
 
 def render_form(handler, form, action, button):
@@ -82,14 +83,17 @@ def current_login(handler):
     return user and user.email
 
 
+def link(url, text):
+    return '<a href="%s">%s</a>' % (url, text)
+
+
 def user_actions(handler, user):
-    return """
-        <a href="{edit}">{edit_text}</a>&nbsp;<a href="{add}">{add_text}</a>&nbsp;<a href="{invite}">{invite_text}</a>
-    """.format(
-        add=handler.reverse_url('add_user') + '?parent=%d' % user.id, add_text=handler.locale.translate('add user'),
-        invite=handler.reverse_url('invite_users', user.id), invite_text=handler.locale.translate('invite users'),
-        edit=handler.reverse_url('edit_user') + '?user=%d' % user.id, edit_text=handler.locale.translate('edit'),
-    )
+    links = map(lambda parts: link(*parts), (
+        (handler.reverse_url('add_user') + '?parent=%d' % user.id, handler.locale.translate('add user')),
+        (handler.reverse_url('invite_users', user.id), handler.locale.translate('invite users')),
+        (handler.reverse_url('edit_user') + '?user=%d' % user.id, handler.locale.translate('edit')),
+    ))
+    return '&nbsp;'.join(links)
 
 
 DRAG_N_DROP = ' draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)" '
@@ -190,7 +194,7 @@ def checklist_item(item):
     return CHECKLIST_ITEM_TEMPLATE.format(id=item.address.id, selected=selected, contents=item.address.house)
 
 
-def nested_checklist(handler, items, action_url=None):
+def nested_checklist(handler, items):
     try:
         while items and len(items) == 1:
             items, = items.values()
@@ -198,3 +202,11 @@ def nested_checklist(handler, items, action_url=None):
         return checklist_item(items)
 
     return ''.join([checklist_level(key, items[key]) for key in sorted(items)])
+
+
+def render_campaign_streets(handler, campaign):
+    addrs_tree = defaultdict(lambda: defaultdict(lambda: defaultdict(CampaignAddress)))
+    for address in handler.get_addresses(campaign.id):
+        addr = address.address
+        addrs_tree[addr.town][addr.street][addr.house] = address
+    return nested_checklist(campaign, addrs_tree)

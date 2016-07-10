@@ -1,8 +1,8 @@
 from tornado.web import authenticated
 
 from leaflets.views.users.auth import LoginHandler
-from leaflets.views.users.management import UsersListHandler
-from leaflets.forms.auth import AddUserForm, EditUserForm, InviteUsersForm
+from leaflets.views.users.management import UsersListHandler, UpdateUserHandler
+from leaflets.forms.auth import AddUserForm, EditUserForm, InviteUsersForm, send_email
 from leaflets.models import User
 
 
@@ -68,6 +68,24 @@ class EditUserHandler(LoginHandler):
             user_id=user.id,
         )
 
+    def reset_password(self, user):
+        activation_url = '%s://%s%s%s' % (
+            self.request.protocol,
+            self.request.host,
+            self.reverse_url(UpdateUserHandler.name, '', '')[:-1],
+            user.reset_passwd(),
+        )
+
+        send_email(
+            self.locale.translate('reset_password_subject'),
+            user.email,
+            self.locale.translate('reset_password_email').format(
+                name=user.username,
+                email=user.email,
+                url='<a href="{0}">{0}</a>'.format(activation_url)
+            )
+        )
+
     @authenticated
     def post(self):
         """Add a new user."""
@@ -76,7 +94,9 @@ class EditUserHandler(LoginHandler):
             return self.get(form)
 
         user = User.query.get(int(form.user_id.data))
-        if user:
+        if user and form.reset_password.data:
+            self.reset_password(user)
+        elif user:
             form.update(user)
 
         self.redirect(UsersListHandler.url)

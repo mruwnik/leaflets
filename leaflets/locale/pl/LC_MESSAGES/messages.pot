@@ -290,3 +290,12 @@ msgstr "Ten odnośnik się przeterminował. Poproś o nowy."
 
 msgid "pending_user"
 msgstr "nie aktywny"
+
+msgid "reset_password"
+msgstr "Wykasuj hasło"
+
+msgid "reset_password_email"
+msgstr "Aby ponownie ustawić hasło, należy kliknąć na {url}"
+
+msgid "reset_password_subject"
+msgstr "Zmiana hasła"

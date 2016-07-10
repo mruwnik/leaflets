@@ -286,3 +286,12 @@ msgstr "This activation link is stale. Request a new one."
 
 msgid "pending_user"
 msgstr "not activated"
+
+msgid "reset_password"
+msgstr "Reset password"
+
+msgid "reset_password_subject"
+msgstr "Password reset"
+
+msgid "reset_password_email"
+msgstr "To reset your password, please click {url}"
