@@ -79,15 +79,9 @@ class ShowCampaignHandler(CampaignHandler):
 
     @authenticated
     def get(self, campaign):
-        addrs_tree = defaultdict(lambda: defaultdict(lambda: defaultdict(CampaignAddress)))
-        for address in self.get_addresses(campaign):
-            addr = address.address
-            addrs_tree[addr.town][addr.street][addr.house] = address
-
         self.render(
             'campaign/show-list.html',
             campaign=self.get_campaign(campaign),
-            addrs_tree=addrs_tree,
         )
 
 

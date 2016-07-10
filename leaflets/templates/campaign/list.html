@@ -26,7 +26,7 @@
                   <td>
                     <a href="{{ reverse_url('show_campaign', campaign.id) }}">{{ _('show_campaign') }}</a><br>
                     <a href="{{ reverse_url('edit_campaign', campaign.id) }}">{{ _('edit_campaign') }}</a><br>
-                    <a href="{{ reverse_url('assign_campaign') }}?campaign_id={{ campaign.id }}">{{ _('assign_campaign') }}</a><br>
+                    <a href="{{ reverse_url('assign_campaign', 'map') }}?campaign={{ campaign.id }}">{{ _('assign_campaign') }}</a><br>
                   </td>
                 </tr>
                 {% end %}

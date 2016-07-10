@@ -1,3 +1,4 @@
+from collections import defaultdict
 from sqlalchemy.exc import IntegrityError
 from tornado import gen
 from tornado.web import authenticated, HTTPError
@@ -87,10 +88,12 @@ class EditCampaignHandler(CampaignHandler):
 class AssignCampaignHandler(CampaignHandler):
     """Assign users to Addresses."""
 
-    url = '/campaign/assign'
+    url = '/campaign/assign/(map|list)'
+    name = 'assign_campaign'
 
-    def get(self):
-        self.render('campaign/assign.html', campaign=self.campaign)
+    def get(self, view_type):
+        self.render(
+            'campaign/assign-%s.html' % view_type, campaign=self.campaign)
 
 
 class UserAssignCampaignHandler(CampaignAddressesHandler, BoundingBox):
