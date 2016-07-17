@@ -131,6 +131,9 @@ msgstr "Na raz można tylko wczytać ograniczony obszar, więc jeżeli zbyt duż
 msgid "manage_users"
 msgstr "Zarządzaj użytkownikami"
 
+msgid "users"
+msgstr "Użytkownicy"
+
 #: ./leaflets/templates/base.html:14
 msgid "add user"
 msgstr "Dodaj użytkownika"
@@ -157,6 +160,9 @@ msgstr "Dodaj nowe wydarzenie"
 
 msgid "assign_campaign"
 msgstr "Przypisz adresy do użytkowników"
+
+msgid "assign_addresses"
+msgstr "Przypisz adresy"
 
 msgid "No user id provided"
 msgstr "Nie podano identyfikator użytkownika"
@@ -299,3 +305,9 @@ msgstr "Aby ponownie ustawić hasło, należy kliknąć na {url}"
 
 msgid "reset_password_subject"
 msgstr "Zmiana hasła"
+
+msgid "edit"
+msgstr "Edycja"
+
+msgid "parent"
+msgstr "Grupa"

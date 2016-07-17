@@ -131,6 +131,9 @@ msgstr "Add a user"
 msgid "manage_users"
 msgstr "Manage users"
 
+msgid "users"
+msgstr "Users"
+
 #: ./leaflets/templates/base.html:15
 msgid "import_addresses"
 msgstr "Import addresses"
@@ -157,6 +160,9 @@ msgstr "Campaign name"
 
 msgid "assign_campaign"
 msgstr "Assign users to addresses"
+
+msgid "assign_addresses"
+msgstr "Assign addresses"
 
 msgid "No user id provided"
 msgstr "No user id provided"
@@ -295,3 +301,6 @@ msgstr "Password reset"
 
 msgid "reset_password_email"
 msgstr "To reset your password, please click {url}"
+
+msgid "parent"
+msgstr "Group"

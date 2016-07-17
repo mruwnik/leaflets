@@ -3,7 +3,7 @@ div.controls {
 }
 
 .main-menu{
-    margin-bottom: 50px;
+    margin-bottom: 1em;
 }
 
 div.location-filter.button-container
@@ -140,4 +140,32 @@ input[type="radio"]:checked + .user{
 
 .active-drag {
   opacity: 0.7;
+}
+
+.users-folder-container{
+    height: 12em;
+    display: inline-block;
+    cursor: pointer;
+    background-color: yellow;
+    margin: 1em;
+}
+.users-user-container{
+    height: 12em;
+    display: inline-block;
+    background-color: orange;
+    margin: 1em;
+}
+.user-folder{
+    display: inline-block;
+    width: 16em;
+    height: 8.8em;
+    padding-top: 4em;
+    text-align: center;
+}
+
+.user-folder .user-name{
+}
+.button-xsmall {
+    font-size: 75%;
+    margin: 2px;
 }

@@ -2,8 +2,10 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <title>{% block title %}leaflets{% end %}</title>
         <link rel="stylesheet" href="{{ static_url('css/pure-min.css') }}">
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
         <link rel="stylesheet" href="{{ static_url('css/locationfilter.css') }}"/>
         <link rel="stylesheet" href="{{ static_url('css/MarkerCluster.Default.css') }}"/>
@@ -16,7 +18,7 @@
         <ul class="pure-menu-list pure-menu-horizontal">
           {% if is_admin() %}
               <li class="pure-menu-item {{ 'pure-menu-selected' if request.uri == reverse_url('list_users') else '' }}">
-                <a href="{{ reverse_url('list_users') }}" class="pure-menu-link">{{ _('manage_users') }}</a>
+                <a href="{{ reverse_url('users_folder', current_user) }}" class="pure-menu-link">{{ _('users') }}</a>
               </li>
               <li class="pure-menu-item {{ 'pure-menu-selected' if request.uri == reverse_url('import_addresses') else '' }}">
                 <a href="{{ reverse_url('import_addresses') }}" class="pure-menu-link">{{ _('import_addresses') }}</a>

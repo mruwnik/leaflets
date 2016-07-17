@@ -4,6 +4,7 @@ from leaflets.views.users.auth import LoginHandler
 from leaflets.views.users.management import UsersListHandler, UpdateUserHandler
 from leaflets.forms.auth import AddUserForm, EditUserForm, InviteUsersForm, send_email
 from leaflets.models import User
+from leaflets import database
 
 
 class AddUserHandler(LoginHandler):
@@ -66,6 +67,7 @@ class EditUserHandler(LoginHandler):
             email=user.email,
             is_admin=user.admin,
             user_id=user.id,
+            parent=str(user.parent_id) if user.parent_id else '',
         )
 
     def reset_password(self, user):
@@ -85,6 +87,7 @@ class EditUserHandler(LoginHandler):
                 url='<a href="{0}">{0}</a>'.format(activation_url)
             )
         )
+        database.session.commit()
 
     @authenticated
     def post(self):

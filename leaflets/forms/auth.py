@@ -4,7 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from sqlalchemy.exc import IntegrityError
-from wtforms import StringField, PasswordField, BooleanField, HiddenField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, HiddenField, SubmitField, SelectField
 from wtforms.widgets import TextArea
 from wtforms.validators import DataRequired, Email, ValidationError
 from wtforms_tornado import Form
@@ -46,6 +46,10 @@ class EditUserForm(Form):
     name = StringField('user_name', validators=[DataRequired()])
     email = StringField('email', validators=[DataRequired(), Email()])
     is_admin = BooleanField('is_admin')
+    parent = SelectField(
+            'parent',
+            choices=[('', '-')] + [(str(u.id), u.username) for u in User.query if u.is_group]
+    )
     reset_password = SubmitField('reset_password')
     user_id = HiddenField('user_id')
 
@@ -54,6 +58,10 @@ class EditUserForm(Form):
         user.username = self.name.data
         user.email = self.email.data
         user.admin = self.is_admin.data
+        if self.parent.data:
+            user.parent_id = int(self.parent.data)
+        else:
+            user.parent_id = None
 
         database.session.commit()
         return user

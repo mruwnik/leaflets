@@ -40,6 +40,17 @@ class UsersListHandler(BaseHandler):
         self.write({'result': 'ok'})
 
 
+class UsersFolderHandler(UsersListHandler):
+
+    url = '/users/folder/(\d+)'
+    name = 'users_folder'
+
+    @authenticated
+    def get(self, user_id):
+        user = User.query.get(user_id)
+        self.render('users_folder.html', users=user.children)
+
+
 class InviteHandler(UsersListHandler):
 
     url = '/users/invite/(\w+)'

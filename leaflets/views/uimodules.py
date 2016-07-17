@@ -1,6 +1,6 @@
 import re
 from collections import defaultdict
-from types import LambdaType
+from types import LambdaType, FunctionType
 
 from leaflets.models import User, AddressStates, CampaignAddress
 
@@ -177,12 +177,12 @@ CHECKLIST_ITEM_TEMPLATE = """
 
 def checklist_level(item, contents, level=0):
     """Render a checklist level along with its children."""
-    if contents.default_factory == LambdaType:
-        children = [checklist_level(key, contents[key], level + 1) for key in sorted(contents)]
-        all_checked = False
-    else:
+    try:
         children = [checklist_item(contents[key]) for key in sorted(contents, key=house_comparator)]
         all_checked = all(map(lambda addr: addr.state == AddressStates.marked, contents.values()))
+    except AttributeError:
+        children = [checklist_level(key, contents[key], level + 1) for key in sorted(contents)]
+        all_checked = False
 
     return CHECKLIST_LEVEL_TEMPLATE.format(
             level=level, id=item, label=item, html=''.join(children), level_class='checked' if all_checked else '')
@@ -208,5 +208,5 @@ def render_campaign_streets(handler, campaign):
     addrs_tree = defaultdict(lambda: defaultdict(lambda: defaultdict(CampaignAddress)))
     for address in handler.get_addresses(campaign.id):
         addr = address.address
-        addrs_tree[addr.town][addr.street][addr.house] = address
+        addrs_tree[str(addr.town)][str(addr.street)][str(addr.house)] = address
     return nested_checklist(campaign, addrs_tree)

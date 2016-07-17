@@ -19,14 +19,18 @@ class ListCampaignsHandler(BaseHandler):
     @authenticated
     def get(self):
         user = self.current_user_obj
-        self.render(
-            'campaign/list.html',
-            campaigns=[
-                ('user_campaigns', user.campaigns),
-                ('parent_campaigns', user.parent_campaigns),
-                ('children_campaigns', user.children_campaigns),
-            ],
-        )
+
+        if not user.admin and len(user.campaigns + user.parent_campaigns) == 1:
+            self.redirect('/campaign/%d' % user.first_campaign.id)
+        else:
+            self.render(
+                'campaign/list.html',
+                campaigns=[
+                    ('user_campaigns', user.campaigns),
+                    ('parent_campaigns', user.parent_campaigns),
+                    ('children_campaigns', user.children_campaigns),
+                ],
+            )
 
 
 class AddCampaignHandler(BaseHandler):

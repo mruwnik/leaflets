@@ -10,7 +10,7 @@ class BaseHandler(RequestHandler):
     name = None
 
     def get(self):
-        self.render('sandra.html')
+        self.redirect('/campaign/list')
 
     def get_current_user(self):
         """Get the id of the currently logged in user."""

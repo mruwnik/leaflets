@@ -1,0 +1,30 @@
+{% extends "../base.html" %}
+
+{% block body %}
+    <h1>{{ campaign.name }}</h1>
+    {% raw render_user(current_user_object(), radio=True) %}
+    <input type="hidden" name="campaign_id" value="{{ campaign.id }}"/>
+    {% module xsrf_form_html() %}
+
+    <a href="{{ reverse_url('assign_campaign', 'map') }}?campaign={{ campaign.id }}" class="pure-button pure-button-primary">{{ _('show_map') }}</a>
+    <br>
+    <br>
+    <div class="legend">
+        <div class="legend-item"><span class="legend-colour unmarked"></span>{{ _('unassigned_address') }}</div>
+        <div class="legend-item"><span class="legend-colour marked"></span>{{ _('assigned_selected_user') }}</div>
+        <div class="legend-item"><span class="legend-colour other-user"></span>{{ _('assigned_other_user') }}</div>
+        <div class="legend-item"><span class="legend-colour child"></span>{{ _('assigned_child_user') }}</div>
+        <div class="legend-item"><span class="legend-colour parent"></span>{{ _('assigned_parent_user') }}</div>
+        <div class="legend-item"><span class="legend-colour pending"></span>{{ _('pending') }}</div>
+    </div>
+    <br>
+{% end %}
+
+{% block map %}
+    {% raw render_campaign_streets(campaign) %}
+{% end %}
+
+{% block scripts %}
+    <script src="{{ static_url('js/user.js') }}"></script>
+    <script src="{{ static_url('js/address_list.js') }}"></script>
+{% end %}

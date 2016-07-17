@@ -90,3 +90,17 @@ class User(Base):
         users = [child for user in self.top_level_users for child in user.descendants] + self.top_level_users
         return {user.id for user in users}
 
+    @property
+    def is_group(self):
+        return bool(self.children)
+
+    @property
+    def first_campaign(self):
+        if self.campaigns:
+            return self.campaigns[0]
+        if self.campaign_addresses:
+            return self.campaign_addresses[0].campaign
+        if self.parent_campaigns:
+            return self.parent_campaigns[0]
+        if self.childre_campaigns:
+            return self.children_campaigns[0]

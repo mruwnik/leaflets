@@ -7,7 +7,7 @@ from leaflets.views.campaign import (
 )
 from leaflets.views.users import (
     LoginHandler, LogOutHandler, AddUserHandler, UsersListHandler, EditUserHandler,
-    InviteHandler, UpdateUserHandler,
+    InviteHandler, UpdateUserHandler, UsersFolderHandler
 )
 
 
@@ -17,6 +17,7 @@ handlers = (
     AddCampaignHandler, ListCampaignsHandler, ShowCampaignHandler, CampaignAddressesHandler,
     EditCampaignHandler, UsersListHandler, EditUserHandler, UserAssignCampaignHandler,
     AssignCampaignHandler, ShowCampaignMapHandler, InviteHandler, UpdateUserHandler,
+    UsersFolderHandler,
 )
 
 
@@ -26,5 +27,5 @@ __all__ = (
     AddCampaignHandler, ListCampaignsHandler, ShowCampaignHandler, CampaignAddressesHandler,
     EditCampaignHandler, UsersListHandler, EditUserHandler, UserAssignCampaignHandler,
     AssignCampaignHandler, ShowCampaignMapHandler, InviteHandler, UpdateUserHandler,
-    handlers
+    UsersFolderHandler, handlers
 )
