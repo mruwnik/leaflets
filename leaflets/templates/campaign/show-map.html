@@ -18,11 +18,9 @@
 {% end %}
 
 {% block map-controls %}
-    <div class="controls pure-button pure-button-primary">
-      <input type="checkbox" id="track-position" class="selector-control" name="track-position">
-         <label for="track-position">{{ _('track_position') }}</label>
-      </input>
-    </div>
+    <button name="track-position" class="controls pure-button pure-button-primary">
+         {{ _('track_position') }}
+    </button>
 {% end %}
 
 {% block legend %}

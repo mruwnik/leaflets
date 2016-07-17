@@ -249,7 +249,7 @@ msgid "deselect_area"
 msgstr "Odznacz obszar"
 
 msgid "track_position"
-msgstr "Śledź pozycję"
+msgstr "Pokaż pozycję"
 
 # invite users
 msgid "invite users"

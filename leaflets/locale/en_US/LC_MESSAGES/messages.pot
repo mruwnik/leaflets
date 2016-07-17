@@ -245,7 +245,7 @@ msgid "deselect_area"
 msgstr "Deselect area"
 
 msgid "track_position"
-msgstr "Track position"
+msgstr "Show position"
 
 # invite users
 msgid "invite users"

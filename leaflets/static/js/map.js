@@ -33,3 +33,8 @@ window.markersLayer = L.markerClusterGroup({
         });
     }
 }).addTo(map);
+position_marker = L.marker(map.getCenter());
+map.on('locationfound', function(e){
+    position_marker.setLatLng(e.latlng);
+    position_marker.addTo(map);
+});

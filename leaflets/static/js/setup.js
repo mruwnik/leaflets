@@ -5,7 +5,7 @@ var mapControls = {
     showSelector: $('.controls #show-selector'),
     selectAreaButton: $('.controls #select-area').hide(),
     deselectAreaButton: $('.controls #deselect-area').hide(),
-    trackButton: $('.controls input[name="track-position"]'),
+    trackButton: $('button.controls[name="track-position"]'),
     mapButtons: $('.selector-control'),
     errors: $('.map-errors'),
     markerClass: Markers[$('#map-container').data('marker')] || Marker,
@@ -41,32 +41,7 @@ if (mapControls.addressHandler) {
 
     var watchTracker = null;
     mapControls.trackButton.click(function(){
-        if (watchTracker != null) {
-            navigator.geolocation.clearWatch(watchTracker);
-            watchTracker = null;
-        } else {
-            watchTracker = navigator.geolocation.watchPosition(function(position, a, b, c) {
-                    map.panTo([position.coords.latitude, position.coords.longitude]);
-                    map.setZoom(20);
-                },
-                function(error) {
-                    switch(error.code) {
-                        case error.PERMISSION_DENIED:
-                            console.log("User denied the request for Geolocation.")
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            console.log("Location information is unavailable.")
-                            break;
-                        case error.TIMEOUT:
-                            console.log("The request to get user location timed out.")
-                            break;
-                        case error.UNKNOWN_ERROR:
-                            console.log("An unknown error occurred.")
-                            break;
-                    }
-                    mapControls.trackButton.prop('checked', false);
-            });
-        }
-        mapControls.trackButton.prop('checked', watchTracker != null);
+        map.locate({setView: true, maxZoom: 20});
+        map.locate({maxZoom: 20, watch: true});
     });
 }
