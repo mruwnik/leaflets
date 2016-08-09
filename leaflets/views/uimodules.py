@@ -99,10 +99,13 @@ def user_actions(handler, user):
 DRAG_N_DROP = ' draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)" '
 
 
-def render_user(handler, user, editable=False, radio=False):
+def render_user(handler, user, editable=False, radio=False, is_parent=False):
     """Generate HTML for the given user."""
     checked = 'checked' if user.id == handler.current_user else ''
-    toggle = '<input type="checkbox" hidden %s id="%s-show-children"/>' % (checked, user.id)
+    if not is_parent:
+        toggle = '<input type="checkbox" hidden %s id="%s-show-children"/>' % (checked, user.id)
+    else:
+        toggle = ''
     children = render_users(handler, user.children, editable, radio) if user.children else ''
 
     pending = ''
@@ -132,11 +135,19 @@ def render_user(handler, user, editable=False, radio=False):
         user_id=user.id,
         username=user.username,
         email=user.email,
-        actions=user_actions(handler, user) if editable else '',
+        actions=user_actions(handler, user) if (editable and not is_parent) else '',
         is_admin='(admin)' if user.admin else '',
         pending=pending,
         children=children,
     )
+
+
+def render_parent(handler, parent, editable=False, radio=False):
+    """Render a parent with all its children."""
+    if not parent:
+        return ''
+
+    return render_user(handler, parent, editable, radio, is_parent=True)
 
 
 def render_users(handler, users, editable=False, radio=False):

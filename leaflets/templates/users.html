@@ -5,7 +5,7 @@
     <a href="{{ reverse_url('add_user') }}?parent={{current_user}}" class="pure-button pure-button-primary">{{ _('add user') }}</a>
     <br><br>
     <div id="users-list">
-      {% raw render_users(users, editable=True) %}
+      {% raw render_parent(parent, editable=True) %}
     </div>
 {% end %}
 

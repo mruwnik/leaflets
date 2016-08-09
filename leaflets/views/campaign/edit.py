@@ -1,7 +1,7 @@
 from collections import defaultdict
 from sqlalchemy.exc import IntegrityError
 from tornado import gen
-from tornado.web import authenticated, HTTPError
+from tornado.web import authenticated, HTTPError, MissingArgumentError
 
 from leaflets.views.base import BaseHandler
 from leaflets.views.campaign.handle import CampaignHandler, CampaignAddressesHandler
@@ -157,7 +157,7 @@ class UserAssignCampaignHandler(CampaignAddressesHandler, BoundingBox):
         """Mark or unmark an address in the given campaign."""
         try:
             user_id = self.get_argument('userId')
-        except KeyError:
+        except MissingArgumentError:
             raise HTTPError(403, reason=self.locale.translate('No user id provided'))
 
         address_id = self.get_argument('address', None)

@@ -17,7 +17,7 @@ class UsersListHandler(BaseHandler):
     @authenticated
     def get(self):
         """Show all users that this user can see."""
-        self.render('users.html', users=self.current_user_obj.top_level_users)
+        self.render('users.html', parent=self.current_user_obj.parent)
 
     @authenticated
     @gen.coroutine

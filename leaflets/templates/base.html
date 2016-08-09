@@ -18,7 +18,7 @@
         <ul class="pure-menu-list pure-menu-horizontal">
           {% if is_admin() %}
               <li class="pure-menu-item {{ 'pure-menu-selected' if request.uri == reverse_url('list_users') else '' }}">
-                <a href="{{ reverse_url('users_folder', current_user) }}" class="pure-menu-link">{{ _('users') }}</a>
+                <a href="{{ reverse_url('users_folder', current_user_object().parent_id or current_user) }}" class="pure-menu-link">{{ _('users') }}</a>
               </li>
               <li class="pure-menu-item {{ 'pure-menu-selected' if request.uri == reverse_url('import_addresses') else '' }}">
                 <a href="{{ reverse_url('import_addresses') }}" class="pure-menu-link">{{ _('import_addresses') }}</a>
