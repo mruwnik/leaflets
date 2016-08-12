@@ -9,7 +9,7 @@
       </div>
       &nbsp;<br><br>
       <div class="pure-u-1-4">
-        <a href="{{ reverse_url('show_campaign', campaign.id) }}" class="pure-button pure-button-primary">{{ _('show_list') }}</a>
+        <a href="{{ reverse_url('show_campaign', campaign.id) }}" class="pure-button">{{ _('show_list') }}</a>
         <div class="pure-u-1-24"></div>
       </div>
     </div>
@@ -18,7 +18,7 @@
 {% end %}
 
 {% block map-controls %}
-    <button name="track-position" class="controls pure-button pure-button-primary">
+    <button name="track-position" class="controls pure-button">
          {{ _('track_position') }}
     </button>
 {% end %}

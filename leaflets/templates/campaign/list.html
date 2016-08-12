@@ -1,7 +1,7 @@
 {% extends "../base.html" %}
 
 {% block body %}
-    <a href="{{ reverse_url('add_campaign') }}" class="pure-button pure-button-primary">
+    <a href="{{ reverse_url('add_campaign') }}" class="pure-button">
       {{ _('add_campaign') }}
     </a>
     {% for campaign_type, campaign_objs in campaigns %}

@@ -18,7 +18,7 @@ def render_form(handler, form, action, button):
         <fieldset class="centered">
             {fields}
             <div class="pure-controls">
-                <button type="submit" class="pure-button pure-button-primary">{button}</button>
+                <button type="submit" class="pure-button">{button}</button>
             </div>
         </fieldset>
     </form>"""

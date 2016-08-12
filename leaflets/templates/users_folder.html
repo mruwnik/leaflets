@@ -7,23 +7,23 @@
         <div 
              {# HACKINESS ALERT!! - but I can't be bothered to do it properly #}
              {% if user.is_group %}
-                 class="users-folder-container"
+                 class="users-folder-container folder"
                  onclick="window.location = '{{ reverse_url('users_folder', user.id) }}'"
              {% else %}
-                 class="users-user-container"
+                 class="users-user-container folder"
              {% end %} >
           <div class="user-folder">
             <div class="user-name">{{ user.username }}</div><br>
-            {% if not user.is_group and user.first_campaign %}
+            {% if user.first_campaign %}
                 <div class="user-campaigns">
                   <a href="{{ reverse_url('assign_campaign', 'map') }}?campaign={{ user.first_campaign.id }}"
-                     class="pure-button button-xsmall pure-button-primary">{{ _('assign_addresses') }}</a>
+                     class="pure-button button-xsmall">{{ _('assign_addresses') }}</a>
                 </div>
             {% end %}
             {% if is_admin() %}
                 <span class="user-options">
                   <a href="{{ reverse_url('edit_user') + '?user=%d' % user.id}}"
-                     class="pure-button button-xsmall pure-button-primary">{{ _('edit') }}</a>
+                     class="pure-button button-xsmall">{{ _('edit') }}</a>
                 </span>
             {% end %}
           </div>

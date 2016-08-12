@@ -37,8 +37,14 @@ table, th, td {
 
 #map-container {
     height: 800px;
+    border-radius: 30px;
 }
-
+.leaflet-top{
+    left: 10px;
+}
+.leaflet-left{
+    top: 10px;
+}
 
 div.legend {
     min-height: 1em;
@@ -142,30 +148,39 @@ input[type="radio"]:checked + .user{
   opacity: 0.7;
 }
 
-.users-folder-container{
-    height: 12em;
-    display: inline-block;
-    cursor: pointer;
-    background-color: yellow;
+.folder{
+    border-radius: 25px;
     margin: 1em;
+    display: inline-block;
+    height: 12em;
+}
+.users-folder-container{
+    cursor: pointer;
+    background-color: #9999cc;
 }
 .users-user-container{
-    height: 12em;
-    display: inline-block;
-    background-color: orange;
-    margin: 1em;
+    background-color: #ccccff;
 }
 .user-folder{
     display: inline-block;
     width: 16em;
     height: 8.8em;
-    padding-top: 4em;
+    padding-top: 3em;
     text-align: center;
 }
 
+
+// Zmiany zaproponowane przez Sandrę:
 .user-folder .user-name{
+    font-family: "Georgia", "Lucida Console";
+    font-size: 2em;
+    color: #E6E6E6;
 }
 .button-xsmall {
     font-size: 75%;
     margin: 2px;
+    border-radius: 25px;
+}
+.pure-button{
+    border-radius: 25px;
 }
