@@ -1,5 +1,5 @@
 window.map = L.map('map-container').setView([50.223262, 19.070912], 16);
-L.tileLayer.provider('Thunderforest.OpenCycleMap').addTo(map);
+L.tileLayer.provider('OpenStreetMap.Mapnik').addTo(map);
 window.markersLayer = L.markerClusterGroup({
     showCoverageOnHover: true,
     removeOutsideVisibleBounds: true,
