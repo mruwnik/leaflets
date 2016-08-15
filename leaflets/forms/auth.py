@@ -34,7 +34,7 @@ def send_email(subject, address, contents):
             server.quit()
             logger.info('INVITE: sent activation url to %s', address)
         except smtplib.SMTPException:
-            logger.error("Error: unable to send email")
+            logger.error("Error: unable to send email to %s: '%s'", address, contents)
 
 
 class LoginForm(Form):
